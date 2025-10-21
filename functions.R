@@ -92,30 +92,9 @@ FactorizeRast <- function(r, type) {
 
 # ----- Produce a leaflet map showing risk of infection -----
 
-RiskMap <- function(input, rast, pal, map_title, lgd_title, unique_vals, last_year) {
+RiskMap <- function(input, rast, pal, map_title, lgd_title, unique_vals) {
   
   # Need different layer IDs (for "addImageQuery") and zoom/drag options 
-  
-  # Last year map
-  if (last_year == 1) {
-    
-    layerID <- "Value (last year)"
-    
-    map <- leaflet(#height = 500, 
-      
-      options = leafletOptions(
-        
-        attributionControl = FALSE, 
-        zoomControl = FALSE, 
-        dragging = FALSE,
-        doubleClickZoom = FALSE, 
-        touchZoom = FALSE, 
-        boxZoom = FALSE, 
-        scrollWheelZoom = FALSE, 
-        minZoom = 6))
-    
-    # Current year map
-  } else {
     
     layerID <- "Value"
     
@@ -132,8 +111,6 @@ RiskMap <- function(input, rast, pal, map_title, lgd_title, unique_vals, last_ye
       htmlwidgets::onRender("function(el, x) {
         L.control.zoom({ position: 'topright' }).addTo(this)
       }")
-    
-  }
   
   # Add additional map features
   map <- map %>%
@@ -143,7 +120,7 @@ RiskMap <- function(input, rast, pal, map_title, lgd_title, unique_vals, last_ye
     #addProviderTiles(providers$Stamen.TonerLite)  %>%
     
     # Risk layer output
-    addRasterImage(rast, 
+    addRasterImage(raster(rast), 
                    color = pal, 
                    opacity = 0.65,
                    group = layerID, 
