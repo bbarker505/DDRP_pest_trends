@@ -92,7 +92,7 @@ FactorizeRast <- function(r, type) {
 
 # ----- Produce a leaflet map showing risk of infection -----
 
-RiskMap <- function(input, rast, pal, map_title, lgd_title, unique_vals) {
+RiskMap <- function(input, rast) {
   
   # Need different layer IDs (for "addImageQuery") and zoom/drag options 
     
@@ -121,7 +121,7 @@ RiskMap <- function(input, rast, pal, map_title, lgd_title, unique_vals) {
     
     # Risk layer output
     addRasterImage(raster(rast), 
-                   color = pal, 
+                   # color = pal, 
                    opacity = 0.65,
                    group = layerID, 
                    layerId = layerID) %>%
@@ -152,11 +152,12 @@ RiskMap <- function(input, rast, pal, map_title, lgd_title, unique_vals) {
                  weight = 1.25) %>%
     
     # Max bounds prevents zooming out past western OR and WA
-    setMaxBounds(lng1 = -127, lat1 = 41.966, lng2 = -120.5, lat2 = 49.1664) %>%
-    
-    # Map title
-    addControl(map_title, position = "bottomleft", className = "map-title") %>%
-    #addControl(map_title, className = "map-title") %>%
+    # Adjust for united states
+    setMaxBounds(lng1 = -127.856833, 
+                 lat1 = 23.717389, 
+                 lng2 = -64.790557, 
+                 lat2 = 50.864485) %>%
+
     
     # Shows map coordinates as mouse is moved over map
     addMouseCoordinates
@@ -164,20 +165,6 @@ RiskMap <- function(input, rast, pal, map_title, lgd_title, unique_vals) {
   # TO DO: Could not figure out how to put legend outside of map!!!
   
   # The legend gets in the way when viewing the app on a phone
-  
-  ## Final map features
-  ## Add legend (only to current year map)
-  ## TO DO: figure out how to make legend background fully opaque
-  
-  # lgd_vals <- factor(unique_vals, levels = unique(levels(rast)[[1]]$risk))
-  
-  # map <- map %>%
-  #   addLegendFactor(title = lgd_title, 
-  #                   pal = colorFactor(pal, lgd_vals),
-  #                   values =  lgd_vals, 
-  #                   orientation = "horizontal",
-  #                   width = 10, height = 10, 
-  #                   labelStyle = 'font-size: 14px;')
   
   return(map)
   
