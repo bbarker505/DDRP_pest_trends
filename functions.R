@@ -104,7 +104,7 @@ RiskMap <- function(input, rast) {
         
         attributionControl = FALSE, 
         zoomControl = FALSE, 
-        minZoom = 6)) %>% 
+        minZoom = 4)) %>% 
       
       # Change position of zoom control buttons
       
@@ -136,7 +136,7 @@ RiskMap <- function(input, rast) {
                   #raster(rast), project = TRUE, prefix = "", digits = 0,
                   layerId = layerID, 
                   position = "topleft", 
-                  type = "mousemove") %>%
+                  type = "mousemove") %>% # change to click later?
     
     # Add county lines / markers
     addPolylines(data = state_sf, 
@@ -151,13 +151,15 @@ RiskMap <- function(input, rast) {
                  color = "black", 
                  weight = 1.25) %>%
     
-    # Max bounds prevents zooming out past western OR and WA
-    # Adjust for united states
+    # Max bounds prevents zooming out past US
     setMaxBounds(lng1 = -127.856833, 
                  lat1 = 23.717389, 
                  lng2 = -64.790557, 
                  lat2 = 50.864485) %>%
-
+    
+    # Start with full US view
+    fitBounds(lng1 = -127.856833, lat1 = 23.717389,
+              lng2 = -64.790557, lat2 = 50.864485) %>%
     
     # Shows map coordinates as mouse is moved over map
     addMouseCoordinates
