@@ -27,7 +27,7 @@
 
 
 
-# Figure out what this line does
+# Shows full error message (if there is one) on app
 options(shiny.sanitize.errors = FALSE)
 
 
@@ -35,459 +35,389 @@ options(shiny.sanitize.errors = FALSE)
 
 
 
-# ---------- LOAD PACKAGES ----------
+# ---------- LOAD THINGS -------------------------------------------------------
 
 # Packages
-library(tidyverse)          # Data wrangling/manipulation
-library(terra)              # Import model outputs / work with rasters
-library(raster)             # TO DO: hopefully can remove this
-library(sf)                 # Spatial features
-library(mapview)            # Open access street maps
-library(tigris)             # County and state boundaries
-library(leafem)             # Query map values
-library(leaflet)            # Interactive maps
-library(leaflegend)         # Extra legend features
-library(leaflet.extras) 
-library(lubridate)          # Working with dates
-library(tidygeocoder)       # Obtain coordinates from address
-library(shiny)              # Web app 
-library(shinyWidgets)
-library(shinydashboard)
-library(shinyBS)            # Info tabs next to risk map menu items
-library(shinycssloaders)    # "Loading" animation for risk maps (waiting)
-library(shinyjs)            # For "delay" function to causes error messages to disappear
-library(bslib)
-library(fresh)              # Color theme for web app page
-library(htmlwidgets)
+source("packages.R")
 
 # Import custom functions
 source("functions.R")
 
+# Set-up
+source("setup.R")
 
 
 
 
 
-# ---------- SET-UP ----------
+# ---------- DEFINE USER INTERFACE (UI) ----------------------------------------
 
-# Figure out what this does... allows access to map tiles?
-Sys.setenv(MAPQUEST_API_KEY = "5vjLXIpEjMHpANFr4Ok2BNxpuQPrsGQP")
-
-
-
-#### * DATES ####
-
-# Used in map titles
-
-# Current dates and year
-current_date <- Sys.Date()
-current_year <- as.numeric(format(current_date, format = "%Y"))
-
-
-
-#### * SPATIAL FEATURES ####
-
-# All have CRS = WGS 84
-
-# State boundaries
-state_sf <- st_read("./features/states_OR_WA.shp")
-
-# County boundaries
-county_sf <- st_read("./features/counties_OR_WA.shp")
-
-# Get new boundaries
-
-
-
-
-#### * IMPORT AND PROCESS MODEL OUTPUTS ####
-
-# File names
-fls <- c("SLF_MK_Cold_Stress_11-20.tif")
-
-outdir <- paste0("./rasters/MK_trends/SLF")
-
-# Import model outputs
-rasts <- map(
-  fls, function(file_name) {
-    RastImport(paste0(outdir, "/", file_name))
-  }
-)
-
-
-
-#### * CUSTOM MAP TITLE CSS SPECS ####
-
-# Can probably also move these to another files 
-# (styles.scss to define all visual preferences)
-
-# border-radius makes rounded edges
-tag.map.title <- tags$style(HTML("
-  .leaflet-control.map-title { 
-    width: 130px;
-    padding-left: 3px; 
-    padding-right: 3px; 
-    padding-top: 2px; 
-    padding-bottom: 2px;
-    border-radius: 2px;
-    background: rgba(255,255,255,.75);
-    font-size: 16px;
-    font-weight: bold;
-    text-align: left;
-    color: rgb(51, 51, 51);
-  }
-"))
-
-# TO DO: Figure out way to control leaflet legend background opacity
-
-# border-radius makes rounded edges
-# tag.map.legend <- tags$style(HTML("
-#   .leaflet-control.legend { 
-#     background: rgba(255,255,255,.75);
-#   }
-# "))
-
-
-# Color themes
-mytheme <- create_theme(
-  adminlte_color(
-    light_blue = "#434C5E"
+ui <- page_navbar(
+  
+  # Title
+  title = HTML("<b>DDRP Pest Trends in the United States</b>"),
+  
+  # Theme
+  theme = bs_theme(
+    bootswatch = "sandstone",
+    bg = "#FFF5EE",
+    fg = "#8B4500",
+    base_font = font_google("Golos Text"),
+    heading_font = font_google("Crimson Text")
   ),
-  adminlte_global(
-    content_bg = "#FAFCFF",
-    box_bg = "#D8DEE9", 
-    info_box_bg = "#D8DEE9"
-  )
-)
-
-
-
-
-
-# ---------- DEFINE USER INTERFACE (UI) ----------
-
-ui <- navbarPage(
   
-  # Title of site
-  "DDRP Pest Trends in the United States",
+  # Custom CSS
+  tags$head(
+    includeCSS("styles.css")
+  ),
   
-  # Can adjust theme later for aesthetic preferences
-  theme = bs_theme(bootswatch = "sandstone",
-                   bg = "#FFF5EE",
-                   fg = "#8B4500",
-                   base_font = font_google("Golos Text"),
-                   heading_font = font_google("Crimson Text")),
-  
-  # Footer to show on every page (contains the logos)
+  # Footer
   footer = tags$footer(
+    
     style = "
-      background-color: #f5f5f5;
-      padding: 15px;
-      text-align: center;
-      border-top: 1px solid #ddd;
-    ",
-    div(
-      style = "display: inline-block; margin: 0 15px;",
-      tags$a(
-        target = "_blank",
-        tags$img(src = "OIPMC.png", height = "50px")
+      background-color:#FFF5EE; 
+      padding:15px; 
+      text-align:center; 
+      border-top: 1px solid #ddd;",
+    
+    # OSU IPM logo
+    div(style="display:inline-block; margin: 0 15px;",
+        tags$img(src="OIPMC.png", height="50px")),
+    
+    # Oregon Dept. of Ag. logo
+    div(style="display:inline-block; margin: 0 15px;",
+        tags$img(src="Oregon-Department-of-Agriculture-logo.png", height="50px")),
+    
+    # PRISM logo
+    div(style="display:inline-block; margin: 0 15px;",
+        tags$img(src="PRISM.png", height="50px")),
+    
+    # USDA logo
+    div(style="display:inline-block; margin: 0 15px;",
+        tags$img(src="usda-logo_original.png", height="50px"))
+  ),
+  
+  ##### * Tab 1 #####
+  
+  nav_panel(
+    
+    title = "About this site",
+    
+    # Overview
+    card(
+      
+      full_screen = FALSE,
+      class = "p-4 my-3",
+      card_header("Overview"),
+      
+      # Text
+      p(
+        "The boxwood blight infection risk mapping tool produces forecasts ",
+        "based on gridded daily climate data from the ",
+        a("PRISM", href="https://www.prism.oregonstate.edu",
+          target="_blank", style="text-decoration:underline;"),
+        " database at 800 m ",
+        tags$sup("2"),
+        " resolution and from the ",
+        a("NDFD",
+          href="https://vlab.noaa.gov/web/mdl/ndfd",
+          target="_blank", style="text-decoration:underline;"),
+        " database (downscaled...)"
       )
     ),
-    div(
-      style = "display: inline-block; margin: 0 15px;",
-      tags$a(
-        target = "_blank",
-        tags$img(src = "Oregon-Department-of-Agriculture-logo.png", height = "50px")
-      )
-    ),
-    div(
-      style = "display: inline-block; margin: 0 15px;",
-      tags$a(
-        target = "_blank",
-        tags$img(src = "PRISM.png", height = "50px")
-      )
-    ),
-    div(
-      style = "display: inline-block; margin: 0 15px;",
-      tags$a(
-        target = "_blank",
-        tags$img(src = "usda-logo_original.png", height = "50px")
+    
+    
+    # About
+    card(
+      
+      full_screen = FALSE,
+      class = "p-4 my-3",
+      card_header("About"),
+      
+      # Text
+      p(strong("Introduction: "),
+        "Boxwood blight caused by the fungus ",
+        em("Calonectria pseudonaviculata"),
+        " can result in defoliation, decline, and death..."
+      ),
+      
+      p("Generally, it should be very humid or raining..."),
+      
+      p(strong("Tool description: "), 
+        "The risk mapping tool is similar to the ",
+        a("boxwood blight model app", href="...", target="_blank"),
+        " available at USPest.org..."
+      ),
+      
+      p(strong("Suggested citation: "),
+        "Barker & Coop (2023) ..."
+      ),
+      
+      p(strong("Source code and feedback: "),
+        "To view the source code, visit the GitHub repo. ",
+        a("brittany.barker@oregonstate.edu",
+          href="mailto:brittany.barker@oregonstate.edu")
+      ),
+      
+      p(strong("Disclaimer: "),
+        "The risk index is intended to inform your decisions..."
       )
     )
   ),
   
-  # Tab 1
-  tabPanel(
+  ##### * Tab 2 #####
+  
+  nav_panel(
     
-    # Title of sub-page
-    "About",
+    title = "DDRP Map",
     
-    #### * OVERVIEW ####
-    
-    fluidRow(
+    layout_sidebar(
       
-      style = "font-size:19px;",
+      # ----- Controls (left side) --------------------------------------------
       
-      box(title = strong("Overview", style = "font-size:22px"),
-          status = "primary",
-          solidHeader = TRUE,
-          collapsible = TRUE,
-          collapsed = FALSE,
-          width = 12,
-          color = "light-blue",
-          
-          fluidRow(
-            
-            style = "font-size:19px;",
-            
-            column(width = 12, 
-                   offset = 0, 
-                   p("The boxwood blight infection risk mapping tool produces forecasts of the risk of boxwood being infected by boxwood blight in western Oregon and Washington. This information may help with planning scouting activities and with efforts to prevent or mitigate infections (e.g., with fungicide treatments). Forecasts are available for each day between tomorrow and four days from today. Climate data are derived from the", 
-                     a(href = "https://www.prism.oregonstate.edu", "PRISM", 
-                       target = "_blank", 
-                       style="text-decoration-line: underline;"), 
-                     "database at a 800 m", 
-                     tags$sup(2, .noWS = "before"), 
-                     " resolution and from the", 
-                     a(href = "https://vlab.noaa.gov/web/mdl/ndfd", 
-                       "NDFD", 
-                       target = "_blank", 
-                       style = "text-decoration-line: underline;"), 
-                     "database (downscaled from a 2.5 km", 
-                     tags$sup(2, .noWS = "before"), 
-                     "to an 800 m", tags$sup(2, .noWS = "before"), "resolution). Presently models are run only for areas west of the Cascades (approximately west of \u2013120.5\u00B0W). Please see a", 
-                     a(href = "BOXB_webapp_tutorial.pdf", "tutorial", 
-                       target = "_blank", 
-                       style="text-decoration-line: underline;"), 
-                     "for details on tool use and map interpretation. Expand the Introduction below to learn more about boxwood blight and risk models for this disease."))))),
-    
-    
-    
-    #### * ABOUT ####
-    
-    fluidRow(
+      sidebar = sidebar(
+        
+        h3(HTML("<b>Title</b>")),
+        
+        p("Perhaps short instructions"),
+        
+        # Divider line
+        hr(),
+        
+        # Buttons for variable
+        radioButtons(
+          "variable",
+          label = tags$span(h4(HTML("<b>Select a variable</b>"))),
+          choices = variable,
+          selected = variable[1]
+        ),
+        
+        selectInput(
+          "pest",
+          label = tags$span(h4(HTML("<b>Select insect</b>"))),
+          choices = c(
+            "Asian longhorned beetle (ALB)",
+            "Asiatic rice borer (ARB)",
+            "Honeydew moth (CGN)",
+            "Emerald Ash borer (EAB)",
+            "Egyptian cottonworm (ECW)",
+            "False codling moth (FCM)",
+            "Japanese beetle (JPB)",
+            "Japanese pinesawyer beetle (JPSB)",
+            "Light brown apple moth (LBAM)",
+            "Oak ambrosia beetle (OAB)",
+            "Old world bollworm (OWBW)",
+            "Pine-tree lappet moth (PTLM)",
+            "Spotted lanternfly (SLF)",
+            "Common / Cotton cutworm (SLI)",
+            "Silver Y moth (SLYM)",
+            "Small tomato borer (STB)",
+            "Sunn pest (SUNP)",
+            "Tomato leaf miner (TABS)"
+          ),
+          selected = "Spotted lanternfly (SLF)"
+        ),
+        
+        selectInput(
+          "year_range",
+          label = tags$span(h4(HTML("<b>Select range</b>"))),
+          choices = years,
+          selected = years[3]
+        )
+      ),
       
-      style = "font-size:19px;",
+      # ------ Visuals (Right side) -------------------------------------------
       
-      box(title = strong("About", style = "font-size:22px"),
-          status = "primary",
-          solidHeader = TRUE,
-          collapsible = TRUE,
-          collapsed = TRUE,
-          width = 12,
-          color = "light-blue",
-          
-          fluidRow(
-            
-            style = "font-size:19px;",
-            
-            column(width = 4, align = "center", style='padding:0px;font-size:14px;',
-                   img(src = "boxb-infected-shrubs2.png", 
-                       width = "155px", 
-                       style = "max-height: 240px;"),
-                   img(src = "boxb-infected-leaves2.png", 
-                       width = "155px", 
-                       style = "max-height: 240px;"),
-                   img(src = "boxb-infected-stems2.png", 
-                       width = "160px", 
-                       style = "max-height: 240px;")),
-            
-            column(width = 8, offset = 0, 
-                   p(strong("Introduction: "), "Boxwood blight caused by the fungus ", em("Calonectria pseudonaviculata"), " can result in defoliation, decline, and death of susceptible varieties of boxwood, including most varieties of ", em("Buxus sempervirens"), " such as \u0022Suffruticosa\u0022  (English boxwood) and \u0022Justin Brouwers\u0022. Images show diagnostic symptoms of boxwood blight including", strong("(A)"),  "defoliation,", strong("(B)"), "leaf spots, and", strong("(C)"), "black streaks on stems (courtesy of Chuan Hong). The fungus has been detected at several locations (mostly in nurseries) in at least six different counties in Oregon and is thought to be established in some areas. Previous", a(href = "https://doi.org/10.3390/biology11060849", "research", target = "_blank", style="text-decoration-line: underline;"), "indicates that western Oregon and Washington have highly suitable climates for establishment of", em("C. pseudonaviculata"),  ". Tools are therefore needed to inform growers and gardeners about when environmental conditions are conducive to boxwood blight infection and establishment."),
-                   p("Generally, it should be very humid or raining and at moderately warm temperatures (60\u201385\u00B0F) for a couple days for boxwood blight infection risk to be high. An inoculum source must be present nearby for infection to occur. Overhead irrigation facilitates outbreaks because it creates higher relative humidity and exposes leaf surfaces to longer periods of leaf wetness. For more information on preventing and managing boxwood blight, see the ", a(href = " https://pnwhandbooks.org/plantdisease/host-disease/boxwood-buxus-spp-boxwood-blight", "Pacific Northwest Pest Management Handbook", target = "_blank", style="text-decoration-line: underline;"), " and a ", a(href = " https://www.pubs.ext.vt.edu/content/dam/pubs_ext_vt_edu/PPWS/PPWS-29/PPWS-29-pdf.pdf", "publication", target = "_blank", style="text-decoration-line: underline;"),"by Virginia Cooperative Extension."),
-                   p(strong("Tool description: "), "The risk mapping tool is similar to the ", a(href = "https://uspest.org/risk/boxwood_app", "boxwood blight model app", target = "_blank", style="text-decoration-line: underline;"), "and the", a(href = "https://uspest.org/risk/boxwood_map", "synoptic map-view of risk", target = "_blank", style="text-decoration-line: underline;"), "available at", a(href = "https://uspest.org", "USPest.org", target = "_blank", style="text-decoration-line: underline;"), "except that it uses daily gridded climate data instead of hourly climate data from single weather stations.  The spatial model is run using a modified version of a platform known as", a(href = "https://uspest.org/CAPS/", "DDRP", target = "_blank", .noWS = "after", style="text-decoration-line: underline;"), ", which provides real-time forecasts of phenology and establishment risk of 16 species of invasive insects in the contiguous US. It will likely need to be fine-tuned as more infection incidence data become available. Technical information on the station-based (hourly) model can be found at", a(href = "https://uspest.org/wea/Boxwood_blight_risk_model_summaryV3.pdf", "USPest.org", target = "_blank", .noWS = "after", style="text-decoration-line: underline;"),"."),
-                   p(strong("Suggested citation: "), "Barker, B. S., and L. Coop. 2023. Boxwood blight risk mapping app for western Oregon and Washington. Oregon IPM Center, Oregon State University.", a(href = "https://riskmaps.oregonstate.edu/boxb/", "https://riskmaps.oregonstate.edu/boxb/", .noWS = c("after"), style="text-decoration-line: underline;"), "."),
-                   p(strong("Source code and feedback: "), "To view the source code, visit the", a(href = "https://github.com/bbarker505/boxb-webapp", "GitHub repository", target = "_blank", .noWS = c("after"), style="text-decoration-line: underline;"), ". To report bugs or provide feedback, please e-mail Brittany Barker at", a(href = "mailto:brittany.barker@oregonstate.edu", "brittany.barker@oregonstate.edu", .noWS = c("after"), style="text-decoration-line: underline;"), "."),
-                   p(strong("Disclaimer: "), "The risk index is intended to inform your decisions about management actions, such as choice and timing of control measures and intensity of scouting. It should supplement, not replace, the other factors you consider in making these decisions. Use at your own risk."))))),
-    
+      accordion(
+        open = "Visual",
+        
+        accordion_panel(
+          HTML("<b>Visual</b>"),
+          icon = icon("map-location-dot"),
+          tags$style("#map {height: calc(100vh - 80px) !important;}"),
+          leafletOutput("map") %>% withSpinner(color="cornflowerblue")
+        ),
+        
+        accordion_panel(
+          HTML("<b>Summary Statistics</b>"),
+          icon = icon("chart-column"),
+          p("Summary statistics will appear here.")
+        )
+      )
+    )
   ),
   
-  # Tab 2
-  tabPanel(
-    
-    # Title of sub-page
-    "Map",
-    
-    fluidRow(
-      
-      # Left column
-      column(width = 3,
-             
-             # Add title
-             h3(HTML("<b>insert map controls here</b>")),
-             
-             # Controls to plot map for insect
-             selectInput("pest",
-                         label = tags$span(h4(HTML("<b>Select insect:</b>")), 
-                                           bsButton("info_maptype", 
-                                                    label = "", 
-                                                    icon = icon("info"), 
-                                                    style = "info", 
-                                                    size = "extra-small")),
-                         choices = c("Asian longhorned beetle (ALB)",
-                                     "Asiatic rice borer (ARB)",
-                                     "Honeydew moth (CGN)",
-                                     "Emerald Ash borer (EAB)",
-                                     "Egyptian cottonworm (ECW)",
-                                     "False codling moth (FCM)",
-                                     "Japanese beetle (JPB)",
-                                     "Japanese pinesawyer beetle (JPSB)",
-                                     "Light brown apple moth (LBAM)",
-                                     "Oak ambrosia beetle (OAB)",
-                                     "Old world bollworm (OWBW)",
-                                     "Pine-tree lappet moth (PTLM)",
-                                     "Spotted lanternfly (SLF)",
-                                     "Common / Cotton cutworm (SLI)",
-                                     "Silver Y moth (SLYM)",
-                                     "Small tomato borer (STB)",
-                                     "Sunn pest (SUNP)",
-                                     "Tomato leaf miner (TABS)"),
-                         selected = "Spotted lanternfly (SLF)")),
-      
-      # Right column
-      column(width = 9,
-             
-             # Box for map
-             tabsetPanel(
-               
-               # Tab for map
-               tabPanel(
-                 title = "Visual",
-                 icon = icon("map-location-dot"),
-                 tags$style(type = "text/css",
-                            "#map {height: calc(100vh - 80px) !important;}"),
-                 leafletOutput("map")
-               ),
-               
-               # Tab for statistics
-               tabPanel(
-                 title = "Stats",
-                 icon = icon("chart-column"),
-                 fluidRow(
-                   h3(HTML("<b>insert summary statistics / supplementary plots here?</b>")),
-                   plotOutput("plot", width = "98%"),
-                   dataTableOutput("table")
-                 )
-               )
-             )
-      )
-    )),
+  ##### * Tab 3 #####
   
-  # Tab 3
-  tabPanel(
+  nav_panel(
     
-    # Title of sub-page
-    "Pest information",
+    title = "Pest Information",
     
-    # ALB
-    fluidRow(
-      style = "font-size:19px;",
-      box(title = strong("Asian longhorned beetle", style = "font-size:22px"),
-          status = "primary",
-          solidHeader = TRUE,
-          collapsible = TRUE,
-          collapsed = FALSE,
-          width = 12,
-          color = "light-blue",
-          fluidRow(
-            style = "font-size:19px;",
-            column(width = 12, 
-                   offset = 0, 
-                   p("words"))))),
+    card(
+      class = "p-3 my-3",
+      card_header("Asian longhorned beetle (ALB)"),
+      p("words")
+    ),
     
-    # ASRB
-    fluidRow(
-      style = "font-size:19px;",
-      box(title = strong("Asian rice borer", style = "font-size:22px"),
-          status = "primary",
-          solidHeader = TRUE,
-          collapsible = TRUE,
-          collapsed = TRUE,
-          width = 12,
-          color = "light-blue",
-          fluidRow(
-            style = "font-size:19px;",
-            column(width = 12, 
-                   offset = 0, 
-                   p("words"))))),
+    card(
+      class = "p-3 my-3",
+      card_header("Asiatic rice borer (ARB)"),
+      p("words")
+    ),
     
-    # CGN
-    fluidRow(
-      style = "font-size:19px;",
-      box(title = strong("Honeydew moth", style = "font-size:22px"),
-          status = "primary",
-          solidHeader = TRUE,
-          collapsible = TRUE,
-          collapsed = TRUE,
-          width = 12,
-          color = "light-blue",
-          fluidRow(
-            style = "font-size:19px;",
-            column(width = 12, 
-                   offset = 0, 
-                   p("words"))))),
+    card(
+      class = "p-3 my-3",
+      card_header("Common / Cotton cutworm (SLI)"),
+      p("words")
+    ),
     
-    # EAB
-    fluidRow(
-      style = "font-size:19px;",
-      box(title = strong("Emerald ash borer", style = "font-size:22px"),
-          status = "primary",
-          solidHeader = TRUE,
-          collapsible = TRUE,
-          collapsed = TRUE,
-          width = 12,
-          color = "light-blue",
-          fluidRow(
-            style = "font-size:19px;",
-            column(width = 12, 
-                   offset = 0, 
-                   p("words"))))),
+    card(
+      class = "p-3 my-3",
+      card_header("Egyptian cottonworm (ECW)"),
+      p("words")
+    ),
     
-    # ECW
-    fluidRow(
-      style = "font-size:19px;",
-      box(title = strong("Egyptian cotton worm", style = "font-size:22px"),
-          status = "primary",
-          solidHeader = TRUE,
-          collapsible = TRUE,
-          collapsed = TRUE,
-          width = 12,
-          color = "light-blue",
-          fluidRow(
-            style = "font-size:19px;",
-            column(width = 12, 
-                   offset = 0, 
-                   p("words")))))
+    card(
+      class = "p-3 my-3",
+      card_header("Emerald Ash borer (EAB)"),
+      p("words")
+    ),
+    
+    card(
+      class = "p-3 my-3",
+      card_header("False codling moth (FCM)"),
+      p("words")
+    ),
+    
+    card(
+      class = "p-3 my-3",
+      card_header("Honeydew moth (CGN)"),
+      p("words")
+    ),
+    
+    card(
+      class = "p-3 my-3",
+      card_header("Japanese beetle (JPB)"),
+      p("words")
+    ),
+    
+    card(
+      class = "p-3 my-3",
+      card_header("Japanese pinesawyer beetle (JPSB)"),
+      p("words")
+    ),
+    
+    card(
+      class = "p-3 my-3",
+      card_header("Light brown apple moth (LBAM)"),
+      p("words")
+    ),
+    
+    card(
+      class = "p-3 my-3",
+      card_header("Oak ambrosia beetle (OAB)"),
+      p("words")
+    ),
+    
+    card(
+      class = "p-3 my-3",
+      card_header("Old world bollworm (OWBW)"),
+      p("words")
+    ),
+    
+    card(
+      class = "p-3 my-3",
+      card_header("Pine-tree lappet moth (PTLM)"),
+      p("words")
+    ),
+    
+    card(
+      class = "p-3 my-3",
+      card_header("Silver Y moth (SLYM)"),
+      p("words")
+    ),
+    
+    card(
+      class = "p-3 my-3",
+      card_header("Small tomato borer (STB)"),
+      p("words")
+    ),
+    
+    card(
+      class = "p-3 my-3",
+      card_header("Spotted lanternfly (SLF)"),
+      p("words")
+    ),
+    
+    card(
+      class = "p-3 my-3",
+      card_header("Sunn pest (SUNP)"),
+      p("words")
+    ),
+    
+    card(
+      class = "p-3 my-3",
+      card_header("Tomato leaf miner (TABS)"),
+      p("words")
+    )
     
   )
-  
 )
 
 
 
 
 
-# ---------- DEFINE SERVER ----------
+
+# ---------- DEFINE SERVER -----------------------------------------------------
 
 server <- function(input, output, session) {
   
-  # Holds the currently selected raster
+  # Pull in mapping we defined
+  source("pest_prefix_mapping.R")
+  
+  # Collect raster of interest
   pest_raster <- reactive({
-    switch(input$pest,
-           "Spotted lanternfly (SLF)" = rasts[[1]])
+    
+    # Require an input of what pest, variable, and years
+    req(input$pest, input$variable, input$year_range)
+    
+    # Lookup prefix from pest selection
+    prefix <- pest_to_species[[input$pest]]
+    
+    # Make sure there's a raster associated
+    validate(
+      need(!is.null(prefix),
+           "This pest does not have associated raster data.")
+    )
+    
+    # Assemble filename
+    # Example: "SLF_MK_Heat_Stress_91-20.tif"
+    file_name <- paste0(prefix, "_MK_", input$variable, "_", input$year_range, ".tif")
+    
+    # Build full path to file
+    full_path <- file.path(rasts_dir, prefix, file_name)
+    
+    # Check again
+    validate(
+      need(file.exists(full_path),
+           paste("Raster not found:", file_name))
+    )
+    
+    # Load and return the raster
+    RastImport(full_path)
+    
   })
   
   #### * INITIAL MAP ####
   
   output$map <- renderLeaflet({
     
-    req(rasts[[1]])  # make sure raster data exists
+    # Custom function that defines all map features
+    produce_map(input, pest_raster, 
+                north = north, south = south,
+                east = east, west = west)
     
-    RiskMap(input, rasts[[1]]) %>%
-      fitBounds(lng1 = -127.856833, 
-                lat1 = 23.717389, 
-                lng2 = -64.790557, 
-                lat2 = 50.864485)
   })
   
   
@@ -495,15 +425,15 @@ server <- function(input, output, session) {
   
   observeEvent(input$pest, {
     
-    req(pest_raster())  # Ensure raster exists
+    req(pest_raster)  # Ensure raster exists
     
+    # Render new map
     output$map <- renderLeaflet({
-      RiskMap(input, pest_raster()) %>%
-        fitBounds(lng1 = -127.856833, 
-                  lat1 = 23.717389, 
-                  lng2 = -64.790557, 
-                  lat2 = 50.864485)
+      produce_map(input, pest_raster, 
+                  north = north, south = south,
+                  east = east, west = west)
     })
+    
   })
     
     #### * BOUNDS OF MAP ####
@@ -587,8 +517,8 @@ server <- function(input, output, session) {
       # Add circle markers and zoom to location
       if (!is.na(coords$lat)) {
         
-        if (coords$lat > 23.717389 & coords$lat < 50.864485 & 
-            coords$long > -127.856833 & coords$long < -64.790557) {
+        if (coords$lat > south & coords$lat < north & 
+            coords$long > west & coords$long < east) {
           
           output$search_message <- renderText({
             
@@ -633,13 +563,9 @@ server <- function(input, output, session) {
       
       if (input$address_checkbox == 0) {
         
-        # Zoom back out to western OR and WA and clear location markers
+        # Zoom back out and clear location markers
         
-        leafletProxy("map")  %>%
-          fitBounds(lng1 = -127.856833, 
-                    lat1 = 23.717389, 
-                    lng2 = -64.790557, 
-                    lat2 = 50.864485) %>%
+        leafletProxy("map") %>%
           removeMarker(layerId = "Value")  %>% 
           addImageQuery(raster(pest_raster), project = TRUE, prefix = "", digits = 0,
                         layerId = "Value", position = "topleft", type = "mousemove") 
@@ -651,5 +577,6 @@ server <- function(input, output, session) {
 
 
 
-# ---------- RUN APP ----------
+# ---------- RUN APP -----------------------------------------------------------
+
 shinyApp(ui = ui, server = server)

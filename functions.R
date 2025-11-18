@@ -92,82 +92,88 @@ FactorizeRast <- function(r, type) {
 
 # ----- Produce a leaflet map showing risk of infection -----
 
-RiskMap <- function(input, rast) {
+produce_map <- function(input, rast, north, south, east, west) {
   
   # Need different layer IDs (for "addImageQuery") and zoom/drag options 
+  layerID <- "Value"
+  
+  # Generate map
+  map <- leaflet(#height = 500, 
     
-    layerID <- "Value"
+    # Custom leaflet options
+    options = leafletOptions(attributionControl = FALSE,
+                             zoomControl = FALSE, 
+                             minZoom = 1,
+                             zoomSnap = 0,
+                             zoomDelta = 0.25)) %>% 
     
-    map <- leaflet(#height = 500, 
-      
-      options = leafletOptions(
-        
-        attributionControl = FALSE, 
-        zoomControl = FALSE, 
-        minZoom = 4)) %>% 
-      
-      # Change position of zoom control buttons
-      
-      htmlwidgets::onRender("function(el, x) {
-        L.control.zoom({ position: 'topright' }).addTo(this)
-      }")
+    # Custom JavaScript overrides
+    htmlwidgets::onRender(sprintf("
+  function(el, x) {
+    var map = this;
+
+    // Zoom control
+    L.control.zoom({ position: 'topright' }).addTo(map);
+
+    // Exact bounds for map
+    var exactBounds = L.latLngBounds(
+      [%f, %f],
+      [%f, %f]
+    );
+
+    // Enforce exact bounds for panning
+    map.on('moveend', function() {
+      if (!exactBounds.contains(map.getCenter())) {
+        map.panInsideBounds(exactBounds, { animate: false });
+      }
+    });
+
+    // Enforce fractional min-zoom (default leaflet only allows integer zoom)
+    map.on('zoomend', function() {
+      if (map.getZoom() < 4.75) {
+        map.setZoom(4.75);
+      }
+    });
+  }
+", south, west, north, east))
   
   # Add additional map features
   map <- map %>%
     
     # Add OpenStreetMap layer
     addProviderTiles(providers$CartoDB.Voyager)  %>%
-    #addProviderTiles(providers$Stamen.TonerLite)  %>%
     
-    # Risk layer output
+    # Raster layer output
     addRasterImage(raster(rast), 
-                   # color = pal, 
                    opacity = 0.65,
                    group = layerID, 
                    layerId = layerID) %>%
     
     # Risk layer raster query (use project = TRUE or get wrong values)
-    # Changed from "mousemove" to "mousemove" because value would 
-    # sometimes get "stuck" (wouldn't update)
     addImageQuery(raster(rast), 
                   project = TRUE, 
                   prefix = "", 
                   digits = 0,
-                  #raster(rast), project = TRUE, prefix = "", digits = 0,
                   layerId = layerID, 
                   position = "topleft", 
                   type = "mousemove") %>% # change to click later?
     
-    # Add county lines / markers
-    addPolylines(data = state_sf, 
-                 group = "States", 
-                 opacity = 0.25, 
-                 color = "black", 
-                 weight = 1.75) %>%
-    
+    # Add county lines
     addPolylines(data = county_sf, 
                  group = "Counties", 
                  opacity = 0.15, 
                  color = "black", 
                  weight = 1.25) %>%
     
-    # Max bounds prevents zooming out past US
-    setMaxBounds(lng1 = -127.856833, 
-                 lat1 = 23.717389, 
-                 lng2 = -64.790557, 
-                 lat2 = 50.864485) %>%
-    
-    # Start with full US view
-    fitBounds(lng1 = -127.856833, lat1 = 23.717389,
-              lng2 = -64.790557, lat2 = 50.864485) %>%
+    # Set initial view
+    setView(lng = mean(c(west, east)),
+            lat = mean(c(south, north)),
+            zoom = 4.75) %>%
     
     # Shows map coordinates as mouse is moved over map
     addMouseCoordinates
   
-  # TO DO: Could not figure out how to put legend outside of map!!!
-  
-  # The legend gets in the way when viewing the app on a phone
-  
+  # Return map
   return(map)
   
 }

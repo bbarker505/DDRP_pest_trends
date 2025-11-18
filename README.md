@@ -1,6 +1,21 @@
-# Boxwood Blight Risk Mapping Tool for Western OR and WA
-👥 Brittany Barker 
+# Degree-Day, Establishment Risk, & Phenological Mapping System for the Contiguous United States
 
-Questions? 📧 bbarker505@gmail.com or brittany.barker@oregonstate.edu  
+👥 Brittany Barker
 
-Boxwood blight, caused by the ascomycete fungus *Calonectria pseudonaviculata*, is an emerging plant disease of boxwood (*Buxus* spp.) that has resulted in substantial economic losses to the ornamental nursery industry. In previous work, infection risk modeling tools were developed to address a critical need for timely and comprehensive guidance on both where and when to expect boxwood blight outbreaks. However, none of these tools have provide interactive maps of infection risk that would be useful for decision making at area-wide scales, such as counties and cities. In particular, risk maps can help identify areas where near-term conditions are conducive for infection, which may help boxwood stakeholders decide whether they should conduct close inspections or manage potential infections (e.g., apply fungicide treatments). As part of an Oregon Department of Agriculture grant (Nursery Research Program), I developed a boxwood blight risk mapping tool using Shiny, which is an open-source R package that provides a powerful framework for building web applications. The web app is hosted by OSU at https://riskmaps.oregonstate.edu/boxb, where you can also find a more detailed description of the app. The tutorial is in the "www" folder in this repository.
+Questions? 📧 [bbarker505\@gmail.com](mailto:bbarker505@gmail.com){.email} or [brittany.barker\@oregonstate.edu](mailto:brittany.barker@oregonstate.edu){.email}
+
+## 📜 Summary
+
+Insert description
+
+## 📚 Libraries
+
+The R packages used may be found in `packages.R`.
+
+## 📂 Folder Contents
+
+Insert folder descriptions
+
+![](www/OIPMC_for_README.png){width="339"}
+
+*Last updated: November 2025*
