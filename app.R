@@ -1,4 +1,4 @@
-# ---------- NOTES ----------
+# ---------- NOTES -------------------------------------------------------------
 
 # Edits:
 
@@ -18,24 +18,21 @@
 
 
 
-# ---------- DDRP PEST TRENDS SHINY APP ----------
+# ---------- DDRP PEST TRENDS SHINY APP ----------------------------------------
 
 # Purpose: 
 
-# Insert code description
-
-
-
-
-# Shows full error message (if there is one) on app
-options(shiny.sanitize.errors = FALSE)
+# This app presents results from a proven modeling system to assess the  
+  # potential impacts of recent weather trends (1980−2024) on the timing of  
+  # pest activities such as emergence, number of generations, and establishment 
+  # for 18 major invasive species for the contiguous United States. 
 
 
 
 
 
 
-# ---------- LOAD THINGS -------------------------------------------------------
+# ---------- PREAMBLE THINGS ---------------------------------------------------
 
 # Packages
 source("packages.R")
@@ -60,8 +57,8 @@ ui <- page_navbar(
   # Theme
   theme = bs_theme(
     bootswatch = "sandstone",
-    bg = "#FFF5EE",
-    fg = "#8B4500",
+    bg = "#FAFCFF",
+    fg = "#434C5E",
     base_font = font_google("Golos Text"),
     heading_font = font_google("Crimson Text")
   ),
@@ -75,7 +72,7 @@ ui <- page_navbar(
   footer = tags$footer(
     
     style = "
-      background-color:#FFF5EE; 
+      background-color:#FAFCFF; 
       padding:15px; 
       text-align:center; 
       border-top: 1px solid #ddd;",
@@ -196,26 +193,26 @@ ui <- page_navbar(
           "pest",
           label = tags$span(h4(HTML("<b>Select insect</b>"))),
           choices = c(
-            "Asian longhorned beetle (ALB)",
-            "Asiatic rice borer (ARB)",
-            "Honeydew moth (CGN)",
-            "Emerald Ash borer (EAB)",
-            "Egyptian cottonworm (ECW)",
-            "False codling moth (FCM)",
-            "Japanese beetle (JPB)",
-            "Japanese pinesawyer beetle (JPSB)",
-            "Light brown apple moth (LBAM)",
-            "Oak ambrosia beetle (OAB)",
-            "Old world bollworm (OWBW)",
-            "Pine-tree lappet moth (PTLM)",
-            "Spotted lanternfly (SLF)",
-            "Common / Cotton cutworm (SLI)",
-            "Silver Y moth (SLYM)",
-            "Small tomato borer (STB)",
-            "Sunn pest (SUNP)",
-            "Tomato leaf miner (TABS)"
+            "Asian longhorned beetle",
+            "Asiatic rice borer",
+            "Honeydew moth",
+            "Emerald Ash borer",
+            "Egyptian cottonworm",
+            "False codling moth",
+            "Japanese beetle",
+            "Japanese pinesawyer beetle",
+            "Light brown apple moth",
+            "Oak ambrosia beetle",
+            "Old world bollworm",
+            "Pine-tree lappet moth",
+            "Spotted lanternfly",
+            "Common / Cotton cutworm",
+            "Silver Y moth",
+            "Small tomato borer",
+            "Sunn pest",
+            "Tomato leaf miner"
           ),
-          selected = "Spotted lanternfly (SLF)"
+          selected = "Spotted lanternfly"
         ),
         
         selectInput(
@@ -373,48 +370,48 @@ ui <- page_navbar(
 
 server <- function(input, output, session) {
   
-  # Pull in mapping we defined
-  source("pest_prefix_mapping.R")
-  
   # Collect raster of interest
   pest_raster <- reactive({
     
-    # Require an input of what pest, variable, and years
+    # Require inputs
     req(input$pest, input$variable, input$year_range)
     
-    # Lookup prefix from pest selection
-    prefix <- pest_to_species[[input$pest]]
+    # Look up the correct row in files table
+    row <- raster_lookup %>%
+      dplyr::filter(
+        pest == input$pest,
+        variable == input$variable,
+        year_range == input$year_range
+      )
     
-    # Make sure there's a raster associated
+    # Check
     validate(
-      need(!is.null(prefix),
-           "This pest does not have associated raster data.")
+      need(nrow(row) == 1,
+           "No raster found.")
     )
     
-    # Assemble filename
-    # Example: "SLF_MK_Heat_Stress_91-20.tif"
-    file_name <- paste0(prefix, "_MK_", input$variable, "_", input$year_range, ".tif")
+    # Full file path
+    full_path <- row$file_path
     
-    # Build full path to file
-    full_path <- file.path(rasts_dir, prefix, file_name)
-    
-    # Check again
+    # Check
     validate(
       need(file.exists(full_path),
-           paste("Raster not found:", file_name))
+           paste("Raster file not found:", full_path))
     )
     
-    # Load and return the raster
+    # Load raster
     RastImport(full_path)
-    
   })
   
   #### * INITIAL MAP ####
   
   output$map <- renderLeaflet({
     
+    # Get raster
+    r <- pest_raster()
+    
     # Custom function that defines all map features
-    produce_map(input, pest_raster, 
+    produce_map(input, r, 
                 north = north, south = south,
                 east = east, west = west)
     
@@ -429,7 +426,12 @@ server <- function(input, output, session) {
     
     # Render new map
     output$map <- renderLeaflet({
-      produce_map(input, pest_raster, 
+      
+      # Get raster
+      r <- pest_raster()
+      
+      # Custom function that defines all map features
+      produce_map(input, r, 
                   north = north, south = south,
                   east = east, west = west)
     })

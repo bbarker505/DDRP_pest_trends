@@ -5,23 +5,23 @@
 
 pest_to_species <- list(
   
-  "Asian longhorned beetle (ALB)"     = "ALB",
-  "Asiatic rice borer (ARB)"          = "ARB",
-  "Common / Cotton cutworm (SLI)"     = "SLI",
-  "Egyptian cottonworm (ECW)"         = "ECW",
-  "Emerald Ash borer (EAB)"           = "EAB",
-  "False codling moth (FCM)"          = "FCM",
-  "Honeydew moth (CGN)"               = "CGN",
-  "Japanese beetle (JPB)"             = "JPB",
-  "Japanese pinesawyer beetle (JPSB)" = "JPSB",
-  "Light brown apple moth (LBAM)"     = "LBAM",
-  "Oak ambrosia beetle (OAB)"         = "OAB",
-  "Old world bollworm (OWBW)"         = "OWBW",
-  "Pine-tree lappet moth (PTLM)"      = "PTLM",
-  "Silver Y moth (SLYM)"              = "SLYM",
-  "Small tomato borer (STB)"          = "STB",
-  "Spotted lanternfly (SLF)"          = "SLF",
-  "Sunn pest (SUNP)"                  = "SUNP",
-  "Tomato leaf miner (TABS)"          = "TABS"
+  "Asian longhorned beetle"     = "ALB",
+  "Asiatic rice borer"          = "ARB",
+  "Common / Cotton cutworm"     = "SLI",
+  "Egyptian cottonworm"         = "ECW",
+  "Emerald Ash borer"           = "EAB",
+  "False codling moth"          = "FCM",
+  "Honeydew moth"               = "CGN",
+  "Japanese beetle"             = "JPB",
+  "Japanese pinesawyer beetle"  = "JPSB",
+  "Light brown apple moth"      = "LBAM",
+  "Oak ambrosia beetle"         = "OAB",
+  "Old world bollworm"          = "OWBW",
+  "Pine-tree lappet moth"       = "PTLM",
+  "Silver Y moth"               = "SLYM",
+  "Small tomato borer"          = "STB",
+  "Spotted lanternfly"          = "SLF",
+  "Sunn pest"                   = "SUNP",
+  "Tomato leaf miner"           = "TABS"
   
 )
