@@ -101,28 +101,42 @@ ui <- page_navbar(
     title = "About this site",
     
     # Overview
-    card(
-      
-      full_screen = FALSE,
+    div(
       class = "p-4 my-3",
-      card_header("Overview"),
+      h3(HTML("<b>Overview</b>")),
       
       # Text
-      p(
-        "The boxwood blight infection risk mapping tool produces forecasts ",
-        "based on gridded daily climate data from the ",
-        a("PRISM", href="https://www.prism.oregonstate.edu",
+      p("We use the Degree-Day, establishment Risk, and Phenological event 
+      mapping system (known as DDRP) to assess the potential impacts of weather 
+      between 1980 and 2024 on the timing of pest activity such as emergence 
+      (phenology) and potential for establishment of 18 invasive pest species in 
+      the contiguous United States (Table 1). The system is part of a suite of 
+      decision-support tools at ",
+        a("USPest.org", href = "https://uspest.org/wea/",
           target="_blank", style="text-decoration:underline;"),
-        " database at 800 m ",
-        tags$sup("2"),
-        " resolution and from the ",
-        a("NDFD",
-          href="https://vlab.noaa.gov/web/mdl/ndfd",
+        " that are developed and maintained by the Oregon Integrated Pest 
+        Management Center at Oregon State University. These tools provide 
+        thousands of end users nationwide with information to support timely 
+        and effective management activities for agricultural pests and diseases. 
+        This project will use the Degree-Day, establishment Risk, and 
+        Phenological event mapping system to predict where pests exhibit earlier 
+        activities, increases in the number of generations, and increases in 
+        habitat suitability. This information helps Plant Protection and 
+        Quarantine allocate survey resources more strategically, thereby 
+        reducing the likelihood of pest establishment and spread."
+      ),
+      
+      # Another paragraph
+      p("Of the 18 species with models, 12 are presently on Plant Protection and 
+      Quarantine’s National Priority Pest List, six were formerly included on 
+      the List, and two are Federal Program Pests. Most of the species do not 
+      occur in the contiguous United States (N = 13); however, five are 
+      established and may spread to additional regions. Real-time forecasts for 
+      these pests are available at ",
+        a("USPest.org", href = "https://uspest.org/CAPS",
           target="_blank", style="text-decoration:underline;"),
-        " database (downscaled...)"
-      )
+          ".")
     ),
-    
     
     # About
     card(
@@ -174,9 +188,9 @@ ui <- page_navbar(
       
       sidebar = sidebar(
         
-        h3(HTML("<b>Title</b>")),
+        h3(HTML("<b>DDRP Pest Map</b>")),
         
-        p("Perhaps short instructions"),
+        p("Please select the desired variable, pest, and time frame of interest."),
         
         # Divider line
         hr(),
@@ -184,14 +198,20 @@ ui <- page_navbar(
         # Buttons for variable
         radioButtons(
           "variable",
-          label = tags$span(h4(HTML("<b>Select a variable</b>"))),
-          choices = variable,
-          selected = variable[1]
+          label = tags$span(h4(HTML("<b>Select variable</b>"))),
+          choices = c(
+            "Cold Stress"                = "Cold_Stress",
+            "Heat Stress"                = "Heat_Stress",
+            "Earliest Date of (e = 0)"   = "Earliest_PEMe0",
+            "Earliest Date of (e = 1)"   = "Earliest_PEMe1",
+            "Earliest Date of (p = 0)"   = "Earliest_PEMp0"
+          ),
+          selected = "Cold_Stress"
         ),
         
         selectInput(
           "pest",
-          label = tags$span(h4(HTML("<b>Select insect</b>"))),
+          label = tags$span(h4(HTML("<b>Select pest</b>"))),
           choices = c(
             "Asian longhorned beetle",
             "Asiatic rice borer",
@@ -217,30 +237,55 @@ ui <- page_navbar(
         
         selectInput(
           "year_range",
-          label = tags$span(h4(HTML("<b>Select range</b>"))),
-          choices = years,
-          selected = years[3]
+          label = tags$span(h4(HTML("<b>Select time range</b>"))),
+          choices = c(
+            "2001–2010" = "01-10",
+            "2011–2020" = "11-20",
+            "1981–2024" = "81-24",
+            "1981–1990" = "81-90",
+            "1991–2020" = "91-20"
+          ),
+          selected = "81-24"
         )
       ),
       
       # ------ Visuals (Right side) -------------------------------------------
       
-      accordion(
-        open = "Visual",
+      div(
         
-        accordion_panel(
-          HTML("<b>Visual</b>"),
-          icon = icon("map-location-dot"),
-          tags$style("#map {height: calc(100vh - 80px) !important;}"),
-          leafletOutput("map") %>% withSpinner(color="cornflowerblue")
-        ),
+        style = "height: 100%; position: relative;",
         
-        accordion_panel(
-          HTML("<b>Summary Statistics</b>"),
-          icon = icon("chart-column"),
-          p("Summary statistics will appear here.")
+        # Ensure map fills the viewport minus header space
+        tags$style("#map {height: calc(100vh - 80px) !important;}"),
+        leafletOutput("map") %>% 
+          withSpinner(color = 'cornflowerblue'),
+        
+        # Floating Info Panel (right)
+        absolutePanel(
+          id = "info_panel",
+          top = 100, right = 20, width = 300,
+          draggable = TRUE,
+          style = "z-index:999;
+          background:white;
+          padding:15px;
+          border-radius:10px;
+          box-shadow:0 0 10px rgba(0,0,0,0.2);
+        ",
+          
+          # Text
+          h4(HTML("<b>Location statistics</b>")),
+          tags$hr(),
+          
+          textOutput("clicked_latlon"),
+          br(),
+          textOutput("clicked_pest"),
+          textOutput("clicked_variable"),
+          textOutput("clicked_year"),
+          br(),
+          textOutput("clicked_value"),
+          textOutput("clicked_pval")
         )
-      )
+      ) # end main
     )
   ),
   
@@ -250,114 +295,100 @@ ui <- page_navbar(
     
     title = "Pest Information",
     
-    card(
-      class = "p-3 my-3",
-      card_header("Asian longhorned beetle (ALB)"),
+    accordion(
+      
+      open = "Asian longhorned beetle",
+      
+      accordion_panel(
+        HTML("<b>Asian longhorned beetle</b>"),
+        p("words")
+      ),
+    
+      accordion_panel(
+      HTML("<b>Asiatic rice borer</b>"),
       p("words")
     ),
     
-    card(
-      class = "p-3 my-3",
-      card_header("Asiatic rice borer (ARB)"),
+    accordion_panel(
+      HTML("<b>Common / Cotton cutworm</b>"),
       p("words")
     ),
     
-    card(
-      class = "p-3 my-3",
-      card_header("Common / Cotton cutworm (SLI)"),
+    accordion_panel(
+      HTML("<b>Egyptian cottonworm</b>"),
       p("words")
     ),
     
-    card(
-      class = "p-3 my-3",
-      card_header("Egyptian cottonworm (ECW)"),
+    accordion_panel(
+      HTML("<b>Emerald Ash borer</b>"),
       p("words")
     ),
     
-    card(
-      class = "p-3 my-3",
-      card_header("Emerald Ash borer (EAB)"),
+    accordion_panel(
+      HTML("<b>False codling moth</b>"),
       p("words")
     ),
     
-    card(
-      class = "p-3 my-3",
-      card_header("False codling moth (FCM)"),
+    accordion_panel(
+      HTML("<b>Honeydew moth</b>"),
       p("words")
     ),
     
-    card(
-      class = "p-3 my-3",
-      card_header("Honeydew moth (CGN)"),
+    accordion_panel(
+      HTML("<b>Japanese beetle</b>"),
       p("words")
     ),
     
-    card(
-      class = "p-3 my-3",
-      card_header("Japanese beetle (JPB)"),
+    accordion_panel(
+      HTML("<b>Japanese pinesawyer beetle</b>"),
       p("words")
     ),
     
-    card(
-      class = "p-3 my-3",
-      card_header("Japanese pinesawyer beetle (JPSB)"),
+    accordion_panel(
+      HTML("<b>Light brown apple moth</b>"),
       p("words")
     ),
     
-    card(
-      class = "p-3 my-3",
-      card_header("Light brown apple moth (LBAM)"),
+    accordion_panel(
+      HTML("<b>Oak ambrosia beetle</b>"),
       p("words")
     ),
     
-    card(
-      class = "p-3 my-3",
-      card_header("Oak ambrosia beetle (OAB)"),
+    accordion_panel(
+      HTML("<b>Old world bollworm</b>"),
       p("words")
     ),
     
-    card(
-      class = "p-3 my-3",
-      card_header("Old world bollworm (OWBW)"),
+    accordion_panel(
+      HTML("<b>Pine-tree lappet moth</b>"),
       p("words")
     ),
     
-    card(
-      class = "p-3 my-3",
-      card_header("Pine-tree lappet moth (PTLM)"),
+    accordion_panel(
+      HTML("<b>Silver Y moth</b>"),
       p("words")
     ),
     
-    card(
-      class = "p-3 my-3",
-      card_header("Silver Y moth (SLYM)"),
+    accordion_panel(
+      HTML("<b>Small tomato borer</b>"),
       p("words")
     ),
     
-    card(
-      class = "p-3 my-3",
-      card_header("Small tomato borer (STB)"),
+    accordion_panel(
+      HTML("<b>Spotted lanternfly</b>"),
       p("words")
     ),
     
-    card(
-      class = "p-3 my-3",
-      card_header("Spotted lanternfly (SLF)"),
+    accordion_panel(
+      HTML("<b>Sunn pest</b>"),
       p("words")
     ),
     
-    card(
-      class = "p-3 my-3",
-      card_header("Sunn pest (SUNP)"),
-      p("words")
-    ),
-    
-    card(
-      class = "p-3 my-3",
-      card_header("Tomato leaf miner (TABS)"),
+    accordion_panel(
+      HTML("<b>Tomato leaf miner</b>"),
       p("words")
     )
-    
+    )
   )
 )
 
@@ -400,7 +431,7 @@ server <- function(input, output, session) {
     )
     
     # Load raster
-    RastImport(full_path)
+    rast_import_tau(full_path)
   })
   
   #### * INITIAL MAP ####
@@ -573,6 +604,53 @@ server <- function(input, output, session) {
                         layerId = "Value", position = "topleft", type = "mousemove") 
       }
     })
+  
+  #### * RIGHT SIDE INFO PANEL OUTPUTS ####
+  
+  observeEvent(input$map_click, {
+    
+    click <- input$map_click
+    req(click)
+    
+    xy <- data.frame(x = click$lng, y = click$lat)
+    
+    # Find the correct row based on user inputs
+    row <- raster_lookup %>%
+      filter(
+        pest       == input$pest,
+        variable   == input$variable,
+        year_range == input$year_range
+      )
+    
+    req(nrow(row) == 1)
+    
+    # Extract tau and p-value
+    tau_val <- tryCatch(terra::extract(row$rast_tau[[1]], xy)[1,2], 
+                        error = function(e) NA)
+    pval_val <- tryCatch(terra::extract(row$rast_pval[[1]], xy)[1,2], 
+                         error = function(e) NA)
+    
+    # Display tau
+    output$clicked_value <- renderText({
+      if (is.na(tau_val)) "Value: NA" else paste("Value:", round(tau_val, 3))
+    })
+    
+    # Display p-value
+    output$clicked_pval <- renderText({
+      if (is.na(pval_val)) "P-value: NA" else paste("P-value:", signif(pval_val, 3))
+    })
+    
+    # Display coordinates
+    output$clicked_latlon <- renderText({
+      paste0("Coordinates: ", round(click$lat, 4), ", ", round(click$lng, 4))
+    })
+    
+    # Display selected inputs
+    output$clicked_pest <- renderText({ paste("Pest:", input$pest) })
+    output$clicked_variable <- renderText({ paste("Variable:", input$variable) })
+    output$clicked_year <- renderText({ paste("Years:", input$year_range) })
+    
+  })
   
 } # END OF SERVER
 

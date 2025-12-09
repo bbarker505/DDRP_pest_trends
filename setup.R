@@ -1,4 +1,12 @@
+# ---- ABOUT -------------------------------------------------------------------
+
 # Contains preamble for Shiny that doesn't need to be in the UI or server
+
+
+
+
+
+# ----- MISCELLANEOUS ----------------------------------------------------------
 
 # Shows full error message (if there is one) on app
 options(shiny.sanitize.errors = FALSE)
@@ -26,25 +34,42 @@ current_year <- as.numeric(format(current_date, format = "%Y"))
 
 # All have CRS = WGS 84
 
-# County boundaries
+# Shapefile of county boundaries (to overlay map)
 county_sf <- st_read("./features/counties_CONUS.shp")
 
-# Define bounds
+# Define bounds (United States bounds)
 north <- 50
 south <- 24.5
 east <- -65.1
 west <- -126.2
 
-# Compile
+# Compile bounds
 bounds <- list(
   c(south, west),
   c(north, east)
 )
 
+
+
+
+
 # ----- IMPORT AND PROCESS MODEL OUTPUTS----------------------------------------
 
-# Directory holding all rasters to import
+# File of all raster files
 raster_lookup <- read.csv("raster_lookup.csv")
+
+# Attach rasters directly to lookup table
+raster_vals <- raster_lookup %>%
+  mutate(
+    rast_tau  = map(file_path, rast_import_tau),
+    rast_pval = map(file_path, rast_import_pval)
+  )
+
+
+
+
+
+# (For selection later) ---
 
 # Directory holding all rasters to import
 rasts_dir <- paste0("./rasters/MK_trends")
@@ -57,14 +82,6 @@ files <- list.files(
   recursive = TRUE       
 )
 
-# Import model outputs
-rasts <- map(
-  files,
-  ~ RastImport(.x)  
-)
-
-# For selection later ---
-
 # Extract species prefixes
 species <- unique(sub("_.*", "", basename(files)))
 
@@ -73,6 +90,11 @@ years <- unique(sub(".*_", "", tools::file_path_sans_ext(basename(files))))
 
 # Extract variable names
 variable <- basename(files)
-variable <- sub(".*MK_", "", variable)                # Remove before MK_
-variable <- sub("_\\d{2}-\\d{2}.*", "", variable)     # Remove _YY-YY
+variable <- sub(".*MK_", "", variable)                    # Remove before MK_
+variable <- sub("_\\d{2}-\\d{2}.*", "", variable)         # Remove _YY-YY
 variable <- unique(tools::file_path_sans_ext(variable))
+
+
+
+
+

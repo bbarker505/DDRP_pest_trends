@@ -1,26 +1,8 @@
 # Last modified: 11 October 2025
 
-# --- ABOUT ---
+# ----- ABOUT ------------------------------------------------------------------
 
 # Contains custom functions to be loaded into the app.R file
-
-
-
-# ---
-
-
-
-
-
-
-# ----- Function that removes leading 0s in map title dates -----
-
-DateFormat <- function(dat) {
-  
-  str_glue("{month(dat)}/{day(dat)}/{year(dat)}")
-  
-}
-
 
 
 
@@ -28,18 +10,34 @@ DateFormat <- function(dat) {
 
 #  ----- Function to import outputs (rasters) -----
 
-# Raster with total cumulative DDs has multiple layers so need only last layer, 
-# which corresponds to cumulative DDs on last sampling day (= 4 days from current date)
+# The Mann-Kendall test has a tau and p-value that we're interested in
 
-# Rasters with 3- and 4-day risk have only 1 layer
-
-RastImport <- function(file_name) {
+# Tau
+rast_import_tau <- function(file_name) {
   
+  # Pull in file as Spatraster
   rast_stack <- rast(file_name)
   
-  # Round up to nearest 0.5 
-  rast <- ceiling(rast_stack[[nlyr(rast_stack)]] / 0.5) * 0.5 
+  # Select layer containing tau
+  rast <- rast_stack$tau
   
+  # Convert crs
+  crs(rast) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=GRS80 +towgs84=0,0,0"
+  
+  return(rast)
+  
+}
+
+# P-value
+rast_import_pval <- function(file_name) {
+  
+  # Pull in file as Spatraster
+  rast_stack <- rast(file_name)
+  
+  # Select layer containing p-values
+  rast <- rast_stack$sl
+  
+  # Convert crs
   crs(rast) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=GRS80 +towgs84=0,0,0"
   
   return(rast)

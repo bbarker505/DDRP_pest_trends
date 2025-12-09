@@ -60,7 +60,6 @@ prefix_mapping <- tibble(
   prefix = unlist(pest_to_species)
 )
 
-
 # Make table
 table <- 
   
