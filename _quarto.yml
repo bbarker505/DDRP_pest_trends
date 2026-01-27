@@ -1,0 +1,38 @@
+project:
+
+  type: website
+
+website:
+
+  title: "DDRP Pest Trends"
+  
+  navbar:
+    left:
+      - text: "About this site"
+        href: index.qmd#about
+      - text: "DDRP Map"
+        href: index.qmd#map
+      - text: "Pest Reports"
+        href: index.qmd#reports
+        
+  page-footer: 
+    right: 
+      - href: https://quarto.org/
+        text: "Made with Quarto"
+      - href: https://github.com/bbarker505/DDRP_pest_trends
+        icon: github
+
+format:
+
+  html:
+  
+    theme:
+      - sandstone
+      
+    css: styles.css
+    
+    toc: false
+
+execute:
+
+  freeze: auto

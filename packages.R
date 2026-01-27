@@ -19,3 +19,4 @@ library(shinyjs)              # For "delay" function to causes error messages to
 library(bslib)
 library(fresh)                # Color theme for web app page
 library(htmlwidgets)
+library(viridisLite)

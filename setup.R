@@ -32,10 +32,16 @@ current_year <- as.numeric(format(current_date, format = "%Y"))
 
 # ----- SPATIAL FEATURES -------------------------------------------------------
 
-# All have CRS = WGS 84
-
 # Shapefile of county boundaries (to overlay map)
 county_sf <- st_read("./features/counties_CONUS.shp")
+
+# Reproject to WGS84
+county_sf <- st_transform(county_sf, crs = 4326)
+
+# US state borders
+us_states <- states(cb = TRUE, year = 2022) %>%
+  st_transform(4326) %>%
+  dplyr::select(STUSPS, geometry)
 
 # Define bounds (United States bounds)
 north <- 50
@@ -58,17 +64,6 @@ bounds <- list(
 # File of all raster files
 raster_lookup <- read.csv("raster_lookup.csv")
 
-# Attach rasters directly to lookup table
-raster_vals <- raster_lookup %>%
-  mutate(
-    rast_tau  = map(file_path, rast_import_tau),
-    rast_pval = map(file_path, rast_import_pval)
-  )
-
-
-
-
-
 # (For selection later) ---
 
 # Directory holding all rasters to import
@@ -82,19 +77,20 @@ files <- list.files(
   recursive = TRUE       
 )
 
-# Extract species prefixes
-species <- unique(sub("_.*", "", basename(files)))
-
-# Extract years
-years <- unique(sub(".*_", "", tools::file_path_sans_ext(basename(files))))
-
-# Extract variable names
-variable <- basename(files)
-variable <- sub(".*MK_", "", variable)                    # Remove before MK_
-variable <- sub("_\\d{2}-\\d{2}.*", "", variable)         # Remove _YY-YY
-variable <- unique(tools::file_path_sans_ext(variable))
 
 
+
+
+# ----- OTHER DISPLAY COMPONENTS -----------------------------------------------
+
+# For how variables are displayed in floating statistics panel
+variable_labels <- c(
+  Cold_Stress     = "Cold stress",
+  Heat_Stress     = "Heat stress",
+  Earliest_PEMe0  = "Egg hatch (overwintering)",
+  Earliest_PEMe1  = "Egg hatch (1st adults)",
+  Earliest_PEMp0  = "First adult emergence"
+)
 
 
 
