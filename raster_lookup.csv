@@ -1,61 +1,217 @@
-"prefix","variable","year_range","file_path","pest"
-"EAB","Cold_Stress","01-10","rasters/MK_trends/EAB/EAB_MK_Cold_Stress_01-10.tif","Emerald Ash borer"
-"EAB","Cold_Stress","11-20","rasters/MK_trends/EAB/EAB_MK_Cold_Stress_11-20.tif","Emerald Ash borer"
-"EAB","Cold_Stress","81-24","rasters/MK_trends/EAB/EAB_MK_Cold_Stress_81-24.tif","Emerald Ash borer"
-"EAB","Cold_Stress","81-90","rasters/MK_trends/EAB/EAB_MK_Cold_Stress_81-90.tif","Emerald Ash borer"
-"EAB","Cold_Stress","91-20","rasters/MK_trends/EAB/EAB_MK_Cold_Stress_91-20.tif","Emerald Ash borer"
-"EAB","Earliest_PEMe1","01-10","rasters/MK_trends/EAB/EAB_MK_Earliest_PEMe1_01-10.tif","Emerald Ash borer"
-"EAB","Earliest_PEMe1","11-20","rasters/MK_trends/EAB/EAB_MK_Earliest_PEMe1_11-20.tif","Emerald Ash borer"
-"EAB","Earliest_PEMe1","81-24","rasters/MK_trends/EAB/EAB_MK_Earliest_PEMe1_81-24.tif","Emerald Ash borer"
-"EAB","Earliest_PEMe1","81-90","rasters/MK_trends/EAB/EAB_MK_Earliest_PEMe1_81-90.tif","Emerald Ash borer"
-"EAB","Earliest_PEMe1","91-20","rasters/MK_trends/EAB/EAB_MK_Earliest_PEMe1_91-20.tif","Emerald Ash borer"
-"EAB","Earliest_PEMp0","01-10","rasters/MK_trends/EAB/EAB_MK_Earliest_PEMp0_01-10.tif","Emerald Ash borer"
-"EAB","Earliest_PEMp0","11-20","rasters/MK_trends/EAB/EAB_MK_Earliest_PEMp0_11-20.tif","Emerald Ash borer"
-"EAB","Earliest_PEMp0","81-24","rasters/MK_trends/EAB/EAB_MK_Earliest_PEMp0_81-24.tif","Emerald Ash borer"
-"EAB","Earliest_PEMp0","81-90","rasters/MK_trends/EAB/EAB_MK_Earliest_PEMp0_81-90.tif","Emerald Ash borer"
-"EAB","Earliest_PEMp0","91-20","rasters/MK_trends/EAB/EAB_MK_Earliest_PEMp0_91-20.tif","Emerald Ash borer"
-"EAB","Heat_Stress","01-10","rasters/MK_trends/EAB/EAB_MK_Heat_Stress_01-10.tif","Emerald Ash borer"
-"EAB","Heat_Stress","11-20","rasters/MK_trends/EAB/EAB_MK_Heat_Stress_11-20.tif","Emerald Ash borer"
-"EAB","Heat_Stress","81-24","rasters/MK_trends/EAB/EAB_MK_Heat_Stress_81-24.tif","Emerald Ash borer"
-"EAB","Heat_Stress","81-90","rasters/MK_trends/EAB/EAB_MK_Heat_Stress_81-90.tif","Emerald Ash borer"
-"EAB","Heat_Stress","91-20","rasters/MK_trends/EAB/EAB_MK_Heat_Stress_91-20.tif","Emerald Ash borer"
-"JPB","Cold_Stress","01-10","rasters/MK_trends/JPB/JPB_MK_Cold_Stress_01-10.tif","Japanese beetle"
-"JPB","Cold_Stress","11-20","rasters/MK_trends/JPB/JPB_MK_Cold_Stress_11-20.tif","Japanese beetle"
-"JPB","Cold_Stress","81-24","rasters/MK_trends/JPB/JPB_MK_Cold_Stress_81-24.tif","Japanese beetle"
-"JPB","Cold_Stress","81-90","rasters/MK_trends/JPB/JPB_MK_Cold_Stress_81-90.tif","Japanese beetle"
-"JPB","Cold_Stress","91-20","rasters/MK_trends/JPB/JPB_MK_Cold_Stress_91-20.tif","Japanese beetle"
-"JPB","Earliest_PEMe1","01-10","rasters/MK_trends/JPB/JPB_MK_Earliest_PEMe1_01-10.tif","Japanese beetle"
-"JPB","Earliest_PEMe1","11-20","rasters/MK_trends/JPB/JPB_MK_Earliest_PEMe1_11-20.tif","Japanese beetle"
-"JPB","Earliest_PEMe1","81-24","rasters/MK_trends/JPB/JPB_MK_Earliest_PEMe1_81-24.tif","Japanese beetle"
-"JPB","Earliest_PEMe1","81-90","rasters/MK_trends/JPB/JPB_MK_Earliest_PEMe1_81-90.tif","Japanese beetle"
-"JPB","Earliest_PEMe1","91-20","rasters/MK_trends/JPB/JPB_MK_Earliest_PEMe1_91-20.tif","Japanese beetle"
-"JPB","Earliest_PEMp0","01-10","rasters/MK_trends/JPB/JPB_MK_Earliest_PEMp0_01-10.tif","Japanese beetle"
-"JPB","Earliest_PEMp0","11-20","rasters/MK_trends/JPB/JPB_MK_Earliest_PEMp0_11-20.tif","Japanese beetle"
-"JPB","Earliest_PEMp0","81-24","rasters/MK_trends/JPB/JPB_MK_Earliest_PEMp0_81-24.tif","Japanese beetle"
-"JPB","Earliest_PEMp0","81-90","rasters/MK_trends/JPB/JPB_MK_Earliest_PEMp0_81-90.tif","Japanese beetle"
-"JPB","Earliest_PEMp0","91-20","rasters/MK_trends/JPB/JPB_MK_Earliest_PEMp0_91-20.tif","Japanese beetle"
-"JPB","Heat_Stress","01-10","rasters/MK_trends/JPB/JPB_MK_Heat_Stress_01-10.tif","Japanese beetle"
-"JPB","Heat_Stress","11-20","rasters/MK_trends/JPB/JPB_MK_Heat_Stress_11-20.tif","Japanese beetle"
-"JPB","Heat_Stress","81-24","rasters/MK_trends/JPB/JPB_MK_Heat_Stress_81-24.tif","Japanese beetle"
-"JPB","Heat_Stress","81-90","rasters/MK_trends/JPB/JPB_MK_Heat_Stress_81-90.tif","Japanese beetle"
-"JPB","Heat_Stress","91-20","rasters/MK_trends/JPB/JPB_MK_Heat_Stress_91-20.tif","Japanese beetle"
-"SLF","Cold_Stress","01-10","rasters/MK_trends/SLF/SLF_MK_Cold_Stress_01-10.tif","Spotted lanternfly"
-"SLF","Cold_Stress","11-20","rasters/MK_trends/SLF/SLF_MK_Cold_Stress_11-20.tif","Spotted lanternfly"
-"SLF","Cold_Stress","81-24","rasters/MK_trends/SLF/SLF_MK_Cold_Stress_81-24.tif","Spotted lanternfly"
-"SLF","Cold_Stress","81-90","rasters/MK_trends/SLF/SLF_MK_Cold_Stress_81-90.tif","Spotted lanternfly"
-"SLF","Cold_Stress","91-20","rasters/MK_trends/SLF/SLF_MK_Cold_Stress_91-20.tif","Spotted lanternfly"
-"SLF","Earliest_PEMe0","01-10","rasters/MK_trends/SLF/SLF_MK_Earliest_PEMe0_01-10.tif","Spotted lanternfly"
-"SLF","Earliest_PEMe0","11-20","rasters/MK_trends/SLF/SLF_MK_Earliest_PEMe0_11-20.tif","Spotted lanternfly"
-"SLF","Earliest_PEMe0","81-24","rasters/MK_trends/SLF/SLF_MK_Earliest_PEMe0_81-24.tif","Spotted lanternfly"
-"SLF","Earliest_PEMe0","81-90","rasters/MK_trends/SLF/SLF_MK_Earliest_PEMe0_81-90.tif","Spotted lanternfly"
-"SLF","Earliest_PEMe0","91-20","rasters/MK_trends/SLF/SLF_MK_Earliest_PEMe0_91-20.tif","Spotted lanternfly"
-"SLF","Earliest_PEMp0","01-10","rasters/MK_trends/SLF/SLF_MK_Earliest_PEMp0_01-10.tif","Spotted lanternfly"
-"SLF","Earliest_PEMp0","11-20","rasters/MK_trends/SLF/SLF_MK_Earliest_PEMp0_11-20.tif","Spotted lanternfly"
-"SLF","Earliest_PEMp0","81-24","rasters/MK_trends/SLF/SLF_MK_Earliest_PEMp0_81-24.tif","Spotted lanternfly"
-"SLF","Earliest_PEMp0","81-90","rasters/MK_trends/SLF/SLF_MK_Earliest_PEMp0_81-90.tif","Spotted lanternfly"
-"SLF","Earliest_PEMp0","91-20","rasters/MK_trends/SLF/SLF_MK_Earliest_PEMp0_91-20.tif","Spotted lanternfly"
-"SLF","Heat_Stress","01-10","rasters/MK_trends/SLF/SLF_MK_Heat_Stress_01-10.tif","Spotted lanternfly"
-"SLF","Heat_Stress","11-20","rasters/MK_trends/SLF/SLF_MK_Heat_Stress_11-20.tif","Spotted lanternfly"
-"SLF","Heat_Stress","81-24","rasters/MK_trends/SLF/SLF_MK_Heat_Stress_81-24.tif","Spotted lanternfly"
-"SLF","Heat_Stress","81-90","rasters/MK_trends/SLF/SLF_MK_Heat_Stress_81-90.tif","Spotted lanternfly"
-"SLF","Heat_Stress","91-20","rasters/MK_trends/SLF/SLF_MK_Heat_Stress_91-20.tif","Spotted lanternfly"
+prefix,variable,year_range,file_path,pest
+EAB,Cold_Stress,81-24,rasters/MK_trends/EAB/EAB_MK_Cold_Stress_81-24.tif,Emerald ash borer
+EAB,Cold_Stress,81-00,rasters/MK_trends/EAB/EAB_MK_Cold_Stress_81-00.tif,Emerald ash borer
+EAB,Cold_Stress,01-24,rasters/MK_trends/EAB/EAB_MK_Cold_Stress_01-24.tif,Emerald ash borer
+EAB,First_egg_hatch,81-24,rasters/MK_trends/EAB/EAB_MK_Earliest_PEMe1_81-24.tif,Emerald ash borer
+EAB,First_egg_hatch,81-00,rasters/MK_trends/EAB/EAB_MK_Earliest_PEMe1_81-00.tif,Emerald ash borer
+EAB,First_egg_hatch,01-24,rasters/MK_trends/EAB/EAB_MK_Earliest_PEMe1_01-24.tif,Emerald ash borer
+EAB,First_adult_emergence,81-24,rasters/MK_trends/EAB/EAB_MK_Earliest_PEMp0_81-24.tif,Emerald ash borer
+EAB,First_adult_emergence,81-00,rasters/MK_trends/EAB/EAB_MK_Earliest_PEMp0_81-00.tif,Emerald ash borer
+EAB,First_adult_emergence,01-24,rasters/MK_trends/EAB/EAB_MK_Earliest_PEMp0_01-24.tif,Emerald ash borer
+EAB,Heat_Stress,81-24,rasters/MK_trends/EAB/EAB_MK_Heat_Stress_81-24.tif,Emerald ash borer
+EAB,Heat_Stress,81-00,rasters/MK_trends/EAB/EAB_MK_Heat_Stress_81-00.tif,Emerald ash borer
+EAB,Heat_Stress,01-24,rasters/MK_trends/EAB/EAB_MK_Heat_Stress_01-24.tif,Emerald ash borer
+JPB,Cold_Stress,81-24,rasters/MK_trends/JPB/JPB_MK_Cold_Stress_81-24.tif,Japanese beetle
+JPB,Cold_Stress,81-00,rasters/MK_trends/JPB/JPB_MK_Cold_Stress_81-00.tif,Japanese beetle
+JPB,Cold_Stress,01-24,rasters/MK_trends/JPB/JPB_MK_Cold_Stress_01-24.tif,Japanese beetle
+JPB,First_egg_hatch,81-24,rasters/MK_trends/JPB/JPB_MK_Earliest_PEMe1_81-24.tif,Japanese beetle
+JPB,First_egg_hatch,81-00,rasters/MK_trends/JPB/JPB_MK_Earliest_PEMe1_81-00.tif,Japanese beetle
+JPB,First_egg_hatch,01-24,rasters/MK_trends/JPB/JPB_MK_Earliest_PEMe1_01-24.tif,Japanese beetle
+JPB,First_adult_emergence,81-24,rasters/MK_trends/JPB/JPB_MK_Earliest_PEMp0_81-24.tif,Japanese beetle
+JPB,First_adult_emergence,81-00,rasters/MK_trends/JPB/JPB_MK_Earliest_PEMp0_81-00.tif,Japanese beetle
+JPB,First_adult_emergence,01-24,rasters/MK_trends/JPB/JPB_MK_Earliest_PEMp0_01-24.tif,Japanese beetle
+JPB,Heat_Stress,81-24,rasters/MK_trends/JPB/JPB_MK_Heat_Stress_81-24.tif,Japanese beetle
+JPB,Heat_Stress,81-00,rasters/MK_trends/JPB/JPB_MK_Heat_Stress_81-00.tif,Japanese beetle
+JPB,Heat_Stress,01-24,rasters/MK_trends/JPB/JPB_MK_Heat_Stress_01-24.tif,Japanese beetle
+ALB,Cold_Stress,81-24,rasters/MK_trends/ALB/ALB_MK_Cold_Stress_81-24.tif,Asian longhorned beetle
+ALB,Cold_Stress,81-00,rasters/MK_trends/ALB/ALB_MK_Cold_Stress_81-00.tif,Asian longhorned beetle
+ALB,Cold_Stress,01-24,rasters/MK_trends/ALB/ALB_MK_Cold_Stress_01-24.tif,Asian longhorned beetle
+ALB,First_egg_hatch,81-24,rasters/MK_trends/ALB/ALB_MK_Earliest_PEMe1_81-24.tif,Asian longhorned beetle
+ALB,First_egg_hatch,81-00,rasters/MK_trends/ALB/ALB_MK_Earliest_PEMe1_81-00.tif,Asian longhorned beetle
+ALB,First_egg_hatch,01-24,rasters/MK_trends/ALB/ALB_MK_Earliest_PEMe1_01-24.tif,Asian longhorned beetle
+ALB,First_adult_emergence,81-24,rasters/MK_trends/ALB/ALB_MK_Earliest_PEMp0_81-24.tif,Asian longhorned beetle
+ALB,First_adult_emergence,81-00,rasters/MK_trends/ALB/ALB_MK_Earliest_PEMp0_81-00.tif,Asian longhorned beetle
+ALB,First_adult_emergence,01-24,rasters/MK_trends/ALB/ALB_MK_Earliest_PEMp0_01-24.tif,Asian longhorned beetle
+ALB,Heat_Stress,81-24,rasters/MK_trends/ALB/ALB_MK_Heat_Stress_81-24.tif,Asian longhorned beetle
+ALB,Heat_Stress,81-00,rasters/MK_trends/ALB/ALB_MK_Heat_Stress_81-00.tif,Asian longhorned beetle
+ALB,Heat_Stress,01-24,rasters/MK_trends/ALB/ALB_MK_Heat_Stress_01-24.tif,Asian longhorned beetle
+ASRB,Cold_Stress,81-24,rasters/MK_trends/ASRB/ASRB_MK_Cold_Stress_81-24.tif,Asiatic rice borer
+ASRB,Cold_Stress,81-00,rasters/MK_trends/ASRB/ASRB_MK_Cold_Stress_81-00.tif,Asiatic rice borer
+ASRB,Cold_Stress,01-24,rasters/MK_trends/ASRB/ASRB_MK_Cold_Stress_01-24.tif,Asiatic rice borer
+ASRB,First_egg_hatch,81-24,rasters/MK_trends/ASRB/ASRB_MK_Earliest_PEMe1_81-24.tif,Asiatic rice borer
+ASRB,First_egg_hatch,81-00,rasters/MK_trends/ASRB/ASRB_MK_Earliest_PEMe1_81-00.tif,Asiatic rice borer
+ASRB,First_egg_hatch,01-24,rasters/MK_trends/ASRB/ASRB_MK_Earliest_PEMe1_01-24.tif,Asiatic rice borer
+ASRB,First_adult_emergence,81-24,rasters/MK_trends/ASRB/ASRB_MK_Earliest_PEMp0_81-24.tif,Asiatic rice borer
+ASRB,First_adult_emergence,81-00,rasters/MK_trends/ASRB/ASRB_MK_Earliest_PEMp0_81-00.tif,Asiatic rice borer
+ASRB,First_adult_emergence,01-24,rasters/MK_trends/ASRB/ASRB_MK_Earliest_PEMp0_01-24.tif,Asiatic rice borer
+ASRB,Heat_Stress,81-24,rasters/MK_trends/ASRB/ASRB_MK_Heat_Stress_81-24.tif,Asiatic rice borer
+ASRB,Heat_Stress,81-00,rasters/MK_trends/ASRB/ASRB_MK_Heat_Stress_81-00.tif,Asiatic rice borer
+ASRB,Heat_Stress,01-24,rasters/MK_trends/ASRB/ASRB_MK_Heat_Stress_01-24.tif,Asiatic rice borer
+CGN,Cold_Stress,81-24,rasters/MK_trends/CGN/CGN_MK_Cold_Stress_81-24.tif,Honeydew moth
+CGN,Cold_Stress,81-00,rasters/MK_trends/CGN/CGN_MK_Cold_Stress_81-00.tif,Honeydew moth
+CGN,Cold_Stress,01-24,rasters/MK_trends/CGN/CGN_MK_Cold_Stress_01-24.tif,Honeydew moth
+CGN,First_egg_hatch,81-24,rasters/MK_trends/CGN/CGN_MK_Earliest_PEMe1_81-24.tif,Honeydew moth
+CGN,First_egg_hatch,81-00,rasters/MK_trends/CGN/CGN_MK_Earliest_PEMe1_81-00.tif,Honeydew moth
+CGN,First_egg_hatch,01-24,rasters/MK_trends/CGN/CGN_MK_Earliest_PEMe1_01-24.tif,Honeydew moth
+CGN,First_adult_emergence,81-24,rasters/MK_trends/CGN/CGN_MK_Earliest_PEMp0_81-24.tif,Honeydew moth
+CGN,First_adult_emergence,81-00,rasters/MK_trends/CGN/CGN_MK_Earliest_PEMp0_81-00.tif,Honeydew moth
+CGN,First_adult_emergence,01-24,rasters/MK_trends/CGN/CGN_MK_Earliest_PEMp0_01-24.tif,Honeydew moth
+CGN,Heat_Stress,81-24,rasters/MK_trends/CGN/CGN_MK_Heat_Stress_81-24.tif,Honeydew moth
+CGN,Heat_Stress,81-00,rasters/MK_trends/CGN/CGN_MK_Heat_Stress_81-00.tif,Honeydew moth
+CGN,Heat_Stress,01-24,rasters/MK_trends/CGN/CGN_MK_Heat_Stress_01-24.tif,Honeydew moth
+ECW,Cold_Stress,81-24,rasters/MK_trends/ECW/ECW_MK_Cold_Stress_81-24.tif,Egyptian cottonworm
+ECW,Cold_Stress,81-00,rasters/MK_trends/ECW/ECW_MK_Cold_Stress_81-00.tif,Egyptian cottonworm
+ECW,Cold_Stress,01-24,rasters/MK_trends/ECW/ECW_MK_Cold_Stress_01-24.tif,Egyptian cottonworm
+ECW,First_egg_hatch,81-24,rasters/MK_trends/ECW/ECW_MK_Earliest_PEMe1_81-24.tif,Egyptian cottonworm
+ECW,First_egg_hatch,81-00,rasters/MK_trends/ECW/ECW_MK_Earliest_PEMe1_81-00.tif,Egyptian cottonworm
+ECW,First_egg_hatch,01-24,rasters/MK_trends/ECW/ECW_MK_Earliest_PEMe1_01-24.tif,Egyptian cottonworm
+ECW,First_adult_emergence,81-24,rasters/MK_trends/ECW/ECW_MK_Earliest_PEMp0_81-24.tif,Egyptian cottonworm
+ECW,First_adult_emergence,81-00,rasters/MK_trends/ECW/ECW_MK_Earliest_PEMp0_81-00.tif,Egyptian cottonworm
+ECW,First_adult_emergence,01-24,rasters/MK_trends/ECW/ECW_MK_Earliest_PEMp0_01-24.tif,Egyptian cottonworm
+ECW,Heat_Stress,81-24,rasters/MK_trends/ECW/ECW_MK_Heat_Stress_81-24.tif,Egyptian cottonworm
+ECW,Heat_Stress,81-00,rasters/MK_trends/ECW/ECW_MK_Heat_Stress_81-00.tif,Egyptian cottonworm
+ECW,Heat_Stress,01-24,rasters/MK_trends/ECW/ECW_MK_Heat_Stress_01-24.tif,Egyptian cottonworm
+FCM,Cold_Stress,81-24,rasters/MK_trends/FCM/FCM_MK_Cold_Stress_81-24.tif,False codling moth
+FCM,Cold_Stress,81-00,rasters/MK_trends/FCM/FCM_MK_Cold_Stress_81-00.tif,False codling moth
+FCM,Cold_Stress,01-24,rasters/MK_trends/FCM/FCM_MK_Cold_Stress_01-24.tif,False codling moth
+FCM,First_egg_hatch,81-24,rasters/MK_trends/FCM/FCM_MK_Earliest_PEMe1_81-24.tif,False codling moth
+FCM,First_egg_hatch,81-00,rasters/MK_trends/FCM/FCM_MK_Earliest_PEMe1_81-00.tif,False codling moth
+FCM,First_egg_hatch,01-24,rasters/MK_trends/FCM/FCM_MK_Earliest_PEMe1_01-24.tif,False codling moth
+FCM,First_adult_emergence,81-24,rasters/MK_trends/FCM/FCM_MK_Earliest_PEMa0_81-24.tif,False codling moth
+FCM,First_adult_emergence,81-00,rasters/MK_trends/FCM/FCM_MK_Earliest_PEMa0_81-00.tif,False codling moth
+FCM,First_adult_emergence,01-24,rasters/MK_trends/FCM/FCM_MK_Earliest_PEMa0_01-24.tif,False codling moth
+FCM,Heat_Stress,81-24,rasters/MK_trends/FCM/FCM_MK_Heat_Stress_81-24.tif,False codling moth
+FCM,Heat_Stress,81-00,rasters/MK_trends/FCM/FCM_MK_Heat_Stress_81-00.tif,False codling moth
+FCM,Heat_Stress,01-24,rasters/MK_trends/FCM/FCM_MK_Heat_Stress_01-24.tif,False codling moth
+JPSB,Cold_Stress,81-24,rasters/MK_trends/JPSB/JPSB_MK_Cold_Stress_81-24.tif,Japanese pine sawyer beetle
+JPSB,Cold_Stress,81-00,rasters/MK_trends/JPSB/JPSB_MK_Cold_Stress_81-00.tif,Japanese pine sawyer beetle
+JPSB,Cold_Stress,01-24,rasters/MK_trends/JPSB/JPSB_MK_Cold_Stress_01-24.tif,Japanese pine sawyer beetle
+JPSB,First_egg_hatch,81-24,rasters/MK_trends/JPSB/JPSB_MK_Earliest_PEMe1_81-24.tif,Japanese pine sawyer beetle
+JPSB,First_egg_hatch,81-00,rasters/MK_trends/JPSB/JPSB_MK_Earliest_PEMe1_81-00.tif,Japanese pine sawyer beetle
+JPSB,First_egg_hatch,01-24,rasters/MK_trends/JPSB/JPSB_MK_Earliest_PEMe1_01-24.tif,Japanese pine sawyer beetle
+JPSB,First_adult_emergence,81-24,rasters/MK_trends/JPSB/JPSB_MK_Earliest_PEMp0_81-24.tif,Japanese pine sawyer beetle
+JPSB,First_adult_emergence,81-00,rasters/MK_trends/JPSB/JPSB_MK_Earliest_PEMp0_81-00.tif,Japanese pine sawyer beetle
+JPSB,First_adult_emergence,01-24,rasters/MK_trends/JPSB/JPSB_MK_Earliest_PEMp0_01-24.tif,Japanese pine sawyer beetle
+JPSB,Heat_Stress,81-24,rasters/MK_trends/JPSB/JPSB_MK_Heat_Stress_81-24.tif,Japanese pine sawyer beetle
+JPSB,Heat_Stress,81-00,rasters/MK_trends/JPSB/JPSB_MK_Heat_Stress_81-00.tif,Japanese pine sawyer beetle
+JPSB,Heat_Stress,01-24,rasters/MK_trends/JPSB/JPSB_MK_Heat_Stress_01-24.tif,Japanese pine sawyer beetle
+LBAM,Cold_Stress,81-24,rasters/MK_trends/LBAM/LBAM_MK_Cold_Stress_81-24.tif,Light brown apple moth
+LBAM,Cold_Stress,81-00,rasters/MK_trends/LBAM/LBAM_MK_Cold_Stress_81-00.tif,Light brown apple moth
+LBAM,Cold_Stress,01-24,rasters/MK_trends/LBAM/LBAM_MK_Cold_Stress_01-24.tif,Light brown apple moth
+LBAM,First_egg_hatch,81-24,rasters/MK_trends/LBAM/LBAM_MK_Earliest_PEMe1_81-24.tif,Light brown apple moth
+LBAM,First_egg_hatch,81-00,rasters/MK_trends/LBAM/LBAM_MK_Earliest_PEMe1_81-00.tif,Light brown apple moth
+LBAM,First_egg_hatch,01-24,rasters/MK_trends/LBAM/LBAM_MK_Earliest_PEMe1_01-24.tif,Light brown apple moth
+LBAM,First_adult_emergence,81-24,rasters/MK_trends/LBAM/LBAM_MK_Earliest_PEMp0_81-24.tif,Light brown apple moth
+LBAM,First_adult_emergence,81-00,rasters/MK_trends/LBAM/LBAM_MK_Earliest_PEMp0_81-00.tif,Light brown apple moth
+LBAM,First_adult_emergence,01-24,rasters/MK_trends/LBAM/LBAM_MK_Earliest_PEMp0_01-24.tif,Light brown apple moth
+LBAM,Heat_Stress,81-24,rasters/MK_trends/LBAM/LBAM_MK_Heat_Stress_81-24.tif,Light brown apple moth
+LBAM,Heat_Stress,81-00,rasters/MK_trends/LBAM/LBAM_MK_Heat_Stress_81-00.tif,Light brown apple moth
+LBAM,Heat_Stress,01-24,rasters/MK_trends/LBAM/LBAM_MK_Heat_Stress_01-24.tif,Light brown apple moth
+OAB,Cold_Stress,81-24,rasters/MK_trends/OAB/OAB_MK_Cold_Stress_81-24.tif,Oak ambrosia beetle
+OAB,Cold_Stress,81-00,rasters/MK_trends/OAB/OAB_MK_Cold_Stress_81-00.tif,Oak ambrosia beetle
+OAB,Cold_Stress,01-24,rasters/MK_trends/OAB/OAB_MK_Cold_Stress_01-24.tif,Oak ambrosia beetle
+OAB,First_egg_hatch,81-24,rasters/MK_trends/OAB/OAB_MK_Earliest_PEMe1_81-24.tif,Oak ambrosia beetle
+OAB,First_egg_hatch,81-00,rasters/MK_trends/OAB/OAB_MK_Earliest_PEMe1_81-00.tif,Oak ambrosia beetle
+OAB,First_egg_hatch,01-24,rasters/MK_trends/OAB/OAB_MK_Earliest_PEMe1_01-24.tif,Oak ambrosia beetle
+OAB,First_adult_emergence,81-24,rasters/MK_trends/OAB/OAB_MK_Earliest_PEMp0_81-24.tif,Oak ambrosia beetle
+OAB,First_adult_emergence,81-00,rasters/MK_trends/OAB/OAB_MK_Earliest_PEMp0_81-00.tif,Oak ambrosia beetle
+OAB,First_adult_emergence,01-24,rasters/MK_trends/OAB/OAB_MK_Earliest_PEMp0_01-24.tif,Oak ambrosia beetle
+OAB,Heat_Stress,81-24,rasters/MK_trends/OAB/OAB_MK_Heat_Stress_81-24.tif,Oak ambrosia beetle
+OAB,Heat_Stress,81-00,rasters/MK_trends/OAB/OAB_MK_Heat_Stress_81-00.tif,Oak ambrosia beetle
+OAB,Heat_Stress,01-24,rasters/MK_trends/OAB/OAB_MK_Heat_Stress_01-24.tif,Oak ambrosia beetle
+OWBW,Cold_Stress,81-24,rasters/MK_trends/OWBW/OWBW_MK_Cold_Stress_81-24.tif,Old World bollworm
+OWBW,Cold_Stress,81-00,rasters/MK_trends/OWBW/OWBW_MK_Cold_Stress_81-00.tif,Old World bollworm
+OWBW,Cold_Stress,01-24,rasters/MK_trends/OWBW/OWBW_MK_Cold_Stress_01-24.tif,Old World bollworm
+OWBW,First_egg_hatch,81-24,rasters/MK_trends/OWBW/OWBW_MK_Earliest_PEMe1_81-24.tif,Old World bollworm
+OWBW,First_egg_hatch,81-00,rasters/MK_trends/OWBW/OWBW_MK_Earliest_PEMe1_81-00.tif,Old World bollworm
+OWBW,First_egg_hatch,01-24,rasters/MK_trends/OWBW/OWBW_MK_Earliest_PEMe1_01-24.tif,Old World bollworm
+OWBW,First_adult_emergence,81-24,rasters/MK_trends/OWBW/OWBW_MK_Earliest_PEMp0_81-24.tif,Old World bollworm
+OWBW,First_adult_emergence,81-00,rasters/MK_trends/OWBW/OWBW_MK_Earliest_PEMp0_81-00.tif,Old World bollworm
+OWBW,First_adult_emergence,01-24,rasters/MK_trends/OWBW/OWBW_MK_Earliest_PEMp0_01-24.tif,Old World bollworm
+OWBW,Heat_Stress,81-24,rasters/MK_trends/OWBW/OWBW_MK_Heat_Stress_81-24.tif,Old World bollworm
+OWBW,Heat_Stress,81-00,rasters/MK_trends/OWBW/OWBW_MK_Heat_Stress_81-00.tif,Old World bollworm
+OWBW,Heat_Stress,01-24,rasters/MK_trends/OWBW/OWBW_MK_Heat_Stress_01-24.tif,Old World bollworm
+PTLM,Cold_Stress,81-24,rasters/MK_trends/PTLM/PTLM_MK_Cold_Stress_81-24.tif,Pine-tree lappet moth
+PTLM,Cold_Stress,81-00,rasters/MK_trends/PTLM/PTLM_MK_Cold_Stress_81-00.tif,Pine-tree lappet moth
+PTLM,Cold_Stress,01-24,rasters/MK_trends/PTLM/PTLM_MK_Cold_Stress_01-24.tif,Pine-tree lappet moth
+PTLM,First_egg_hatch,81-24,rasters/MK_trends/PTLM/PTLM_MK_Earliest_PEMe1_81-24.tif,Pine-tree lappet moth
+PTLM,First_egg_hatch,81-00,rasters/MK_trends/PTLM/PTLM_MK_Earliest_PEMe1_81-00.tif,Pine-tree lappet moth
+PTLM,First_egg_hatch,01-24,rasters/MK_trends/PTLM/PTLM_MK_Earliest_PEMe1_01-24.tif,Pine-tree lappet moth
+PTLM,First_adult_emergence,81-24,rasters/MK_trends/PTLM/PTLM_MK_Earliest_PEMp0_81-24.tif,Pine-tree lappet moth
+PTLM,First_adult_emergence,81-00,rasters/MK_trends/PTLM/PTLM_MK_Earliest_PEMp0_81-00.tif,Pine-tree lappet moth
+PTLM,First_adult_emergence,01-24,rasters/MK_trends/PTLM/PTLM_MK_Earliest_PEMp0_01-24.tif,Pine-tree lappet moth
+PTLM,Heat_Stress,81-24,rasters/MK_trends/PTLM/PTLM_MK_Heat_Stress_81-24.tif,Pine-tree lappet moth
+PTLM,Heat_Stress,81-00,rasters/MK_trends/PTLM/PTLM_MK_Heat_Stress_81-00.tif,Pine-tree lappet moth
+PTLM,Heat_Stress,01-24,rasters/MK_trends/PTLM/PTLM_MK_Heat_Stress_01-24.tif,Pine-tree lappet moth
+SLF,Cold_Stress,81-24,rasters/MK_trends/SLF/SLF_MK_Cold_Stress_81-24.tif,Spotted lanternfly
+SLF,Cold_Stress,81-00,rasters/MK_trends/SLF/SLF_MK_Cold_Stress_81-00.tif,Spotted lanternfly
+SLF,Cold_Stress,01-24,rasters/MK_trends/SLF/SLF_MK_Cold_Stress_01-24.tif,Spotted lanternfly
+SLF,First_egg_hatch,81-24,rasters/MK_trends/SLF/SLF_MK_Earliest_PEMe0_81-24.tif,Spotted lanternfly
+SLF,First_egg_hatch,81-00,rasters/MK_trends/SLF/SLF_MK_Earliest_PEMe0_81-00.tif,Spotted lanternfly
+SLF,First_egg_hatch,01-24,rasters/MK_trends/SLF/SLF_MK_Earliest_PEMe0_01-24.tif,Spotted lanternfly
+SLF,First_adult_emergence,81-24,rasters/MK_trends/SLF/SLF_MK_Earliest_PEMp0_81-24.tif,Spotted lanternfly
+SLF,First_adult_emergence,81-00,rasters/MK_trends/SLF/SLF_MK_Earliest_PEMp0_81-00.tif,Spotted lanternfly
+SLF,First_adult_emergence,01-24,rasters/MK_trends/SLF/SLF_MK_Earliest_PEMp0_01-24.tif,Spotted lanternfly
+SLF,Heat_Stress,81-24,rasters/MK_trends/SLF/SLF_MK_Heat_Stress_81-24.tif,Spotted lanternfly
+SLF,Heat_Stress,81-00,rasters/MK_trends/SLF/SLF_MK_Heat_Stress_81-00.tif,Spotted lanternfly
+SLF,Heat_Stress,01-24,rasters/MK_trends/SLF/SLF_MK_Heat_Stress_01-24.tif,Spotted lanternfly
+SLI,Cold_Stress,81-24,rasters/MK_trends/SLI/SLI_MK_Cold_Stress_81-24.tif,Common cutworm
+SLI,Cold_Stress,81-00,rasters/MK_trends/SLI/SLI_MK_Cold_Stress_81-00.tif,Common cutworm
+SLI,Cold_Stress,01-24,rasters/MK_trends/SLI/SLI_MK_Cold_Stress_01-24.tif,Common cutworm
+SLI,First_egg_hatch,81-24,rasters/MK_trends/SLI/SLI_MK_Earliest_PEMe1_81-24.tif,Common cutworm
+SLI,First_egg_hatch,81-00,rasters/MK_trends/SLI/SLI_MK_Earliest_PEMe1_81-00.tif,Common cutworm
+SLI,First_egg_hatch,01-24,rasters/MK_trends/SLI/SLI_MK_Earliest_PEMe1_01-24.tif,Common cutworm
+SLI,First_adult_emergence,81-24,rasters/MK_trends/SLI/SLI_MK_Earliest_PEMp0_81-24.tif,Common cutworm
+SLI,First_adult_emergence,81-00,rasters/MK_trends/SLI/SLI_MK_Earliest_PEMp0_81-00.tif,Common cutworm
+SLI,First_adult_emergence,01-24,rasters/MK_trends/SLI/SLI_MK_Earliest_PEMp0_01-24.tif,Common cutworm
+SLI,Heat_Stress,81-24,rasters/MK_trends/SLI/SLI_MK_Heat_Stress_81-24.tif,Common cutworm
+SLI,Heat_Stress,81-00,rasters/MK_trends/SLI/SLI_MK_Heat_Stress_81-00.tif,Common cutworm
+SLI,Heat_Stress,01-24,rasters/MK_trends/SLI/SLI_MK_Heat_Stress_01-24.tif,Common cutworm
+SLYM,Cold_Stress,81-24,rasters/MK_trends/SLYM/SLYM_MK_Cold_Stress_81-24.tif,Silver Y moth
+SLYM,Cold_Stress,81-00,rasters/MK_trends/SLYM/SLYM_MK_Cold_Stress_81-00.tif,Silver Y moth
+SLYM,Cold_Stress,01-24,rasters/MK_trends/SLYM/SLYM_MK_Cold_Stress_01-24.tif,Silver Y moth
+SLYM,First_egg_hatch,81-24,rasters/MK_trends/SLYM/SLYM_MK_Earliest_PEMe1_81-24.tif,Silver Y moth
+SLYM,First_egg_hatch,81-00,rasters/MK_trends/SLYM/SLYM_MK_Earliest_PEMe1_81-00.tif,Silver Y moth
+SLYM,First_egg_hatch,01-24,rasters/MK_trends/SLYM/SLYM_MK_Earliest_PEMe1_01-24.tif,Silver Y moth
+SLYM,First_adult_emergence,81-24,rasters/MK_trends/SLYM/SLYM_MK_Earliest_PEMp0_81-24.tif,Silver Y moth
+SLYM,First_adult_emergence,81-00,rasters/MK_trends/SLYM/SLYM_MK_Earliest_PEMp0_81-00.tif,Silver Y moth
+SLYM,First_adult_emergence,01-24,rasters/MK_trends/SLYM/SLYM_MK_Earliest_PEMp0_01-24.tif,Silver Y moth
+SLYM,Heat_Stress,81-24,rasters/MK_trends/SLYM/SLYM_MK_Heat_Stress_81-24.tif,Silver Y moth
+SLYM,Heat_Stress,81-00,rasters/MK_trends/SLYM/SLYM_MK_Heat_Stress_81-00.tif,Silver Y moth
+SLYM,Heat_Stress,01-24,rasters/MK_trends/SLYM/SLYM_MK_Heat_Stress_01-24.tif,Silver Y moth
+STB,Cold_Stress,81-24,rasters/MK_trends/STB/STB_MK_Cold_Stress_81-24.tif,Small tomato borer
+STB,Cold_Stress,81-00,rasters/MK_trends/STB/STB_MK_Cold_Stress_81-00.tif,Small tomato borer
+STB,Cold_Stress,01-24,rasters/MK_trends/STB/STB_MK_Cold_Stress_01-24.tif,Small tomato borer
+STB,First_egg_hatch,81-24,rasters/MK_trends/STB/STB_MK_Earliest_PEMe1_81-24.tif,Small tomato borer
+STB,First_egg_hatch,81-00,rasters/MK_trends/STB/STB_MK_Earliest_PEMe1_81-00.tif,Small tomato borer
+STB,First_egg_hatch,01-24,rasters/MK_trends/STB/STB_MK_Earliest_PEMe1_01-24.tif,Small tomato borer
+STB,First_adult_emergence,81-24,rasters/MK_trends/STB/STB_MK_Earliest_PEMa0_81-24.tif,Small tomato borer
+STB,First_adult_emergence,81-00,rasters/MK_trends/STB/STB_MK_Earliest_PEMa0_81-00.tif,Small tomato borer
+STB,First_adult_emergence,01-24,rasters/MK_trends/STB/STB_MK_Earliest_PEMa0_01-24.tif,Small tomato borer
+STB,Heat_Stress,81-24,rasters/MK_trends/STB/STB_MK_Heat_Stress_81-24.tif,Small tomato borer
+STB,Heat_Stress,81-00,rasters/MK_trends/STB/STB_MK_Heat_Stress_81-00.tif,Small tomato borer
+STB,Heat_Stress,01-24,rasters/MK_trends/STB/STB_MK_Heat_Stress_01-24.tif,Small tomato borer
+SUNP,Cold_Stress,81-24,rasters/MK_trends/STB/STB_MK_Cold_Stress_81-24.tif,Sunn pest
+SUNP,Cold_Stress,81-00,rasters/MK_trends/STB/STB_MK_Cold_Stress_81-00.tif,Sunn pest
+SUNP,Cold_Stress,01-24,rasters/MK_trends/STB/STB_MK_Cold_Stress_01-24.tif,Sunn pest
+SUNP,First_egg_hatch,81-24,rasters/MK_trends/STB/STB_MK_Earliest_PEMe1_81-24.tif,Sunn pest
+SUNP,First_egg_hatch,81-00,rasters/MK_trends/STB/STB_MK_Earliest_PEMe1_81-00.tif,Sunn pest
+SUNP,First_egg_hatch,01-24,rasters/MK_trends/STB/STB_MK_Earliest_PEMe1_01-24.tif,Sunn pest
+SUNP,First_adult_emergence,81-24,rasters/MK_trends/STB/STB_MK_Earliest_PEMa0_81-24.tif,Sunn pest
+SUNP,First_adult_emergence,81-00,rasters/MK_trends/STB/STB_MK_Earliest_PEMa0_81-00.tif,Sunn pest
+SUNP,First_adult_emergence,01-24,rasters/MK_trends/STB/STB_MK_Earliest_PEMa0_01-24.tif,Sunn pest
+SUNP,Heat_Stress,81-24,rasters/MK_trends/STB/STB_MK_Heat_Stress_81-24.tif,Sunn pest
+SUNP,Heat_Stress,81-00,rasters/MK_trends/STB/STB_MK_Heat_Stress_81-00.tif,Sunn pest
+SUNP,Heat_Stress,01-24,rasters/MK_trends/STB/STB_MK_Heat_Stress_01-24.tif,Sunn pest
+TABS,Cold_Stress,81-24,rasters/MK_trends/STB/STB_MK_Cold_Stress_81-24.tif,Tomato leafminer
+TABS,Cold_Stress,81-00,rasters/MK_trends/STB/STB_MK_Cold_Stress_81-00.tif,Tomato leafminer
+TABS,Cold_Stress,01-24,rasters/MK_trends/STB/STB_MK_Cold_Stress_01-24.tif,Tomato leafminer
+TABS,First_egg_hatch,81-24,rasters/MK_trends/STB/STB_MK_Earliest_PEMe1_81-24.tif,Tomato leafminer
+TABS,First_egg_hatch,81-00,rasters/MK_trends/STB/STB_MK_Earliest_PEMe1_81-00.tif,Tomato leafminer
+TABS,First_egg_hatch,01-24,rasters/MK_trends/STB/STB_MK_Earliest_PEMe1_01-24.tif,Tomato leafminer
+TABS,First_adult_emergence,81-24,rasters/MK_trends/STB/STB_MK_Earliest_PEMa0_81-24.tif,Tomato leafminer
+TABS,First_adult_emergence,81-00,rasters/MK_trends/STB/STB_MK_Earliest_PEMa0_81-00.tif,Tomato leafminer
+TABS,First_adult_emergence,01-24,rasters/MK_trends/STB/STB_MK_Earliest_PEMa0_01-24.tif,Tomato leafminer
+TABS,Heat_Stress,81-24,rasters/MK_trends/STB/STB_MK_Heat_Stress_81-24.tif,Tomato leafminer
+TABS,Heat_Stress,81-00,rasters/MK_trends/STB/STB_MK_Heat_Stress_81-00.tif,Tomato leafminer
+TABS,Heat_Stress,01-24,rasters/MK_trends/STB/STB_MK_Heat_Stress_01-24.tif,Tomato leafminer

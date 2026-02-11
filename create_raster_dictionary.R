@@ -34,7 +34,7 @@ files <- dir_ls(rasts_dir,
 pest_to_species <- list(
   
   "Asian longhorned beetle"     = "ALB",
-  "Asiatic rice borer"          = "ARB",
+  "Asiatic rice borer"          = "ASRB",
   "Common / Cotton cutworm"     = "SLI",
   "Egyptian cottonworm"         = "ECW",
   "Emerald Ash borer"           = "EAB",
@@ -78,7 +78,10 @@ table <-
     # Split parts: PREFIX_MK_VARIABLE_YEAR
     prefix     = str_extract(base, "^[^_]+"),
     variable   = str_extract(base, "(?<=_MK_).+(?=_[0-9]{2}-[0-9]{2}$)"),
-    year_range = str_extract(base, "[0-9]{2}-[0-9]{2}$")
+    year_range = str_extract(base, "[0-9]{2}-[0-9]{2}$"),
+    
+    # Remove "Earliest_PEM" from string
+    variable   = str_remove(variable, "^Earliest_PEM")
     
     ) %>%
   

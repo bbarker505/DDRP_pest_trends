@@ -12,90 +12,31 @@
 
 # The Mann-Kendall test has some values that we're interested in
 
-# Tau
-rast_import_tau <- function(file_name) {
+rast_import <- function(file_name, layer) {
   
-  # Pull in file as Spatraster
-  rast_stack <- rast(file_name)
+  r <- rast(file_name)
   
-  # Select layer containing tau
-  rast <- rast_stack$tau
+  # Select desired layer
+  r <- r[[layer]]
   
   # Reproject to WGS84
-  rast <- project(rast, "EPSG:4326")
+  r <- project(r, "EPSG:4326")
   
-  return(rast)
-  
+  return(r)
 }
 
-# P-value
 rast_import_pval <- function(file_name) {
   
   # Pull in file as Spatraster
   rast_stack <- rast(file_name)
   
   # Select layer containing p-values
-  rast <- rast_stack$sl
+  rast <- rast_stack$Pval
   
   # Reproject to WGS84
   rast <- project(rast, "EPSG:4326")
   
   return(rast)
-  
-}
-
-# Sen's slope
-rast_import_ss <- function(file_name) {
-  
-  # Pull in file as Spatraster
-  rast_stack <- rast(file_name)
-  
-  # Select layer containing slope
-  rast <- rast_stack$S
-  
-  # Reproject to WGS84
-  rast <- project(rast, "EPSG:4326")
-  
-  return(rast)
-  
-}
-
-
-
-
-
-
-# ----- Function to factorize a raster (translate numbers to a category) -------
-
-FactorizeRast <- function(r, type) {
-  
-  # Must recode raster because raster factorization doesn't work when 
-  # there are "duplicate" values (e.g., if 1.5 and 2 are both "High Risk"),
-  # and apparently it won't accept decimal values? This is strange.
-  
-  r[r >= 2] <- 4          # Values >2 are 5-8 lesions
-  r[r == 1.5] <- 3        # Values of 1.5 are 1-6 lesions
-  r[r == 1] <- 2          # Values of 1 are 1st infection susc. varieties
-  r[r == 0.5] <- 1        # Values of 0.5 are low risk 
-  
-  # Unique values up to 4 ("High risk" is always >= 4)
-  vals <- unique(values(r))
-  vals <- vals[!is.na(vals)]
-  
-  # Levels
-  lvls <- data.frame(ID = vals) %>%
-    mutate(
-      risk = case_when(ID == 0 ~ "0: Very Low Risk",
-                       ID == 1 ~ "1: Low Risk",
-                       ID == 2 ~ "2: 1st Infec. Susc. Vars.",
-                       ID == 3 ~ "3: Up to 1-6 Lesions",
-                       ID == 4 ~ "4: Up to 5-18 Lesions")) %>%
-    arrange(ID)
-  
-  # Factorize raster
-  levels(r) <- lvls
-  
-  return(r)
   
 }
 
@@ -106,85 +47,120 @@ FactorizeRast <- function(r, type) {
 
 # ----- Produce a leaflet map showing risk of infection ------------------------
 
-make_palette <- function(rast) {
-  colorNumeric(
-    palette = viridisLite::inferno(256),
-    domain  = terra::values(rast),
+# Color palette for map
+make_palette <- function(rast, metric) {
+  
+  vals <- terra::values(rast, na.rm = TRUE)
+  
+  # Define symmetric limits
+  limits <- switch(
+    metric,
+    "tau"  = c(-1, 1),
+    "sens" = {
+      max_abs <- max(abs(vals))
+      c(-max_abs, max_abs)
+    }
+  )
+  
+  pal <- colorNumeric(
+    palette  = rev(RColorBrewer::brewer.pal(11, "RdBu")),
+    domain   = limits,
     na.color = "transparent"
+  )
+  
+  list(
+    pal    = pal,
+    limits = limits
   )
 }
 
-produce_map <- function(input, rast, north, south, east, west) {
+
+produce_map <- function(rast, bounds, metric, legend_title) {
   
-  # Need different layer IDs (for "addImageQuery") and zoom/drag options 
   layerID <- "Value"
   
-  # For map legend
-  pal <- make_palette(rast)
+  pal_obj <- make_palette(rast, metric)
   
-  # Generate map
-  map <- leaflet( 
-    
-    # Custom leaflet options
-    options = leafletOptions(attributionControl = FALSE,
-                             zoomControl = FALSE,
-                             minZoom = 4.75,
-                             zoomSnap = 0.25,
-                             zoomDelta = 0.25,
-                             maxBounds = list(c(south, west), c(north, east)),
-                             maxBoundsViscosity = 1.0)) %>%
-    
-    # Extra edits, Javascript
+  pal    <- pal_obj$pal
+  limits <- pal_obj$limits
+  
+  leaflet(
+    options = leafletOptions(
+      attributionControl = FALSE,
+      zoomControl = FALSE,
+      minZoom = 4.75,
+      zoomSnap = 0.25,
+      zoomDelta = 0.25,
+      maxBounds = list(
+        c(bounds$south, bounds$west),
+        c(bounds$north, bounds$east)
+      ),
+      maxBoundsViscosity = 1.0
+    )
+  ) %>%
     htmlwidgets::onRender("
       function(el, x) {
         L.control.zoom({ position: 'topright' }).addTo(this);
       }
     ") %>%
-    
-    # Add OpenStreetMap layer
-    addProviderTiles(providers$CartoDB.Voyager)  %>%
-    
-    # Raster layer output
-    #addRasterImage(raster(rast), 
-    #               opacity = 0.65,
-    #               group = layerID, 
-    #               layerId = layerID) %>%
-    
-    addRasterImage(raster(rast),
-                   colors = pal,
-                   opacity = 0.65,
-                   layerId = "Value"
+    addProviderTiles(providers$CartoDB.Voyager) %>%
+    addRasterImage(
+      rast,
+      colors  = pal,
+      opacity = 0.8,
+      layerId = layerID
     ) %>%
-  
-    
-    # Add legend
-    addLegend(
-      position = "bottomright",
-      pal = pal,
-      values = terra::values(rast),
-      title = "Kendall’s τ",
-      labFormat = labelFormat(digits = 2)
+    addControl(
+      html = HTML(paste0(
+        "<div style='background:white;padding:8px 10px;border-radius:6px;'>",
+        "<div style='text-align:center;font-weight:bold;margin-bottom:4px;'>",
+        legend_title,
+        "</div>",
+        
+        "<div style='display:flex;flex-direction:column;align-items:center;'>",
+        
+        # gradient bar
+        "<div style='width:160px;height:14px;border:1px solid #ccc;",
+        "background:linear-gradient(to right,",
+        paste(pal(seq(limits[1], limits[2], length.out = 50)), collapse = ","),
+        ");'></div>",
+        
+        # labels
+        "<div style='display:flex;justify-content:space-between;",
+        "width:160px;font-size:11px;margin-top:2px;'>",
+        "<span>", round(limits[1],2), "</span>",
+        "<span>0</span>",
+        "<span>", round(limits[2],2), "</span>",
+        "</div>",
+        
+        "</div></div>"
+      )),
+      position = "bottomright"
     ) %>%
-    
-    # Add county lines
-    addPolylines(data = county_sf, 
-                 group = "Counties", 
-                 opacity = 0.15, 
-                 color = "grey", 
-                 weight = 1.25) %>%
-    
-    # Set initial view
-    setView(lng = mean(c(west, east)),
-            lat = mean(c(south, north)),
-            zoom = 4.75) %>%
-    
-    # Shows map coordinates as mouse is moved over map
+    addPolylines(
+      data = county_sf,
+      options = pathOptions(interactive = FALSE),
+      group  = "Counties",
+      opacity = 0.1,
+      color  = "grey",
+      weight = 1.25
+    ) %>%
+    addPolylines(data = us_states,
+                 options = pathOptions(interactive = FALSE),
+                 group  = "Counties",
+                 opacity = 0.5,
+                 color  = "grey",
+                 weight = 1.25
+    ) %>%
+    setView(
+      lng  = mean(c(bounds$west, bounds$east)),
+      lat  = mean(c(bounds$south, bounds$north)),
+      zoom = 4.75
+    ) %>%
     addMouseCoordinates
-  
-  # Return map
-  return(map)
-  
 }
+
+
 
 
 
@@ -213,7 +189,7 @@ clear_click_info <- function(output) {
 # Set up regions
 # Use switch() (works like a single use hash) 
 
-assign_extent <- function(region_param = paste0(region_param)) {
+assign_extent <- function(region_param) {
   REGION <- switch(region_param,
                    "CONUS"        = ext(-125.0, -66.5, 24.54, 49.4),
                    "WEST"         = ext(-125.0, -102, 31.1892, 49.4),
@@ -300,47 +276,4 @@ ext_to_bounds <- function(ext) {
 
 
 
-
-# ----- Function for pest report cards -----------------------------------------
-
-pest_card <- function(id, common, scientific, img) {
-  div(
-    class = "col-md-4 col-lg-3 mb-4",
-    
-    card(
-      class = "h-100 shadow-sm pest-card",
-      style = "cursor:pointer;",
-      
-      onclick = sprintf("$('#%s').modal('show')", id),
-      
-      tags$img(
-        src = img,
-        class = "card-img-top",
-        style = "height:180px; object-fit:cover;"
-      ),
-      
-      card_body(
-        h5(common, class = "card-title"),
-        tags$p(tags$em(scientific), class = "card-text")
-      )
-    )
-  )
-}
-
-pest_modal <- function(id, common, scientific, content, img) {
-  modal(
-    id = id,
-    title = HTML(paste0("<b>", common, "</b><br><i>", scientific, "</i>")),
-    size = "lg",
-    
-    tags$img(
-      src = img,
-      style = "width:100%; max-height:300px; object-fit:contain; margin-bottom:15px;"
-    ),
-    
-    content,
-    easyClose = TRUE,
-    footer = modalButton("Close")
-  )
-}
 
