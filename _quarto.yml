@@ -8,12 +8,12 @@ website:
   
   navbar:
     left:
-      - text: "About this site"
-        href: index.qmd#about
+      - text: "About"
+        href: about.qmd
       - text: "DDRP Map"
-        href: index.qmd#map
+        href: maps.qmd
       - text: "Pest Reports"
-        href: index.qmd#reports
+        href: reports.qmd
         
   page-footer: 
     right: 

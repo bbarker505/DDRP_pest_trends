@@ -1,0 +1,19 @@
+﻿No,Abbr,Species,Common_name,First_adult_emergence,First_egg_hatch
+1,ALB,Anoplophora glabripennis,Asian longhorned beetle,p0,e1
+2,ASRB,Chilo suppressalis,Asiatic rice borer,p0,e1
+3,CGN,Cryptoblabes gnidiella,Honeydew moth,p0,e1
+4,EAB,Agrilus planipennis,Emerald ash borer,p0,e1
+5,ECW,Spodoptera littoralis,Egyptian cottonworm,p0,e1
+6,FCM,Thaumatotibia leucotreta,False codling moth,a0,e1
+7,JPB,Popillia japoonica,Japanese beetle,p0,e1
+8,JPSB,Monochamus alternatus,Japanese pine sawyer beetle,p0,e1
+9,LBAM,Epiphyas postvittana,Light brown apple moth,p0,e1
+10,OAB,Platypus quercivorus,Oak ambrosia beetle,p0,e1
+11,OWBW,Helicoverpa armigera,Old world bollworm,p0,e1
+12,PTLM,Dendrolimus pini,Pine-tree lappet moth,p0,e1
+13,SLF,Lycorma delicatula,Spotted lanternfly,p0,e0
+14,SLI,Spodoptera litura,Common or Cotton cutworm,p0,e1
+15,SLYM,Autographa gamma,Silver Y moth,p0,e1
+16,STB,Neoleucinodes elegantalis,Small tomato borer,a0,e1
+17,SUNP,Eurygaster integriceps,Sunn pest,a0,e1
+18,TABS,Tuta absoluta,Tomato leaf miner,a0,e1

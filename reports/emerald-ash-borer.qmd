@@ -1,0 +1,34 @@
+---
+title: "Emerald ash borer"
+description: "*Agrilus planipennis*"
+image: "images/placeholder.png"
+format:
+  html:
+    toc: true
+  pdf:
+    toc: true
+    number-sections: false
+---
+
+::: {.content-visible when-format="html"}
+<div style="text-align: left;">
+[Download report as PDF](index.pdf){.btn .btn-primary}
+</div>
+:::
+
+## Overview
+
+The emerald ash borer (EAB), Agrilus planipennis Fairmaire (Coleoptera: Buprestidae), is a flat-headed, wood-boring beetle native to eastern Asia that almost exclusively requires ash trees (Fraxinus spp.) to complete its life cycle (Poland et al. 2015, USDA 2025). It was first discovered in North America in 2002 in Michigan and Ontario, though it likely had entered Michigan in the early to mid-1990s (Siegert et al. 2014). EAB is now present in 37 U.S. states and six Canadian provinces (EPPO 2025, USDA-APHIS 2025). Upon hatching, eggs laid by adult beetles in ash bark crevices burrow into the tree to feed on the inner phloem, outer xylem, and cambium, where young larvae or pre-pupae overwinter in serpentine larval galleries (Tluczek et al. 2011, Poland et al. 2015). This feeding usually results in the death of the tree within about six years (Knight et al. 2013). EAB<92>s cryptic nature, in which all life stages except for the adult beetle are inside of trees, makes early detection of this pest extremely difficult (Haack et al. 2002, USDA-APHIS 2025). 
+    
+All North American ash species are vulnerable to EAB, though blue ash (F. quadrangulata Michaux) appears to be less preferred (Poland et al. 2015). In its native range, EAB generally attacks trees that are already stressed (reviewed by Tluczek et al. 2011). In North America, it attacks both healthy and stressed trees, though stressed trees produce higher numbers of adults (Poland and McCullough 2006, Tluczek et al. 2011). White fringetree [Chionanthus virginicus L. (Oleaceae)], and olive [Olea europaea L. (Oleaceae)], both of which are in the same family as Fraxinus spp., are possible hosts for EAB; however, insects may exhibit higher mortality rates on these species (Rutledge and Arango-Velez 2017, Peterson and Cipollini 2020). The financial impact of EAB in the U.S. is estimated to be in the billions of dollars (Aukema et al. 2011). Additionally, the widespread loss of ash trees has resulted in decreased biodiversity and lost ecosystem services (Schrader et al. 2021).
+
+## Identification
+
+## Damage and Economic Impact
+
+## Management Strategies
+
+## DDRP and MK trends report
+
+## References
+

@@ -1,0 +1,13 @@
+---
+title: "DDRP Pest Maps"
+format: 
+  html:
+    page-layout: custom
+execute:
+  echo: true
+  warning: false
+  error: false
+  eval: true
+server: shiny
+editor: visual
+---

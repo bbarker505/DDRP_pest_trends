@@ -1,0 +1,1486 @@
+[
+  {
+    "objectID": "about.html#overview",
+    "href": "about.html#overview",
+    "title": "About",
+    "section": "Overview",
+    "text": "Overview\nWe use the Degree-Day, establishment Risk, and Phenological (DDRP) event mapping system to assess the potential impacts of weather from 1980 to the current year on the timing of pest activity such as emergence (phenology) and potential for establishment of 18 invasive pest species in the contiguous United States.\n\n\n\n\n\n\nOpen to see more info on the 18 species\n\n\n\n\n\nOf the 18 species with models, 12 are presently on Plant Protection and Quarantine’s National Priority Pest List. Six were formerly included on the list, and two are Federal Program Pests. Most of the species do not occur in the contiguous United States (N = 13); however, five are established and may spread to additional regions. Real-time forecasts for these pests are available at USPEST.org.\n\n\n\n\n\n\n\n\n\n\nSpecies\nCommon name\nPresent in United States\nNational Priority Pest\nFederal Program Pest\n\n\n\n\nAnoplophora glabripennis\nAsian longhorned beetle\nYes\nYes\nYes\n\n\nChilo suppressalis\nAsiatic rice borer\nNo\nYes\nNo\n\n\nCryptoblabes gnidiella\nChristmas berry webworm\nNo\nYes\nNo\n\n\nSpodopthera litura\nCommon or cotton cutworm\nNo\nYes\nNo\n\n\nAgrilus planipennis\nEmerald ash borer\nYes\nNo\nYes\n\n\nSpodopthera littoralis\nEgyptian cottonworm\nNo\nNo\nNo\n\n\nThaumatotibia leucotreta\nFalse codling moth\nNo\nYes\nNo\n\n\nPopillia japonica\nJapanese beetle\nYes\nNo\nYes\n\n\nMonochamus alternatus\nJapanese pine sawyer beetle\nNo\nNo\nNo\n\n\nEpiphyas posvittana\nLight brown apple moth\nYes\nNo\nYes\n\n\nPlatypus quercivorus\nOak ambrosia beetle\nNo\nYes\nNo\n\n\nHelicoverpa armigera\nOld world bollworm\nNo\nYes\nYes\n\n\nDendrolimus pini\nPine-tree lappet moth\nNo\nYes\nNo\n\n\nAutographa gamma\nSilver Y moth\nNo\nYes\nNo\n\n\nNeoleucinodes elegantalis\nSmall tomato borer\nNo\nYes\nNo\n\n\nLycorma delicatula\nSpotted lanternfly\nYes\nYes\nYes\n\n\nEurygaster integriceps\nSunn pest\nNo\nYes\nNo\n\n\nTuta absoluta\nTomato leaf miner\nNo\nYes\nNo\n\n\n\n\n\n\nThe system is part of a suite of decision-support tools at USPEST.org that are developed and maintained by the Oregon Integrated Pest Management Center (OIPMC) at Oregon State University. These tools provide thousands of end users nationwide with information to support timely and effective management activities for agricultural pests and diseases. This project will use the DDRP event mapping system to predict where pests may exhibit earlier activities, increases in the number of generations, and increases in habitat suitability. This information helps Plant Protection and Quarantine allocate survey resources more strategically, thereby reducing the likelihood of pest establishment and spread.\nThe DDRP event mapping system is distinct from existing pest decision-support systems in its combination of\n\nintegrated phenology and habitat suitability mapping to fully address both when and where a pest life stage may occur over a year,\nincorporation of biologically meaningful parameters that increase model realism in contrast with simple degree-day models, and\ninclusion of survival-limiting cold and heat stresses to predict habitat suitability over a year, whereas most other systems use simpler models based on weather averages (Barker et al. 2020; Grevstad et al. 2022; Barker et al. 2023).\n\nAdditionally, its ability to accept daily weather data for any time frame allows evaluation of historical conditions and impacts of weather changes on pest phenology and establishment."
+  },
+  {
+    "objectID": "about.html#source-code-feedback",
+    "href": "about.html#source-code-feedback",
+    "title": "About",
+    "section": "Source Code & Feedback",
+    "text": "Source Code & Feedback\nTo view the source code, please visit this GitHub repository: DDRP Pest Trends \nFor any questions or comments regarding this work, please feel free to reach out to Dr. Brittany Barker at brittany.barker@oregonstate.edu."
+  },
+  {
+    "objectID": "about.html#references",
+    "href": "about.html#references",
+    "title": "About",
+    "section": "References",
+    "text": "References\n\nBarker, B. S., L. Coop, T. Wepprich, F. Grevstad, and G. Cook. 2020. Public Library of Science ONE 15:e0244005. https://doi.org/10.1371/journal.pone.0244005\nBarker, B. S., L. Coop, J. J. Duan, and T. R. Petrice. 2023. Frontiers in Insect Science 3:1239173. https://doi.org/10.3389/finsc.2023.1239173\nBarker, B. S., and L. Coop. 2024. Digger. June 2024, pp. 41−45. Online at: https://diggermagazine.com/new-tools-to-forecast-boxwood-blight-infection-risk-in-pacific- northwest-nurseries/\nTakeuchi, Y., A. Tripodi, and K. Montgomery. 2023. Frontiers in Insect Science 3:1198355. https://doi.org/10.3389/finsc.2023.1198355"
+  },
+  {
+    "objectID": "reports.html",
+    "href": "reports.html",
+    "title": "Pest Reports",
+    "section": "",
+    "text": "Asian longhorned beetle\n\n\nAnoplophora glabripennis\n\n\n\n\n\n\n\n\n\n\n\n\n\nAsiatic rice borer\n\n\nChilo suppressalis\n\n\n\n\n\n\n\n\n\n\n\n\n\nCommon or Cotton cutworm\n\n\nSpodoptera litura\n\n\n\n\n\n\n\n\n\n\n\n\n\nEgyptian cottonworm\n\n\nSpodoptera littoralis\n\n\n\n\n\n\n\n\n\n\n\n\n\nEmerald ash borer\n\n\nAgrilus planipennis\n\n\n\n\n\n\n\n\n\n\n\n\n\nFalse codling moth\n\n\nThaumatotibia leucotreta\n\n\n\n\n\n\n\n\n\n\n\n\n\nHoneydew moth\n\n\nCryptoblabes gnidiella\n\n\n\n\n\n\n\n\n\n\n\n\n\nJapanese beetle\n\n\nPopillia japoonica\n\n\n\n\n\n\n\n\n\n\n\n\n\nJapanese pine sawyer beetle\n\n\nMonochamus alternatus\n\n\n\n\n\n\n\n\n\n\n\n\n\nLight brown apple moth\n\n\nEpiphyas postvittana\n\n\n\n\n\n\n\n\n\n\n\n\n\nOak ambrosia beetle\n\n\nPlatypus quercivorus\n\n\n\n\n\n\n\n\n\n\n\n\n\nOld world bollworm\n\n\nHelicoverpa armigera\n\n\n\n\n\n\n\n\n\n\n\n\n\nPine-tree lappet moth\n\n\nDendrolimus pini\n\n\n\n\n\n\n\n\n\n\n\n\n\nSilver Y moth\n\n\nAutographa gamma\n\n\n\n\n\n\n\n\n\n\n\n\n\nSmall tomato borer\n\n\nNeoleucinodes elegantalis\n\n\n\n\n\n\n\n\n\n\n\n\n\nSpotted lanternfly\n\n\nLycorma delicatula\n\n\n\n\n\n\n\n\n\n\n\n\n\nSunn pest\n\n\nEurygaster integriceps\n\n\n\n\n\n\n\n\n\n\n\n\n\nTomato leaf miner\n\n\nTuta absoluta\n\n\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "reports/asian-longhorned-beetle.html",
+    "href": "reports/asian-longhorned-beetle.html",
+    "title": "Asian longhorned beetle",
+    "section": "",
+    "text": "Download report as PDF"
+  },
+  {
+    "objectID": "reports/asian-longhorned-beetle.html#overview",
+    "href": "reports/asian-longhorned-beetle.html#overview",
+    "title": "Asian longhorned beetle",
+    "section": "Overview",
+    "text": "Overview\nNative to Japan, the Japanese beetle (JPB), Popillia japonica Newman (Coleoptera: Scarabaeidae), is a highly polyphagous pest with more than 400 host plants, including food crops, fruit trees, turfgrass, and ornamental plants (Fleming 1972, EPPO 2020, Tayeh et al. 2023). Since its first U.S. detection in 1916 in New Jersey, the beetle has become widespread throughout the eastern and central U.S. as well as parts of eastern Canada (Dickerson and Weiss 1918, Fleming 1972, EPPO 2020, Althoff and Rice 2022). Outbreaks in Colorado and California were eradicated (Althoff and Rice 2022); however, JPB is established in a small number of locations in the Pacific Northwest, including in British Columbia, Washington, and Oregon (EPPO 2020, Stoven et al. 2021, Zhu et al. 2023). The pest is also present in parts of Europe and eastern Russia and has been reported in India (India Biodiversity Portal 2016, EPPO 2020).\nThe beetle is univoltine or semivoltine (2-year life cycle) depending on local climatic conditions (Fleming 1972, Vittum 1986, EPPO 2020). Larvae overwinter as second or third instars in the soil, typically beneath managed turfgrass areas like lawns, pasture, and golf courses. Total associated costs of JPB in the U.S. are estimated at $460 million annually, with $234 million a year spent on control and turf replacement costs (Fleming 1972, USDA-APHIS 2015)."
+  },
+  {
+    "objectID": "reports/asian-longhorned-beetle.html#identification",
+    "href": "reports/asian-longhorned-beetle.html#identification",
+    "title": "Asian longhorned beetle",
+    "section": "Identification",
+    "text": "Identification"
+  },
+  {
+    "objectID": "reports/asian-longhorned-beetle.html#host-plants",
+    "href": "reports/asian-longhorned-beetle.html#host-plants",
+    "title": "Asian longhorned beetle",
+    "section": "Host Plants",
+    "text": "Host Plants"
+  },
+  {
+    "objectID": "reports/asian-longhorned-beetle.html#distribution",
+    "href": "reports/asian-longhorned-beetle.html#distribution",
+    "title": "Asian longhorned beetle",
+    "section": "Distribution",
+    "text": "Distribution"
+  },
+  {
+    "objectID": "reports/asian-longhorned-beetle.html#life-cycle",
+    "href": "reports/asian-longhorned-beetle.html#life-cycle",
+    "title": "Asian longhorned beetle",
+    "section": "Life Cycle",
+    "text": "Life Cycle"
+  },
+  {
+    "objectID": "reports/asian-longhorned-beetle.html#damage-and-economic-impact",
+    "href": "reports/asian-longhorned-beetle.html#damage-and-economic-impact",
+    "title": "Asian longhorned beetle",
+    "section": "Damage and Economic Impact",
+    "text": "Damage and Economic Impact"
+  },
+  {
+    "objectID": "reports/asian-longhorned-beetle.html#management-strategies",
+    "href": "reports/asian-longhorned-beetle.html#management-strategies",
+    "title": "Asian longhorned beetle",
+    "section": "Management Strategies",
+    "text": "Management Strategies"
+  },
+  {
+    "objectID": "reports/asian-longhorned-beetle.html#analyses",
+    "href": "reports/asian-longhorned-beetle.html#analyses",
+    "title": "Asian longhorned beetle",
+    "section": "Analyses",
+    "text": "Analyses"
+  },
+  {
+    "objectID": "reports/asian-longhorned-beetle.html#references",
+    "href": "reports/asian-longhorned-beetle.html#references",
+    "title": "Asian longhorned beetle",
+    "section": "References",
+    "text": "References"
+  },
+  {
+    "objectID": "reports/sunn-pest.html",
+    "href": "reports/sunn-pest.html",
+    "title": "Sunn pest",
+    "section": "",
+    "text": "Download report as PDF"
+  },
+  {
+    "objectID": "reports/sunn-pest.html#overview",
+    "href": "reports/sunn-pest.html#overview",
+    "title": "Sunn pest",
+    "section": "Overview",
+    "text": "Overview"
+  },
+  {
+    "objectID": "reports/sunn-pest.html#identification",
+    "href": "reports/sunn-pest.html#identification",
+    "title": "Sunn pest",
+    "section": "Identification",
+    "text": "Identification"
+  },
+  {
+    "objectID": "reports/sunn-pest.html#host-plants",
+    "href": "reports/sunn-pest.html#host-plants",
+    "title": "Sunn pest",
+    "section": "Host Plants",
+    "text": "Host Plants"
+  },
+  {
+    "objectID": "reports/sunn-pest.html#distribution",
+    "href": "reports/sunn-pest.html#distribution",
+    "title": "Sunn pest",
+    "section": "Distribution",
+    "text": "Distribution"
+  },
+  {
+    "objectID": "reports/sunn-pest.html#life-cycle",
+    "href": "reports/sunn-pest.html#life-cycle",
+    "title": "Sunn pest",
+    "section": "Life Cycle",
+    "text": "Life Cycle"
+  },
+  {
+    "objectID": "reports/sunn-pest.html#damage-and-economic-impact",
+    "href": "reports/sunn-pest.html#damage-and-economic-impact",
+    "title": "Sunn pest",
+    "section": "Damage and Economic Impact",
+    "text": "Damage and Economic Impact"
+  },
+  {
+    "objectID": "reports/sunn-pest.html#management-strategies",
+    "href": "reports/sunn-pest.html#management-strategies",
+    "title": "Sunn pest",
+    "section": "Management Strategies",
+    "text": "Management Strategies"
+  },
+  {
+    "objectID": "reports/sunn-pest.html#analyses",
+    "href": "reports/sunn-pest.html#analyses",
+    "title": "Sunn pest",
+    "section": "Analyses",
+    "text": "Analyses"
+  },
+  {
+    "objectID": "reports/sunn-pest.html#references",
+    "href": "reports/sunn-pest.html#references",
+    "title": "Sunn pest",
+    "section": "References",
+    "text": "References"
+  },
+  {
+    "objectID": "reports/small-tomato-borer.html",
+    "href": "reports/small-tomato-borer.html",
+    "title": "Small tomato borer",
+    "section": "",
+    "text": "Download report as PDF"
+  },
+  {
+    "objectID": "reports/small-tomato-borer.html#overview",
+    "href": "reports/small-tomato-borer.html#overview",
+    "title": "Small tomato borer",
+    "section": "Overview",
+    "text": "Overview"
+  },
+  {
+    "objectID": "reports/small-tomato-borer.html#identification",
+    "href": "reports/small-tomato-borer.html#identification",
+    "title": "Small tomato borer",
+    "section": "Identification",
+    "text": "Identification"
+  },
+  {
+    "objectID": "reports/small-tomato-borer.html#host-plants",
+    "href": "reports/small-tomato-borer.html#host-plants",
+    "title": "Small tomato borer",
+    "section": "Host Plants",
+    "text": "Host Plants"
+  },
+  {
+    "objectID": "reports/small-tomato-borer.html#distribution",
+    "href": "reports/small-tomato-borer.html#distribution",
+    "title": "Small tomato borer",
+    "section": "Distribution",
+    "text": "Distribution"
+  },
+  {
+    "objectID": "reports/small-tomato-borer.html#life-cycle",
+    "href": "reports/small-tomato-borer.html#life-cycle",
+    "title": "Small tomato borer",
+    "section": "Life Cycle",
+    "text": "Life Cycle"
+  },
+  {
+    "objectID": "reports/small-tomato-borer.html#damage-and-economic-impact",
+    "href": "reports/small-tomato-borer.html#damage-and-economic-impact",
+    "title": "Small tomato borer",
+    "section": "Damage and Economic Impact",
+    "text": "Damage and Economic Impact"
+  },
+  {
+    "objectID": "reports/small-tomato-borer.html#management-strategies",
+    "href": "reports/small-tomato-borer.html#management-strategies",
+    "title": "Small tomato borer",
+    "section": "Management Strategies",
+    "text": "Management Strategies"
+  },
+  {
+    "objectID": "reports/small-tomato-borer.html#analyses",
+    "href": "reports/small-tomato-borer.html#analyses",
+    "title": "Small tomato borer",
+    "section": "Analyses",
+    "text": "Analyses"
+  },
+  {
+    "objectID": "reports/small-tomato-borer.html#references",
+    "href": "reports/small-tomato-borer.html#references",
+    "title": "Small tomato borer",
+    "section": "References",
+    "text": "References"
+  },
+  {
+    "objectID": "reports/pine-tree-lappet-moth.html",
+    "href": "reports/pine-tree-lappet-moth.html",
+    "title": "Pine-tree lappet moth",
+    "section": "",
+    "text": "Download report as PDF"
+  },
+  {
+    "objectID": "reports/pine-tree-lappet-moth.html#overview",
+    "href": "reports/pine-tree-lappet-moth.html#overview",
+    "title": "Pine-tree lappet moth",
+    "section": "Overview",
+    "text": "Overview"
+  },
+  {
+    "objectID": "reports/pine-tree-lappet-moth.html#identification",
+    "href": "reports/pine-tree-lappet-moth.html#identification",
+    "title": "Pine-tree lappet moth",
+    "section": "Identification",
+    "text": "Identification"
+  },
+  {
+    "objectID": "reports/pine-tree-lappet-moth.html#host-plants",
+    "href": "reports/pine-tree-lappet-moth.html#host-plants",
+    "title": "Pine-tree lappet moth",
+    "section": "Host Plants",
+    "text": "Host Plants"
+  },
+  {
+    "objectID": "reports/pine-tree-lappet-moth.html#distribution",
+    "href": "reports/pine-tree-lappet-moth.html#distribution",
+    "title": "Pine-tree lappet moth",
+    "section": "Distribution",
+    "text": "Distribution"
+  },
+  {
+    "objectID": "reports/pine-tree-lappet-moth.html#life-cycle",
+    "href": "reports/pine-tree-lappet-moth.html#life-cycle",
+    "title": "Pine-tree lappet moth",
+    "section": "Life Cycle",
+    "text": "Life Cycle"
+  },
+  {
+    "objectID": "reports/pine-tree-lappet-moth.html#damage-and-economic-impact",
+    "href": "reports/pine-tree-lappet-moth.html#damage-and-economic-impact",
+    "title": "Pine-tree lappet moth",
+    "section": "Damage and Economic Impact",
+    "text": "Damage and Economic Impact"
+  },
+  {
+    "objectID": "reports/pine-tree-lappet-moth.html#management-strategies",
+    "href": "reports/pine-tree-lappet-moth.html#management-strategies",
+    "title": "Pine-tree lappet moth",
+    "section": "Management Strategies",
+    "text": "Management Strategies"
+  },
+  {
+    "objectID": "reports/pine-tree-lappet-moth.html#analyses",
+    "href": "reports/pine-tree-lappet-moth.html#analyses",
+    "title": "Pine-tree lappet moth",
+    "section": "Analyses",
+    "text": "Analyses"
+  },
+  {
+    "objectID": "reports/pine-tree-lappet-moth.html#references",
+    "href": "reports/pine-tree-lappet-moth.html#references",
+    "title": "Pine-tree lappet moth",
+    "section": "References",
+    "text": "References"
+  },
+  {
+    "objectID": "reports/oak-ambrosia-beetle.html",
+    "href": "reports/oak-ambrosia-beetle.html",
+    "title": "Oak ambrosia beetle",
+    "section": "",
+    "text": "Download report as PDF"
+  },
+  {
+    "objectID": "reports/oak-ambrosia-beetle.html#overview",
+    "href": "reports/oak-ambrosia-beetle.html#overview",
+    "title": "Oak ambrosia beetle",
+    "section": "Overview",
+    "text": "Overview"
+  },
+  {
+    "objectID": "reports/oak-ambrosia-beetle.html#identification",
+    "href": "reports/oak-ambrosia-beetle.html#identification",
+    "title": "Oak ambrosia beetle",
+    "section": "Identification",
+    "text": "Identification"
+  },
+  {
+    "objectID": "reports/oak-ambrosia-beetle.html#host-plants",
+    "href": "reports/oak-ambrosia-beetle.html#host-plants",
+    "title": "Oak ambrosia beetle",
+    "section": "Host Plants",
+    "text": "Host Plants"
+  },
+  {
+    "objectID": "reports/oak-ambrosia-beetle.html#distribution",
+    "href": "reports/oak-ambrosia-beetle.html#distribution",
+    "title": "Oak ambrosia beetle",
+    "section": "Distribution",
+    "text": "Distribution"
+  },
+  {
+    "objectID": "reports/oak-ambrosia-beetle.html#life-cycle",
+    "href": "reports/oak-ambrosia-beetle.html#life-cycle",
+    "title": "Oak ambrosia beetle",
+    "section": "Life Cycle",
+    "text": "Life Cycle"
+  },
+  {
+    "objectID": "reports/oak-ambrosia-beetle.html#damage-and-economic-impact",
+    "href": "reports/oak-ambrosia-beetle.html#damage-and-economic-impact",
+    "title": "Oak ambrosia beetle",
+    "section": "Damage and Economic Impact",
+    "text": "Damage and Economic Impact"
+  },
+  {
+    "objectID": "reports/oak-ambrosia-beetle.html#management-strategies",
+    "href": "reports/oak-ambrosia-beetle.html#management-strategies",
+    "title": "Oak ambrosia beetle",
+    "section": "Management Strategies",
+    "text": "Management Strategies"
+  },
+  {
+    "objectID": "reports/oak-ambrosia-beetle.html#analyses",
+    "href": "reports/oak-ambrosia-beetle.html#analyses",
+    "title": "Oak ambrosia beetle",
+    "section": "Analyses",
+    "text": "Analyses"
+  },
+  {
+    "objectID": "reports/oak-ambrosia-beetle.html#references",
+    "href": "reports/oak-ambrosia-beetle.html#references",
+    "title": "Oak ambrosia beetle",
+    "section": "References",
+    "text": "References"
+  },
+  {
+    "objectID": "reports/japanese-pine-sawyer-beetle.html",
+    "href": "reports/japanese-pine-sawyer-beetle.html",
+    "title": "Japanese pine sawyer beetle",
+    "section": "",
+    "text": "Download report as PDF"
+  },
+  {
+    "objectID": "reports/japanese-pine-sawyer-beetle.html#overview",
+    "href": "reports/japanese-pine-sawyer-beetle.html#overview",
+    "title": "Japanese pine sawyer beetle",
+    "section": "Overview",
+    "text": "Overview"
+  },
+  {
+    "objectID": "reports/japanese-pine-sawyer-beetle.html#identification",
+    "href": "reports/japanese-pine-sawyer-beetle.html#identification",
+    "title": "Japanese pine sawyer beetle",
+    "section": "Identification",
+    "text": "Identification"
+  },
+  {
+    "objectID": "reports/japanese-pine-sawyer-beetle.html#host-plants",
+    "href": "reports/japanese-pine-sawyer-beetle.html#host-plants",
+    "title": "Japanese pine sawyer beetle",
+    "section": "Host Plants",
+    "text": "Host Plants"
+  },
+  {
+    "objectID": "reports/japanese-pine-sawyer-beetle.html#distribution",
+    "href": "reports/japanese-pine-sawyer-beetle.html#distribution",
+    "title": "Japanese pine sawyer beetle",
+    "section": "Distribution",
+    "text": "Distribution"
+  },
+  {
+    "objectID": "reports/japanese-pine-sawyer-beetle.html#life-cycle",
+    "href": "reports/japanese-pine-sawyer-beetle.html#life-cycle",
+    "title": "Japanese pine sawyer beetle",
+    "section": "Life Cycle",
+    "text": "Life Cycle"
+  },
+  {
+    "objectID": "reports/japanese-pine-sawyer-beetle.html#damage-and-economic-impact",
+    "href": "reports/japanese-pine-sawyer-beetle.html#damage-and-economic-impact",
+    "title": "Japanese pine sawyer beetle",
+    "section": "Damage and Economic Impact",
+    "text": "Damage and Economic Impact"
+  },
+  {
+    "objectID": "reports/japanese-pine-sawyer-beetle.html#management-strategies",
+    "href": "reports/japanese-pine-sawyer-beetle.html#management-strategies",
+    "title": "Japanese pine sawyer beetle",
+    "section": "Management Strategies",
+    "text": "Management Strategies"
+  },
+  {
+    "objectID": "reports/japanese-pine-sawyer-beetle.html#analyses",
+    "href": "reports/japanese-pine-sawyer-beetle.html#analyses",
+    "title": "Japanese pine sawyer beetle",
+    "section": "Analyses",
+    "text": "Analyses"
+  },
+  {
+    "objectID": "reports/japanese-pine-sawyer-beetle.html#references",
+    "href": "reports/japanese-pine-sawyer-beetle.html#references",
+    "title": "Japanese pine sawyer beetle",
+    "section": "References",
+    "text": "References"
+  },
+  {
+    "objectID": "reports/honeydew-moth.html",
+    "href": "reports/honeydew-moth.html",
+    "title": "Honeydew moth",
+    "section": "",
+    "text": "Download report as PDF"
+  },
+  {
+    "objectID": "reports/honeydew-moth.html#overview",
+    "href": "reports/honeydew-moth.html#overview",
+    "title": "Honeydew moth",
+    "section": "Overview",
+    "text": "Overview"
+  },
+  {
+    "objectID": "reports/honeydew-moth.html#identification",
+    "href": "reports/honeydew-moth.html#identification",
+    "title": "Honeydew moth",
+    "section": "Identification",
+    "text": "Identification"
+  },
+  {
+    "objectID": "reports/honeydew-moth.html#host-plants",
+    "href": "reports/honeydew-moth.html#host-plants",
+    "title": "Honeydew moth",
+    "section": "Host Plants",
+    "text": "Host Plants"
+  },
+  {
+    "objectID": "reports/honeydew-moth.html#distribution",
+    "href": "reports/honeydew-moth.html#distribution",
+    "title": "Honeydew moth",
+    "section": "Distribution",
+    "text": "Distribution"
+  },
+  {
+    "objectID": "reports/honeydew-moth.html#life-cycle",
+    "href": "reports/honeydew-moth.html#life-cycle",
+    "title": "Honeydew moth",
+    "section": "Life Cycle",
+    "text": "Life Cycle"
+  },
+  {
+    "objectID": "reports/honeydew-moth.html#damage-and-economic-impact",
+    "href": "reports/honeydew-moth.html#damage-and-economic-impact",
+    "title": "Honeydew moth",
+    "section": "Damage and Economic Impact",
+    "text": "Damage and Economic Impact"
+  },
+  {
+    "objectID": "reports/honeydew-moth.html#management-strategies",
+    "href": "reports/honeydew-moth.html#management-strategies",
+    "title": "Honeydew moth",
+    "section": "Management Strategies",
+    "text": "Management Strategies"
+  },
+  {
+    "objectID": "reports/honeydew-moth.html#analyses",
+    "href": "reports/honeydew-moth.html#analyses",
+    "title": "Honeydew moth",
+    "section": "Analyses",
+    "text": "Analyses"
+  },
+  {
+    "objectID": "reports/honeydew-moth.html#references",
+    "href": "reports/honeydew-moth.html#references",
+    "title": "Honeydew moth",
+    "section": "References",
+    "text": "References"
+  },
+  {
+    "objectID": "reports/emeral-ash-borer.html",
+    "href": "reports/emeral-ash-borer.html",
+    "title": "Emeral ash borer",
+    "section": "",
+    "text": "Agrilus planipennis is an economically important insect pest."
+  },
+  {
+    "objectID": "reports/emeral-ash-borer.html#overview",
+    "href": "reports/emeral-ash-borer.html#overview",
+    "title": "Emeral ash borer",
+    "section": "",
+    "text": "Agrilus planipennis is an economically important insect pest."
+  },
+  {
+    "objectID": "reports/emeral-ash-borer.html#identification",
+    "href": "reports/emeral-ash-borer.html#identification",
+    "title": "Emeral ash borer",
+    "section": "Identification",
+    "text": "Identification"
+  },
+  {
+    "objectID": "reports/emeral-ash-borer.html#host-plants",
+    "href": "reports/emeral-ash-borer.html#host-plants",
+    "title": "Emeral ash borer",
+    "section": "Host Plants",
+    "text": "Host Plants"
+  },
+  {
+    "objectID": "reports/emeral-ash-borer.html#distribution",
+    "href": "reports/emeral-ash-borer.html#distribution",
+    "title": "Emeral ash borer",
+    "section": "Distribution",
+    "text": "Distribution"
+  },
+  {
+    "objectID": "reports/emeral-ash-borer.html#life-cycle",
+    "href": "reports/emeral-ash-borer.html#life-cycle",
+    "title": "Emeral ash borer",
+    "section": "Life Cycle",
+    "text": "Life Cycle"
+  },
+  {
+    "objectID": "reports/emeral-ash-borer.html#damage-and-economic-impact",
+    "href": "reports/emeral-ash-borer.html#damage-and-economic-impact",
+    "title": "Emeral ash borer",
+    "section": "Damage and Economic Impact",
+    "text": "Damage and Economic Impact"
+  },
+  {
+    "objectID": "reports/emeral-ash-borer.html#management-strategies",
+    "href": "reports/emeral-ash-borer.html#management-strategies",
+    "title": "Emeral ash borer",
+    "section": "Management Strategies",
+    "text": "Management Strategies"
+  },
+  {
+    "objectID": "reports/emeral-ash-borer.html#analyses",
+    "href": "reports/emeral-ash-borer.html#analyses",
+    "title": "Emeral ash borer",
+    "section": "Analyses",
+    "text": "Analyses"
+  },
+  {
+    "objectID": "reports/emeral-ash-borer.html#references",
+    "href": "reports/emeral-ash-borer.html#references",
+    "title": "Emeral ash borer",
+    "section": "References",
+    "text": "References"
+  },
+  {
+    "objectID": "reports/common-or-cotton-cutworm.html",
+    "href": "reports/common-or-cotton-cutworm.html",
+    "title": "Common or Cotton cutworm",
+    "section": "",
+    "text": "Download report as PDF"
+  },
+  {
+    "objectID": "reports/common-or-cotton-cutworm.html#overview",
+    "href": "reports/common-or-cotton-cutworm.html#overview",
+    "title": "Common or Cotton cutworm",
+    "section": "Overview",
+    "text": "Overview"
+  },
+  {
+    "objectID": "reports/common-or-cotton-cutworm.html#identification",
+    "href": "reports/common-or-cotton-cutworm.html#identification",
+    "title": "Common or Cotton cutworm",
+    "section": "Identification",
+    "text": "Identification"
+  },
+  {
+    "objectID": "reports/common-or-cotton-cutworm.html#host-plants",
+    "href": "reports/common-or-cotton-cutworm.html#host-plants",
+    "title": "Common or Cotton cutworm",
+    "section": "Host Plants",
+    "text": "Host Plants"
+  },
+  {
+    "objectID": "reports/common-or-cotton-cutworm.html#distribution",
+    "href": "reports/common-or-cotton-cutworm.html#distribution",
+    "title": "Common or Cotton cutworm",
+    "section": "Distribution",
+    "text": "Distribution"
+  },
+  {
+    "objectID": "reports/common-or-cotton-cutworm.html#life-cycle",
+    "href": "reports/common-or-cotton-cutworm.html#life-cycle",
+    "title": "Common or Cotton cutworm",
+    "section": "Life Cycle",
+    "text": "Life Cycle"
+  },
+  {
+    "objectID": "reports/common-or-cotton-cutworm.html#damage-and-economic-impact",
+    "href": "reports/common-or-cotton-cutworm.html#damage-and-economic-impact",
+    "title": "Common or Cotton cutworm",
+    "section": "Damage and Economic Impact",
+    "text": "Damage and Economic Impact"
+  },
+  {
+    "objectID": "reports/common-or-cotton-cutworm.html#management-strategies",
+    "href": "reports/common-or-cotton-cutworm.html#management-strategies",
+    "title": "Common or Cotton cutworm",
+    "section": "Management Strategies",
+    "text": "Management Strategies"
+  },
+  {
+    "objectID": "reports/common-or-cotton-cutworm.html#analyses",
+    "href": "reports/common-or-cotton-cutworm.html#analyses",
+    "title": "Common or Cotton cutworm",
+    "section": "Analyses",
+    "text": "Analyses"
+  },
+  {
+    "objectID": "reports/common-or-cotton-cutworm.html#references",
+    "href": "reports/common-or-cotton-cutworm.html#references",
+    "title": "Common or Cotton cutworm",
+    "section": "References",
+    "text": "References"
+  },
+  {
+    "objectID": "reports/asiatic-rice-borer.html",
+    "href": "reports/asiatic-rice-borer.html",
+    "title": "Asiatic rice borer",
+    "section": "",
+    "text": "Download report as PDF"
+  },
+  {
+    "objectID": "reports/asiatic-rice-borer.html#overview",
+    "href": "reports/asiatic-rice-borer.html#overview",
+    "title": "Asiatic rice borer",
+    "section": "Overview",
+    "text": "Overview"
+  },
+  {
+    "objectID": "reports/asiatic-rice-borer.html#identification",
+    "href": "reports/asiatic-rice-borer.html#identification",
+    "title": "Asiatic rice borer",
+    "section": "Identification",
+    "text": "Identification"
+  },
+  {
+    "objectID": "reports/asiatic-rice-borer.html#host-plants",
+    "href": "reports/asiatic-rice-borer.html#host-plants",
+    "title": "Asiatic rice borer",
+    "section": "Host Plants",
+    "text": "Host Plants"
+  },
+  {
+    "objectID": "reports/asiatic-rice-borer.html#distribution",
+    "href": "reports/asiatic-rice-borer.html#distribution",
+    "title": "Asiatic rice borer",
+    "section": "Distribution",
+    "text": "Distribution"
+  },
+  {
+    "objectID": "reports/asiatic-rice-borer.html#life-cycle",
+    "href": "reports/asiatic-rice-borer.html#life-cycle",
+    "title": "Asiatic rice borer",
+    "section": "Life Cycle",
+    "text": "Life Cycle"
+  },
+  {
+    "objectID": "reports/asiatic-rice-borer.html#damage-and-economic-impact",
+    "href": "reports/asiatic-rice-borer.html#damage-and-economic-impact",
+    "title": "Asiatic rice borer",
+    "section": "Damage and Economic Impact",
+    "text": "Damage and Economic Impact"
+  },
+  {
+    "objectID": "reports/asiatic-rice-borer.html#management-strategies",
+    "href": "reports/asiatic-rice-borer.html#management-strategies",
+    "title": "Asiatic rice borer",
+    "section": "Management Strategies",
+    "text": "Management Strategies"
+  },
+  {
+    "objectID": "reports/asiatic-rice-borer.html#analyses",
+    "href": "reports/asiatic-rice-borer.html#analyses",
+    "title": "Asiatic rice borer",
+    "section": "Analyses",
+    "text": "Analyses"
+  },
+  {
+    "objectID": "reports/asiatic-rice-borer.html#references",
+    "href": "reports/asiatic-rice-borer.html#references",
+    "title": "Asiatic rice borer",
+    "section": "References",
+    "text": "References"
+  },
+  {
+    "objectID": "reports/egyptian-cottonworm.html",
+    "href": "reports/egyptian-cottonworm.html",
+    "title": "Egyptian cottonworm",
+    "section": "",
+    "text": "Download report as PDF"
+  },
+  {
+    "objectID": "reports/egyptian-cottonworm.html#overview",
+    "href": "reports/egyptian-cottonworm.html#overview",
+    "title": "Egyptian cottonworm",
+    "section": "Overview",
+    "text": "Overview"
+  },
+  {
+    "objectID": "reports/egyptian-cottonworm.html#identification",
+    "href": "reports/egyptian-cottonworm.html#identification",
+    "title": "Egyptian cottonworm",
+    "section": "Identification",
+    "text": "Identification"
+  },
+  {
+    "objectID": "reports/egyptian-cottonworm.html#host-plants",
+    "href": "reports/egyptian-cottonworm.html#host-plants",
+    "title": "Egyptian cottonworm",
+    "section": "Host Plants",
+    "text": "Host Plants"
+  },
+  {
+    "objectID": "reports/egyptian-cottonworm.html#distribution",
+    "href": "reports/egyptian-cottonworm.html#distribution",
+    "title": "Egyptian cottonworm",
+    "section": "Distribution",
+    "text": "Distribution"
+  },
+  {
+    "objectID": "reports/egyptian-cottonworm.html#life-cycle",
+    "href": "reports/egyptian-cottonworm.html#life-cycle",
+    "title": "Egyptian cottonworm",
+    "section": "Life Cycle",
+    "text": "Life Cycle"
+  },
+  {
+    "objectID": "reports/egyptian-cottonworm.html#damage-and-economic-impact",
+    "href": "reports/egyptian-cottonworm.html#damage-and-economic-impact",
+    "title": "Egyptian cottonworm",
+    "section": "Damage and Economic Impact",
+    "text": "Damage and Economic Impact"
+  },
+  {
+    "objectID": "reports/egyptian-cottonworm.html#management-strategies",
+    "href": "reports/egyptian-cottonworm.html#management-strategies",
+    "title": "Egyptian cottonworm",
+    "section": "Management Strategies",
+    "text": "Management Strategies"
+  },
+  {
+    "objectID": "reports/egyptian-cottonworm.html#analyses",
+    "href": "reports/egyptian-cottonworm.html#analyses",
+    "title": "Egyptian cottonworm",
+    "section": "Analyses",
+    "text": "Analyses"
+  },
+  {
+    "objectID": "reports/egyptian-cottonworm.html#references",
+    "href": "reports/egyptian-cottonworm.html#references",
+    "title": "Egyptian cottonworm",
+    "section": "References",
+    "text": "References"
+  },
+  {
+    "objectID": "reports/false-codling-moth.html",
+    "href": "reports/false-codling-moth.html",
+    "title": "False codling moth",
+    "section": "",
+    "text": "Download report as PDF"
+  },
+  {
+    "objectID": "reports/false-codling-moth.html#overview",
+    "href": "reports/false-codling-moth.html#overview",
+    "title": "False codling moth",
+    "section": "Overview",
+    "text": "Overview"
+  },
+  {
+    "objectID": "reports/false-codling-moth.html#identification",
+    "href": "reports/false-codling-moth.html#identification",
+    "title": "False codling moth",
+    "section": "Identification",
+    "text": "Identification"
+  },
+  {
+    "objectID": "reports/false-codling-moth.html#host-plants",
+    "href": "reports/false-codling-moth.html#host-plants",
+    "title": "False codling moth",
+    "section": "Host Plants",
+    "text": "Host Plants"
+  },
+  {
+    "objectID": "reports/false-codling-moth.html#distribution",
+    "href": "reports/false-codling-moth.html#distribution",
+    "title": "False codling moth",
+    "section": "Distribution",
+    "text": "Distribution"
+  },
+  {
+    "objectID": "reports/false-codling-moth.html#life-cycle",
+    "href": "reports/false-codling-moth.html#life-cycle",
+    "title": "False codling moth",
+    "section": "Life Cycle",
+    "text": "Life Cycle"
+  },
+  {
+    "objectID": "reports/false-codling-moth.html#damage-and-economic-impact",
+    "href": "reports/false-codling-moth.html#damage-and-economic-impact",
+    "title": "False codling moth",
+    "section": "Damage and Economic Impact",
+    "text": "Damage and Economic Impact"
+  },
+  {
+    "objectID": "reports/false-codling-moth.html#management-strategies",
+    "href": "reports/false-codling-moth.html#management-strategies",
+    "title": "False codling moth",
+    "section": "Management Strategies",
+    "text": "Management Strategies"
+  },
+  {
+    "objectID": "reports/false-codling-moth.html#analyses",
+    "href": "reports/false-codling-moth.html#analyses",
+    "title": "False codling moth",
+    "section": "Analyses",
+    "text": "Analyses"
+  },
+  {
+    "objectID": "reports/false-codling-moth.html#references",
+    "href": "reports/false-codling-moth.html#references",
+    "title": "False codling moth",
+    "section": "References",
+    "text": "References"
+  },
+  {
+    "objectID": "reports/japanese-beetle.html",
+    "href": "reports/japanese-beetle.html",
+    "title": "Japanese beetle",
+    "section": "",
+    "text": "Download report as PDF"
+  },
+  {
+    "objectID": "reports/japanese-beetle.html#overview",
+    "href": "reports/japanese-beetle.html#overview",
+    "title": "Japanese beetle",
+    "section": "Overview",
+    "text": "Overview"
+  },
+  {
+    "objectID": "reports/japanese-beetle.html#identification",
+    "href": "reports/japanese-beetle.html#identification",
+    "title": "Japanese beetle",
+    "section": "Identification",
+    "text": "Identification"
+  },
+  {
+    "objectID": "reports/japanese-beetle.html#host-plants",
+    "href": "reports/japanese-beetle.html#host-plants",
+    "title": "Japanese beetle",
+    "section": "Host Plants",
+    "text": "Host Plants"
+  },
+  {
+    "objectID": "reports/japanese-beetle.html#distribution",
+    "href": "reports/japanese-beetle.html#distribution",
+    "title": "Japanese beetle",
+    "section": "Distribution",
+    "text": "Distribution"
+  },
+  {
+    "objectID": "reports/japanese-beetle.html#life-cycle",
+    "href": "reports/japanese-beetle.html#life-cycle",
+    "title": "Japanese beetle",
+    "section": "Life Cycle",
+    "text": "Life Cycle"
+  },
+  {
+    "objectID": "reports/japanese-beetle.html#damage-and-economic-impact",
+    "href": "reports/japanese-beetle.html#damage-and-economic-impact",
+    "title": "Japanese beetle",
+    "section": "Damage and Economic Impact",
+    "text": "Damage and Economic Impact"
+  },
+  {
+    "objectID": "reports/japanese-beetle.html#management-strategies",
+    "href": "reports/japanese-beetle.html#management-strategies",
+    "title": "Japanese beetle",
+    "section": "Management Strategies",
+    "text": "Management Strategies"
+  },
+  {
+    "objectID": "reports/japanese-beetle.html#analyses",
+    "href": "reports/japanese-beetle.html#analyses",
+    "title": "Japanese beetle",
+    "section": "Analyses",
+    "text": "Analyses"
+  },
+  {
+    "objectID": "reports/japanese-beetle.html#references",
+    "href": "reports/japanese-beetle.html#references",
+    "title": "Japanese beetle",
+    "section": "References",
+    "text": "References"
+  },
+  {
+    "objectID": "reports/light-brown-apple-moth.html",
+    "href": "reports/light-brown-apple-moth.html",
+    "title": "Light brown apple moth",
+    "section": "",
+    "text": "Download report as PDF"
+  },
+  {
+    "objectID": "reports/light-brown-apple-moth.html#overview",
+    "href": "reports/light-brown-apple-moth.html#overview",
+    "title": "Light brown apple moth",
+    "section": "Overview",
+    "text": "Overview\nNative to Australia, the light brown apple moth (LBAM), Epiphyas postvittana (Walker) (Lepidoptera: Tortricidae), is invasive in the United States, the United Kingdom, New Zealand, New Caledonia, and the Azores, with multiple interceptions reported in other countries (Danthanarayana 1975, EPPO 2024, Zhang et al. 2024). The highly polyphagous pest has over 500 reported host plants, though its economic impacts have been greatest for apple, pears, and grapes (Brinkerhoff 2011).\n\nDue to a lack of diapause or other synchronizing factors, such as photoperiod or temperature, LBAM exhibits overlapping generations (Sullivan et al. 2014, Buergi et al. 2011). LBAM infestation can result in market access issues due to the risks of transporting live larvae on a large variety of host plants (Suckling et al. 2014). The pests&lt;92&gt;s distribution in the U.S. is limited to Hawaii, where it was first reported in 1893, and in California, where it was first confirmed in 2007 and now persists mainly around San Francisco and along the coast (Zimmerman 1978, Suckling and Brockerhoff 2010, Barker et al. 2020)."
+  },
+  {
+    "objectID": "reports/light-brown-apple-moth.html#identification",
+    "href": "reports/light-brown-apple-moth.html#identification",
+    "title": "Light brown apple moth",
+    "section": "Identification",
+    "text": "Identification"
+  },
+  {
+    "objectID": "reports/light-brown-apple-moth.html#host-plants",
+    "href": "reports/light-brown-apple-moth.html#host-plants",
+    "title": "Light brown apple moth",
+    "section": "Host Plants",
+    "text": "Host Plants"
+  },
+  {
+    "objectID": "reports/light-brown-apple-moth.html#distribution",
+    "href": "reports/light-brown-apple-moth.html#distribution",
+    "title": "Light brown apple moth",
+    "section": "Distribution",
+    "text": "Distribution"
+  },
+  {
+    "objectID": "reports/light-brown-apple-moth.html#life-cycle",
+    "href": "reports/light-brown-apple-moth.html#life-cycle",
+    "title": "Light brown apple moth",
+    "section": "Life Cycle",
+    "text": "Life Cycle"
+  },
+  {
+    "objectID": "reports/light-brown-apple-moth.html#damage-and-economic-impact",
+    "href": "reports/light-brown-apple-moth.html#damage-and-economic-impact",
+    "title": "Light brown apple moth",
+    "section": "Damage and Economic Impact",
+    "text": "Damage and Economic Impact"
+  },
+  {
+    "objectID": "reports/light-brown-apple-moth.html#management-strategies",
+    "href": "reports/light-brown-apple-moth.html#management-strategies",
+    "title": "Light brown apple moth",
+    "section": "Management Strategies",
+    "text": "Management Strategies"
+  },
+  {
+    "objectID": "reports/light-brown-apple-moth.html#analyses",
+    "href": "reports/light-brown-apple-moth.html#analyses",
+    "title": "Light brown apple moth",
+    "section": "Analyses",
+    "text": "Analyses"
+  },
+  {
+    "objectID": "reports/light-brown-apple-moth.html#references",
+    "href": "reports/light-brown-apple-moth.html#references",
+    "title": "Light brown apple moth",
+    "section": "References",
+    "text": "References"
+  },
+  {
+    "objectID": "reports/old-world-bollworm.html",
+    "href": "reports/old-world-bollworm.html",
+    "title": "Old world bollworm",
+    "section": "",
+    "text": "Download report as PDF"
+  },
+  {
+    "objectID": "reports/old-world-bollworm.html#overview",
+    "href": "reports/old-world-bollworm.html#overview",
+    "title": "Old world bollworm",
+    "section": "Overview",
+    "text": "Overview"
+  },
+  {
+    "objectID": "reports/old-world-bollworm.html#identification",
+    "href": "reports/old-world-bollworm.html#identification",
+    "title": "Old world bollworm",
+    "section": "Identification",
+    "text": "Identification"
+  },
+  {
+    "objectID": "reports/old-world-bollworm.html#host-plants",
+    "href": "reports/old-world-bollworm.html#host-plants",
+    "title": "Old world bollworm",
+    "section": "Host Plants",
+    "text": "Host Plants"
+  },
+  {
+    "objectID": "reports/old-world-bollworm.html#distribution",
+    "href": "reports/old-world-bollworm.html#distribution",
+    "title": "Old world bollworm",
+    "section": "Distribution",
+    "text": "Distribution"
+  },
+  {
+    "objectID": "reports/old-world-bollworm.html#life-cycle",
+    "href": "reports/old-world-bollworm.html#life-cycle",
+    "title": "Old world bollworm",
+    "section": "Life Cycle",
+    "text": "Life Cycle"
+  },
+  {
+    "objectID": "reports/old-world-bollworm.html#damage-and-economic-impact",
+    "href": "reports/old-world-bollworm.html#damage-and-economic-impact",
+    "title": "Old world bollworm",
+    "section": "Damage and Economic Impact",
+    "text": "Damage and Economic Impact"
+  },
+  {
+    "objectID": "reports/old-world-bollworm.html#management-strategies",
+    "href": "reports/old-world-bollworm.html#management-strategies",
+    "title": "Old world bollworm",
+    "section": "Management Strategies",
+    "text": "Management Strategies"
+  },
+  {
+    "objectID": "reports/old-world-bollworm.html#analyses",
+    "href": "reports/old-world-bollworm.html#analyses",
+    "title": "Old world bollworm",
+    "section": "Analyses",
+    "text": "Analyses"
+  },
+  {
+    "objectID": "reports/old-world-bollworm.html#references",
+    "href": "reports/old-world-bollworm.html#references",
+    "title": "Old world bollworm",
+    "section": "References",
+    "text": "References"
+  },
+  {
+    "objectID": "reports/silver-y-moth.html",
+    "href": "reports/silver-y-moth.html",
+    "title": "Silver Y moth",
+    "section": "",
+    "text": "Download report as PDF"
+  },
+  {
+    "objectID": "reports/silver-y-moth.html#overview",
+    "href": "reports/silver-y-moth.html#overview",
+    "title": "Silver Y moth",
+    "section": "Overview",
+    "text": "Overview"
+  },
+  {
+    "objectID": "reports/silver-y-moth.html#identification",
+    "href": "reports/silver-y-moth.html#identification",
+    "title": "Silver Y moth",
+    "section": "Identification",
+    "text": "Identification"
+  },
+  {
+    "objectID": "reports/silver-y-moth.html#host-plants",
+    "href": "reports/silver-y-moth.html#host-plants",
+    "title": "Silver Y moth",
+    "section": "Host Plants",
+    "text": "Host Plants"
+  },
+  {
+    "objectID": "reports/silver-y-moth.html#distribution",
+    "href": "reports/silver-y-moth.html#distribution",
+    "title": "Silver Y moth",
+    "section": "Distribution",
+    "text": "Distribution"
+  },
+  {
+    "objectID": "reports/silver-y-moth.html#life-cycle",
+    "href": "reports/silver-y-moth.html#life-cycle",
+    "title": "Silver Y moth",
+    "section": "Life Cycle",
+    "text": "Life Cycle"
+  },
+  {
+    "objectID": "reports/silver-y-moth.html#damage-and-economic-impact",
+    "href": "reports/silver-y-moth.html#damage-and-economic-impact",
+    "title": "Silver Y moth",
+    "section": "Damage and Economic Impact",
+    "text": "Damage and Economic Impact"
+  },
+  {
+    "objectID": "reports/silver-y-moth.html#management-strategies",
+    "href": "reports/silver-y-moth.html#management-strategies",
+    "title": "Silver Y moth",
+    "section": "Management Strategies",
+    "text": "Management Strategies"
+  },
+  {
+    "objectID": "reports/silver-y-moth.html#analyses",
+    "href": "reports/silver-y-moth.html#analyses",
+    "title": "Silver Y moth",
+    "section": "Analyses",
+    "text": "Analyses"
+  },
+  {
+    "objectID": "reports/silver-y-moth.html#references",
+    "href": "reports/silver-y-moth.html#references",
+    "title": "Silver Y moth",
+    "section": "References",
+    "text": "References"
+  },
+  {
+    "objectID": "reports/spotted-lanternfly.html",
+    "href": "reports/spotted-lanternfly.html",
+    "title": "Spotted lanternfly",
+    "section": "",
+    "text": "Download report as PDF"
+  },
+  {
+    "objectID": "reports/spotted-lanternfly.html#overview",
+    "href": "reports/spotted-lanternfly.html#overview",
+    "title": "Spotted lanternfly",
+    "section": "Overview",
+    "text": "Overview\nThe spotted lanternfly (SLF), Lycorma delicatula (White) (Hemiptera: Fulgoridae), is a highly polyphagous planthopper that feeds on a wide variety of agricultural and nonagricultural plants, including grape vines, fruit and walnut trees, as well as ornamental trees (Chu 1930, Barringer and Ciafr&lt;e9&gt; 2020, EPPO 2021). SLF adults damage plants directly by feeding on plant sap, and&lt;a0&gt; sooty mold caused by excrement can impede photosynthesis and attract additional pests (Dara et al. 2015, Urban and Leach 2023).\n\nNative to China, SLF was first detected in the U.S. in 2014 in Pennsylvania and has since spread to at least 20 eastern states (Urban and Leach 2023, NYSIPM 2025). Over the past 20 years, it has also become a major pest in South Korea (Han et al. 2008). Introduced populations of tree-of-heaven [Ailanthus altissima (Mill.) Swingle], SLF&lt;92&gt;s preferred host plant, has facilitated the invasion of the pest (Barringer and Ciafr&lt;e9&gt; 2020). In suburban landscapes, SLF can become a nuisance as thousands of adults may swarm on trees (Urban and Leach 2023).&lt;a0&gt;"
+  },
+  {
+    "objectID": "reports/spotted-lanternfly.html#identification",
+    "href": "reports/spotted-lanternfly.html#identification",
+    "title": "Spotted lanternfly",
+    "section": "Identification",
+    "text": "Identification"
+  },
+  {
+    "objectID": "reports/spotted-lanternfly.html#host-plants",
+    "href": "reports/spotted-lanternfly.html#host-plants",
+    "title": "Spotted lanternfly",
+    "section": "Host Plants",
+    "text": "Host Plants"
+  },
+  {
+    "objectID": "reports/spotted-lanternfly.html#distribution",
+    "href": "reports/spotted-lanternfly.html#distribution",
+    "title": "Spotted lanternfly",
+    "section": "Distribution",
+    "text": "Distribution"
+  },
+  {
+    "objectID": "reports/spotted-lanternfly.html#life-cycle",
+    "href": "reports/spotted-lanternfly.html#life-cycle",
+    "title": "Spotted lanternfly",
+    "section": "Life Cycle",
+    "text": "Life Cycle"
+  },
+  {
+    "objectID": "reports/spotted-lanternfly.html#damage-and-economic-impact",
+    "href": "reports/spotted-lanternfly.html#damage-and-economic-impact",
+    "title": "Spotted lanternfly",
+    "section": "Damage and Economic Impact",
+    "text": "Damage and Economic Impact"
+  },
+  {
+    "objectID": "reports/spotted-lanternfly.html#management-strategies",
+    "href": "reports/spotted-lanternfly.html#management-strategies",
+    "title": "Spotted lanternfly",
+    "section": "Management Strategies",
+    "text": "Management Strategies"
+  },
+  {
+    "objectID": "reports/spotted-lanternfly.html#analyses",
+    "href": "reports/spotted-lanternfly.html#analyses",
+    "title": "Spotted lanternfly",
+    "section": "Analyses",
+    "text": "Analyses"
+  },
+  {
+    "objectID": "reports/spotted-lanternfly.html#references",
+    "href": "reports/spotted-lanternfly.html#references",
+    "title": "Spotted lanternfly",
+    "section": "References",
+    "text": "References"
+  },
+  {
+    "objectID": "reports/tomato-leaf-miner.html",
+    "href": "reports/tomato-leaf-miner.html",
+    "title": "Tomato leaf miner",
+    "section": "",
+    "text": "Download report as PDF"
+  },
+  {
+    "objectID": "reports/tomato-leaf-miner.html#overview",
+    "href": "reports/tomato-leaf-miner.html#overview",
+    "title": "Tomato leaf miner",
+    "section": "Overview",
+    "text": "Overview"
+  },
+  {
+    "objectID": "reports/tomato-leaf-miner.html#identification",
+    "href": "reports/tomato-leaf-miner.html#identification",
+    "title": "Tomato leaf miner",
+    "section": "Identification",
+    "text": "Identification"
+  },
+  {
+    "objectID": "reports/tomato-leaf-miner.html#host-plants",
+    "href": "reports/tomato-leaf-miner.html#host-plants",
+    "title": "Tomato leaf miner",
+    "section": "Host Plants",
+    "text": "Host Plants"
+  },
+  {
+    "objectID": "reports/tomato-leaf-miner.html#distribution",
+    "href": "reports/tomato-leaf-miner.html#distribution",
+    "title": "Tomato leaf miner",
+    "section": "Distribution",
+    "text": "Distribution"
+  },
+  {
+    "objectID": "reports/tomato-leaf-miner.html#life-cycle",
+    "href": "reports/tomato-leaf-miner.html#life-cycle",
+    "title": "Tomato leaf miner",
+    "section": "Life Cycle",
+    "text": "Life Cycle"
+  },
+  {
+    "objectID": "reports/tomato-leaf-miner.html#damage-and-economic-impact",
+    "href": "reports/tomato-leaf-miner.html#damage-and-economic-impact",
+    "title": "Tomato leaf miner",
+    "section": "Damage and Economic Impact",
+    "text": "Damage and Economic Impact"
+  },
+  {
+    "objectID": "reports/tomato-leaf-miner.html#management-strategies",
+    "href": "reports/tomato-leaf-miner.html#management-strategies",
+    "title": "Tomato leaf miner",
+    "section": "Management Strategies",
+    "text": "Management Strategies"
+  },
+  {
+    "objectID": "reports/tomato-leaf-miner.html#analyses",
+    "href": "reports/tomato-leaf-miner.html#analyses",
+    "title": "Tomato leaf miner",
+    "section": "Analyses",
+    "text": "Analyses"
+  },
+  {
+    "objectID": "reports/tomato-leaf-miner.html#references",
+    "href": "reports/tomato-leaf-miner.html#references",
+    "title": "Tomato leaf miner",
+    "section": "References",
+    "text": "References"
+  },
+  {
+    "objectID": "reports/asian-longhorned-beetle.html#ddrp-and-mk-trends-report",
+    "href": "reports/asian-longhorned-beetle.html#ddrp-and-mk-trends-report",
+    "title": "Asian longhorned beetle",
+    "section": "DDRP and MK trends report",
+    "text": "DDRP and MK trends report"
+  },
+  {
+    "objectID": "reports/sunn-pest.html#ddrp-and-mk-trends-report",
+    "href": "reports/sunn-pest.html#ddrp-and-mk-trends-report",
+    "title": "Sunn pest",
+    "section": "DDRP and MK trends report",
+    "text": "DDRP and MK trends report"
+  },
+  {
+    "objectID": "reports/small-tomato-borer.html#ddrp-and-mk-trends-report",
+    "href": "reports/small-tomato-borer.html#ddrp-and-mk-trends-report",
+    "title": "Small tomato borer",
+    "section": "DDRP and MK trends report",
+    "text": "DDRP and MK trends report"
+  },
+  {
+    "objectID": "reports/pine-tree-lappet-moth.html#ddrp-and-mk-trends-report",
+    "href": "reports/pine-tree-lappet-moth.html#ddrp-and-mk-trends-report",
+    "title": "Pine-tree lappet moth",
+    "section": "DDRP and MK trends report",
+    "text": "DDRP and MK trends report"
+  },
+  {
+    "objectID": "reports/oak-ambrosia-beetle.html#ddrp-and-mk-trends-report",
+    "href": "reports/oak-ambrosia-beetle.html#ddrp-and-mk-trends-report",
+    "title": "Oak ambrosia beetle",
+    "section": "DDRP and MK trends report",
+    "text": "DDRP and MK trends report"
+  },
+  {
+    "objectID": "reports/japanese-pine-sawyer-beetle.html#ddrp-and-mk-trends-report",
+    "href": "reports/japanese-pine-sawyer-beetle.html#ddrp-and-mk-trends-report",
+    "title": "Japanese pine sawyer beetle",
+    "section": "DDRP and MK trends report",
+    "text": "DDRP and MK trends report"
+  },
+  {
+    "objectID": "reports/honeydew-moth.html#ddrp-and-mk-trends-report",
+    "href": "reports/honeydew-moth.html#ddrp-and-mk-trends-report",
+    "title": "Honeydew moth",
+    "section": "DDRP and MK trends report",
+    "text": "DDRP and MK trends report"
+  },
+  {
+    "objectID": "reports/emerald-ash-borer.html",
+    "href": "reports/emerald-ash-borer.html",
+    "title": "Emerald ash borer",
+    "section": "",
+    "text": "Download report as PDF"
+  },
+  {
+    "objectID": "reports/emerald-ash-borer.html#overview",
+    "href": "reports/emerald-ash-borer.html#overview",
+    "title": "Emerald ash borer",
+    "section": "Overview",
+    "text": "Overview\nThe emerald ash borer (EAB), Agrilus planipennis Fairmaire (Coleoptera: Buprestidae), is a flat-headed, wood-boring beetle native to eastern Asia that almost exclusively requires ash trees (Fraxinus spp.) to complete its life cycle (Poland et al. 2015, USDA 2025). It was first discovered in North America in 2002 in Michigan and Ontario, though it likely had entered Michigan in the early to mid-1990s (Siegert et al. 2014). EAB is now present in 37 U.S. states and six Canadian provinces (EPPO 2025, USDA-APHIS 2025). Upon hatching, eggs laid by adult beetles in ash bark crevices burrow into the tree to feed on the inner phloem, outer xylem, and cambium, where young larvae or pre-pupae overwinter in serpentine larval galleries (Tluczek et al. 2011, Poland et al. 2015). This feeding usually results in the death of the tree within about six years (Knight et al. 2013). EAB&lt;92&gt;s cryptic nature, in which all life stages except for the adult beetle are inside of trees, makes early detection of this pest extremely difficult (Haack et al. 2002, USDA-APHIS 2025). \n\nAll North American ash species are vulnerable to EAB, though blue ash (F. quadrangulata Michaux) appears to be less preferred (Poland et al. 2015). In its native range, EAB generally attacks trees that are already stressed (reviewed by Tluczek et al. 2011). In North America, it attacks both healthy and stressed trees, though stressed trees produce higher numbers of adults (Poland and McCullough 2006, Tluczek et al. 2011). White fringetree [Chionanthus virginicus L. (Oleaceae)], and olive [Olea europaea L. (Oleaceae)], both of which are in the same family as Fraxinus spp., are possible hosts for EAB; however, insects may exhibit higher mortality rates on these species (Rutledge and Arango-Velez 2017, Peterson and Cipollini 2020). The financial impact of EAB in the U.S. is estimated to be in the billions of dollars (Aukema et al. 2011). Additionally, the widespread loss of ash trees has resulted in decreased biodiversity and lost ecosystem services (Schrader et al. 2021)."
+  },
+  {
+    "objectID": "reports/emerald-ash-borer.html#identification",
+    "href": "reports/emerald-ash-borer.html#identification",
+    "title": "Emerald ash borer",
+    "section": "Identification",
+    "text": "Identification"
+  },
+  {
+    "objectID": "reports/emerald-ash-borer.html#host-plants",
+    "href": "reports/emerald-ash-borer.html#host-plants",
+    "title": "Emerald ash borer",
+    "section": "Host Plants",
+    "text": "Host Plants"
+  },
+  {
+    "objectID": "reports/emerald-ash-borer.html#distribution",
+    "href": "reports/emerald-ash-borer.html#distribution",
+    "title": "Emerald ash borer",
+    "section": "Distribution",
+    "text": "Distribution"
+  },
+  {
+    "objectID": "reports/emerald-ash-borer.html#life-cycle",
+    "href": "reports/emerald-ash-borer.html#life-cycle",
+    "title": "Emerald ash borer",
+    "section": "Life Cycle",
+    "text": "Life Cycle"
+  },
+  {
+    "objectID": "reports/emerald-ash-borer.html#damage-and-economic-impact",
+    "href": "reports/emerald-ash-borer.html#damage-and-economic-impact",
+    "title": "Emerald ash borer",
+    "section": "Damage and Economic Impact",
+    "text": "Damage and Economic Impact"
+  },
+  {
+    "objectID": "reports/emerald-ash-borer.html#management-strategies",
+    "href": "reports/emerald-ash-borer.html#management-strategies",
+    "title": "Emerald ash borer",
+    "section": "Management Strategies",
+    "text": "Management Strategies"
+  },
+  {
+    "objectID": "reports/emerald-ash-borer.html#ddrp-and-mk-trends-report",
+    "href": "reports/emerald-ash-borer.html#ddrp-and-mk-trends-report",
+    "title": "Emerald ash borer",
+    "section": "DDRP and MK trends report",
+    "text": "DDRP and MK trends report"
+  },
+  {
+    "objectID": "reports/emerald-ash-borer.html#references",
+    "href": "reports/emerald-ash-borer.html#references",
+    "title": "Emerald ash borer",
+    "section": "References",
+    "text": "References"
+  },
+  {
+    "objectID": "reports/egyptian-cottonworm.html#ddrp-and-mk-trends-report",
+    "href": "reports/egyptian-cottonworm.html#ddrp-and-mk-trends-report",
+    "title": "Egyptian cottonworm",
+    "section": "DDRP and MK trends report",
+    "text": "DDRP and MK trends report"
+  },
+  {
+    "objectID": "reports/asiatic-rice-borer.html#ddrp-and-mk-trends-report",
+    "href": "reports/asiatic-rice-borer.html#ddrp-and-mk-trends-report",
+    "title": "Asiatic rice borer",
+    "section": "DDRP and MK trends report",
+    "text": "DDRP and MK trends report"
+  },
+  {
+    "objectID": "reports/common-or-cotton-cutworm.html#ddrp-and-mk-trends-report",
+    "href": "reports/common-or-cotton-cutworm.html#ddrp-and-mk-trends-report",
+    "title": "Common or Cotton cutworm",
+    "section": "DDRP and MK trends report",
+    "text": "DDRP and MK trends report"
+  },
+  {
+    "objectID": "reports/emeral-ash-borer.html#ddrp-and-mk-trends-report",
+    "href": "reports/emeral-ash-borer.html#ddrp-and-mk-trends-report",
+    "title": "Emeral ash borer",
+    "section": "DDRP and MK trends report",
+    "text": "DDRP and MK trends report"
+  },
+  {
+    "objectID": "reports/false-codling-moth.html#ddrp-and-mk-trends-report",
+    "href": "reports/false-codling-moth.html#ddrp-and-mk-trends-report",
+    "title": "False codling moth",
+    "section": "DDRP and MK trends report",
+    "text": "DDRP and MK trends report"
+  },
+  {
+    "objectID": "reports/japanese-beetle.html#ddrp-and-mk-trends-report",
+    "href": "reports/japanese-beetle.html#ddrp-and-mk-trends-report",
+    "title": "Japanese beetle",
+    "section": "DDRP and MK trends report",
+    "text": "DDRP and MK trends report"
+  },
+  {
+    "objectID": "reports/light-brown-apple-moth.html#ddrp-and-mk-trends-report",
+    "href": "reports/light-brown-apple-moth.html#ddrp-and-mk-trends-report",
+    "title": "Light brown apple moth",
+    "section": "DDRP and MK trends report",
+    "text": "DDRP and MK trends report"
+  },
+  {
+    "objectID": "reports/old-world-bollworm.html#ddrp-and-mk-trends-report",
+    "href": "reports/old-world-bollworm.html#ddrp-and-mk-trends-report",
+    "title": "Old world bollworm",
+    "section": "DDRP and MK trends report",
+    "text": "DDRP and MK trends report"
+  },
+  {
+    "objectID": "reports/silver-y-moth.html#ddrp-and-mk-trends-report",
+    "href": "reports/silver-y-moth.html#ddrp-and-mk-trends-report",
+    "title": "Silver Y moth",
+    "section": "DDRP and MK trends report",
+    "text": "DDRP and MK trends report"
+  },
+  {
+    "objectID": "reports/spotted-lanternfly.html#ddrp-and-mk-trends-report",
+    "href": "reports/spotted-lanternfly.html#ddrp-and-mk-trends-report",
+    "title": "Spotted lanternfly",
+    "section": "DDRP and MK trends report",
+    "text": "DDRP and MK trends report"
+  },
+  {
+    "objectID": "reports/tomato-leaf-miner.html#ddrp-and-mk-trends-report",
+    "href": "reports/tomato-leaf-miner.html#ddrp-and-mk-trends-report",
+    "title": "Tomato leaf miner",
+    "section": "DDRP and MK trends report",
+    "text": "DDRP and MK trends report"
+  }
+]

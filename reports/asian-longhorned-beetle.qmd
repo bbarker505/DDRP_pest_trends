@@ -1,0 +1,34 @@
+---
+title: "Asian longhorned beetle"
+description: "*Anoplophora glabripennis*"
+image: "images/placeholder.png"
+format:
+  html:
+    toc: true
+  pdf:
+    toc: true
+    number-sections: false
+---
+
+::: {.content-visible when-format="html"}
+<div style="text-align: left;">
+[Download report as PDF](index.pdf){.btn .btn-primary}
+</div>
+:::
+
+## Overview
+
+Native to Japan, the Japanese beetle (JPB), Popillia japonica Newman (Coleoptera: Scarabaeidae), is a highly polyphagous pest with more than 400 host plants, including food crops, fruit trees, turfgrass, and ornamental plants (Fleming 1972,<a0> EPPO 2020, Tayeh et al. 2023). Since its first U.S. detection in 1916 in New Jersey, the beetle has become widespread throughout the eastern and central U.S. as well as parts of eastern Canada (Dickerson and Weiss 1918, Fleming 1972, EPPO 2020, Althoff and Rice 2022). Outbreaks in Colorado and California were eradicated (Althoff and Rice 2022); however, JPB is established in a small number of locations in the Pacific Northwest, including in British Columbia, Washington, and Oregon (EPPO 2020, Stoven et al. 2021, Zhu et al. 2023). The pest is also present in parts of Europe and eastern Russia and has been reported in India (India Biodiversity Portal 2016, EPPO 2020).
+    
+The beetle is univoltine or semivoltine (2-year life cycle) depending on local climatic conditions (Fleming 1972, Vittum 1986, EPPO 2020). Larvae overwinter as second or third instars in the soil, typically beneath managed turfgrass areas like lawns, pasture, and golf courses. Total associated costs of JPB in the U.S. are estimated at $460 million annually, with $234 million a year spent on control and turf replacement costs (Fleming 1972, USDA-APHIS 2015).<a0>
+
+## Identification
+
+## Damage and Economic Impact
+
+## Management Strategies
+
+## DDRP and MK trends report
+
+## References
+

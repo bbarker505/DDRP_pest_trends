@@ -1,21 +1,29 @@
-# ---- ABOUT -------------------------------------------------------------------
+# ----- ABOUT ------------------------------------------------------------------
 
-# Contains preamble for Shiny that doesn't need to be in the UI or server
-
-
-
-
-
-# ----- MISCELLANEOUS ----------------------------------------------------------
+# Contains code for the map in Quarto
 
 
 
 
 
+# ----- SET-UP -----------------------------------------------------------------
+
+# -- RUN NECESSARY STUFF I HAVE IN OTHER FILES --
+
+# Packages
+source("packages.R")
+
+# Import custom functions
+source("functions.R")
 
 
+# -- RANDOM STUFF --
 
-# ----- SPATIAL FEATURES -------------------------------------------------------
+# Shows full error message (if there is one) on app
+options(shiny.sanitize.errors = FALSE)
+
+
+# -- sHAPEFILE STUFF --
 
 # Shapefile of county boundaries (to overlay map)
 county_sf <- st_read("./features/counties_CONUS.shp")
@@ -37,11 +45,7 @@ bounds <- list(
 )
 
 
-
-
-
-
-# ----- IMPORT MODEL OUTPUTS ----------------------------------------
+# -- RASTER STUFF --
 
 # File of all raster files
 raster_lookup <- read.csv("raster_lookup.csv")
@@ -57,19 +61,6 @@ files <- list.files(
   recursive = TRUE       
 )
 
-
-
-
-
-# ----- OTHER DISPLAY COMPONENTS -----------------------------------------------
-
-# For how variables are displayed in floating statistics panel
-variable_labels <- c(
-  Cold_Stress     = "Cold stress",
-  Heat_Stress     = "Heat stress",
-  First_egg_hatch = "1st egg hatch",
-  First_adult_emergence  = "1st adult emergence"
-)
 
 
 

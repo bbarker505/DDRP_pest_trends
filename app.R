@@ -189,7 +189,7 @@ ui <- page_navbar(
     # Citations and references
     div(
       class = "p-4 my-3",
-      h3(HTML("<b>Suggested citations and references</b>")),
+      h3(HTML("<b>References</b>")),
       
       tags$ul(
         tags$li("Barker, B. S., L. Coop, T. Wepprich, F. Grevstad, and G. Cook. 

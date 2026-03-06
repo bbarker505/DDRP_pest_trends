@@ -1,0 +1,34 @@
+---
+title: "Light brown apple moth"
+description: "*Epiphyas postvittana*"
+image: "images/placeholder.png"
+format:
+  html:
+    toc: true
+  pdf:
+    toc: true
+    number-sections: false
+---
+
+::: {.content-visible when-format="html"}
+<div style="text-align: left;">
+[Download report as PDF](index.pdf){.btn .btn-primary}
+</div>
+:::
+
+## Overview
+
+Native to Australia, the light brown apple moth (LBAM), Epiphyas postvittana (Walker) (Lepidoptera: Tortricidae), is invasive in the United States, the United Kingdom, New Zealand, New Caledonia, and the Azores, with multiple interceptions reported in other countries (Danthanarayana 1975, EPPO 2024, Zhang et al. 2024). The highly polyphagous pest has over 500 reported host plants, though its economic impacts have been greatest for apple, pears, and grapes (Brinkerhoff 2011).
+    
+Due to a lack of diapause or other synchronizing factors, such as photoperiod or temperature, LBAM exhibits overlapping generations (Sullivan et al. 2014, Buergi et al. 2011). LBAM infestation can result in market access issues due to the risks of transporting live larvae on a large variety of host plants (Suckling et al. 2014). The pests<92>s distribution in the U.S. is limited to Hawaii, where it was first reported in 1893, and in California, where it was first confirmed in 2007 and now persists mainly around San Francisco and along the coast (Zimmerman 1978, Suckling and Brockerhoff 2010, Barker et al. 2020).
+
+## Identification
+
+## Damage and Economic Impact
+
+## Management Strategies
+
+## DDRP and MK trends report
+
+## References
+

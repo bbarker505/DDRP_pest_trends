@@ -1,0 +1,12 @@
+---
+title: "Pest Reports"
+listing: 
+  contents: reports
+  type: grid
+  fields: 
+    - title
+    - description
+    - image
+format: html
+editor: visual
+---
