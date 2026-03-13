@@ -10,36 +10,29 @@
 
 # ----- Function to import outputs (rasters) -----------------------------------
 
-# The Mann-Kendall test has some values that we're interested in
+# 1 = Tau statistic
+# 2 = Sen's slope
+# 3 = p-value
 
-rast_import <- function(file_name, layer) {
+rast_import <- function(file, layer = 1) {
   
-  r <- rast(file_name)
+  key <- paste0(file, "_", layer)
   
-  # Select desired layer
-  r <- r[[layer]]
+  if (!exists(key, envir = .raster_cache)) {
+    
+    # Select layer
+    r <- terra::rast(file)[[layer]]
+    
+    # Reproject to WGS84
+    r <- project(r, "EPSG:4326")
+    
+    assign(key, r, envir = .raster_cache)
+    
+  }
   
-  # Reproject to WGS84
-  r <- project(r, "EPSG:4326")
-  
-  return(r)
-}
-
-rast_import_pval <- function(file_name) {
-  
-  # Pull in file as Spatraster
-  rast_stack <- rast(file_name)
-  
-  # Select layer containing p-values
-  rast <- rast_stack$Pval
-  
-  # Reproject to WGS84
-  rast <- project(rast, "EPSG:4326")
-  
-  return(rast)
+  get(key, envir = .raster_cache)
   
 }
-
 
 
 
@@ -79,37 +72,46 @@ produce_map <- function(rast, bounds, metric, legend_title) {
   
   layerID <- "Value"
   
+  # Palette to use
   pal_obj <- make_palette(rast, metric)
   
   pal    <- pal_obj$pal
   limits <- pal_obj$limits
   
+  # Leaflet options
   leaflet(
-    options = leafletOptions(
-      attributionControl = FALSE,
-      zoomControl = FALSE,
-      minZoom = 4.75,
-      zoomSnap = 0.25,
-      zoomDelta = 0.25,
-      maxBounds = list(
-        c(bounds$south, bounds$west),
-        c(bounds$north, bounds$east)
-      ),
-      maxBoundsViscosity = 1.0
-    )
-  ) %>%
+    options = leafletOptions(attributionControl = FALSE,
+                             zoomControl = FALSE,
+                             minZoom = 4.75,
+                             zoomSnap = 0.25,
+                             zoomDelta = 0.25,
+                             maxBounds = list(c(bounds$south, bounds$west),
+                                              c(bounds$north, bounds$east)
+                                              ),
+                             maxBoundsViscosity = 1.0
+                             )
+    ) %>%
+    
+    # Javascript settings
     htmlwidgets::onRender("
       function(el, x) {
         L.control.zoom({ position: 'topright' }).addTo(this);
       }
     ") %>%
+    
+    # Add background tiles
     addProviderTiles(providers$CartoDB.Voyager) %>%
+    
+    # Add our raster
     addRasterImage(
       rast,
       colors  = pal,
       opacity = 0.8,
-      layerId = layerID
+      layerId = layerID,
+      project = FALSE
     ) %>%
+    
+    # Add legend depending on statistic
     addControl(
       html = HTML(paste0(
         "<div style='background:white;padding:8px 10px;border-radius:6px;'>",
@@ -137,6 +139,8 @@ produce_map <- function(rast, bounds, metric, legend_title) {
       )),
       position = "bottomright"
     ) %>%
+    
+    # Add county lines
     addPolylines(
       data = county_sf,
       options = pathOptions(interactive = FALSE),
@@ -145,6 +149,8 @@ produce_map <- function(rast, bounds, metric, legend_title) {
       color  = "grey",
       weight = 1.25
     ) %>%
+    
+    # Add state lines
     addPolylines(data = us_states,
                  options = pathOptions(interactive = FALSE),
                  group  = "Counties",
@@ -152,11 +158,14 @@ produce_map <- function(rast, bounds, metric, legend_title) {
                  color  = "grey",
                  weight = 1.25
     ) %>%
-    setView(
-      lng  = mean(c(bounds$west, bounds$east)),
-      lat  = mean(c(bounds$south, bounds$north)),
-      zoom = 4.75
+    
+    # Set view
+    setView(lng  = mean(c(bounds$west, bounds$east)),
+            lat  = mean(c(bounds$south, bounds$north)),
+            zoom = 4.75
     ) %>%
+    
+    # Adds coordinates from hovering
     addMouseCoordinates
 }
 
@@ -170,6 +179,7 @@ produce_map <- function(rast, bounds, metric, legend_title) {
 # ----- Function to clear absolutePanel stats when pest is changed -------------
 
 clear_click_info <- function(output) {
+  output$clicked_years <- renderUI(NULL)
   output$clicked_latlon <- renderUI(NULL)
   output$clicked_value  <- renderUI(NULL)
   output$clicked_pval   <- renderUI(NULL)

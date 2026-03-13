@@ -1,172 +1,11 @@
----
-title: "DDRP Pest Maps"
-format: 
-  html:
-    page-layout: custom
-runtime: shiny
----
+#### * About ####
 
-```{r setup}
-# This is essentially the UI of the map tab
-# The "server" is in map_server.R
-
-# Set-up code
-source("setup.R")
-```
-
-```{r ui}
-#| panel: sidebar
-
-# Controls
+# Stores "server" information for maps.qmd page.
 
 
-# Words
-p("Please select an insect pest, and then available 
-      variables for mapping will be shown.")
+map_server <- function(input, output, session) {
 
-# Add space
-hr()
-
-# Words
-p("Due to a large amount of data being plotted, 
-      the map may take a few seconds to load.")
-
-# Add space
-hr()
-
-# Select pest
-selectInput(
-  "pest",
-  label = tags$span(h4(HTML("<b>Select insect pest</b>"))),
-  choices = c("", sort(unique(raster_lookup$common_name))),
-  selected = sort(unique(raster_lookup$common_name))[1]
-)
-
-# Select region filter
-selectInput(
-  "region",
-  label = tags$span(h4(HTML("<b>Select region</b>"))),
-  choices = c(
-    "Contiguous U.S." = "CONUS",
-    "Alabama" = "AL", "Arizona" = "AZ", "Arkansas" = "AR",
-    "California" = "CA", "Colorado" = "CO", "Connecticut" = "CT",
-    "Florida" = "FL", "Georgia" = "GA", "Idaho" = "ID",
-    "Illinois" = "IL", "Indiana" = "IN", "Iowa" = "IA",
-    "Kansas" = "KS", "Kentucky" = "KY", "Louisiana" = "LA",
-    "Maine" = "ME", "Maryland" = "MD", "Massachusetts" = "MA",
-    "Michigan" = "MI", "Minnesota" = "MN", "Missouri" = "MO",
-    "Montana" = "MT", "Nebraska" = "NE", "Nevada" = "NV",
-    "New Hampshire" = "NH", "New Jersey" = "NJ", "New Mexico" = "NM",
-    "New York" = "NY", "North Carolina" = "NC", "North Dakota" = "ND",
-    "Ohio" = "OH", "Oklahoma" = "OK", "Oregon" = "OR",
-    "Pennsylvania" = "PA", "South Carolina" = "SC", 
-    "South Dakota" = "SD", "Tennessee" = "TN", "Texas" = "TX", 
-    "Utah" = "UT", "Virginia" = "VA", "Washington" = "WA", 
-    "Wisconsin" = "WI", "Wyoming" = "WY"
-  ),
-  selected = "CONUS"
-)
-
-# Select trend metric
-selectInput(
-  "trend_metric",
-  label = tags$span(h4(HTML("<b>Select metric</b>"))),
-  choices = c(
-    "Change in days per year (Sen’s slope)" = "sens",
-    "Direction of trend (Kendall’s τ)" = "tau"
-  ),
-  selected = "sens"
-)
-
-# Add space
-hr()
-
-# (Shows after pest is selected)
-# Select climate or phenology variable
-conditionalPanel(
-  "input.pest && input.pest !== ''",
-  
-  selectInput(
-    "var_type",
-    label = tags$span(h4(HTML("<b>Select variable type</b>"))),
-    choices = c(
-      "Climate stress" = "climate",
-      "Phenology" = "phenology"
-    ),
-    selected = "climate"
-  )
-)
-
-# (Shows if climate is selected)
-# Select climate variable
-conditionalPanel(
-  "input.pest && input.var_type === 'climate'",
-  
-  selectInput(
-    "clim_variable",
-    label = tags$span(h4(HTML("<b>Select climate variable</b>"))),
-    choices = c("Cold Stress Units", "Heat Stress Units"),
-    selected = "Cold Stress Units"
-  )
-)
-
-# (Shows if phenology is selected)
-# Select phenology variable
-conditionalPanel(
-  "input.pest && input.var_type === 'phenology'",
-  
-  selectInput(
-    "phenology",
-    label = tags$span(h4(HTML("<b>Select phenology metric</b>"))),
-    choices = c("First Adult Emergence", "First Egg Hatch"),
-    selected = "First Adult Emergence"
-  )
-)
-
-# Year range selection
-selectInput(
-  "year_range",
-  label = tags$span(h4(HTML("<b>Select time range</b>"))),
-  choices = c("1981–2025", "2001–2025"),
-  selected = "1981–2025"
-)
-
-```
-
-```{r plot}
-#| panel: fill
-
-# Map plot
-  div(
-
-    tags$style("#map {height: calc(100vh - 300px) !important;}"),
-
-    leafletOutput("map") %>%
-      shinycssloaders::withSpinner(color = "cornflowerblue"),
-
-    # Box where values show up
-    card(
-      class = "mt-3",
-      card_header(tags$b("Location statistics")),
-
-      p("Click on a location for statistics."),
-
-      div(
-        class = "p-2",
-
-        uiOutput("clicked_latlon"),
-        uiOutput("clicked_pest"),
-        uiOutput("clicked_variable"),
-        uiOutput("clicked_years"),
-        uiOutput("clicked_value"),
-        uiOutput("clicked_pval")
-      )
-    )
-  )
-```
-
-```{r server}
-#| context: server
+### ------------------------------------------------------------------------ ###
 
 #### * Check which variable is selected ####
 selected_variable <- reactive({
@@ -515,4 +354,7 @@ observeEvent(list(input$var_type, input$clim_variable, input$phenology), {
   
 })
 
-```
+
+### ------------------------------------------------------------------------ ###
+
+}

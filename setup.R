@@ -1,21 +1,32 @@
-# ---- ABOUT -------------------------------------------------------------------
+# ----- ABOUT ------------------------------------------------------------------
 
-# Contains preamble for Shiny that doesn't need to be in the UI or server
-
-
-
-
-
-# ----- MISCELLANEOUS ----------------------------------------------------------
+# Contains preparatory code for the map
 
 
 
 
 
+# ----- SET-UP -----------------------------------------------------------------
+
+# -- RUN NECESSARY STUFF I HAVE IN OTHER FILES --
+
+# Packages
+source("packages.R")
+
+# Import custom functions
+source("functions.R")
 
 
+# -- RANDOM STUFF --
 
-# ----- SPATIAL FEATURES -------------------------------------------------------
+# Shows full error message (if there is one) on app
+options(shiny.sanitize.errors = FALSE)
+
+# Raster cache (so they're only loaded once)
+.raster_cache <- new.env(parent = emptyenv())
+
+
+# -- sHAPEFILE STUFF --
 
 # Shapefile of county boundaries (to overlay map)
 county_sf <- st_read("./features/counties_CONUS.shp")
@@ -37,39 +48,10 @@ bounds <- list(
 )
 
 
-
-
-
-
-# ----- IMPORT MODEL OUTPUTS ----------------------------------------
+# -- RASTER STUFF --
 
 # File of all raster files
 raster_lookup <- read.csv("raster_lookup.csv")
-
-# Directory holding all rasters to import
-rasts_dir <- paste0("./rasters/MK_trends")
-
-# List all tif files in each sub-folder
-files <- list.files(
-  rasts_dir,
-  pattern = "\\.tif$",
-  full.names = TRUE,
-  recursive = TRUE       
-)
-
-
-
-
-
-# ----- OTHER DISPLAY COMPONENTS -----------------------------------------------
-
-# For how variables are displayed in floating statistics panel
-variable_labels <- c(
-  Cold_Stress     = "Cold stress",
-  Heat_Stress     = "Heat stress",
-  First_egg_hatch = "1st egg hatch",
-  First_adult_emergence  = "1st adult emergence"
-)
 
 
 

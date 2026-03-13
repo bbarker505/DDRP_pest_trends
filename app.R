@@ -97,10 +97,6 @@ ui <- page_navbar(
     div(style = "display:inline-block; margin: 0 15px;",
         tags$img(src = "OIPMC.png", height = "50px")),
     
-    # APHIS PPQ logo
-    div(style = "display:inline-block; margin: 0 15px;",
-        tags$img(src = "APHIS_PPQ_logo.png", height = "50px")),
-    
     # PRISM logo
     div(style = "display:inline-block; margin: 0 15px;",
         tags$img(src = "PRISM.png", height = "50px")),
@@ -127,46 +123,53 @@ ui <- page_navbar(
     
     # Overview
     div(
+      
       class = "p-4 my-3",
+      
       h3(HTML("<b>Overview</b>")),
       
+      p("We use the Degree-Day, establishment Risk, and Phenological (DDRP) 
+        event mapping system to assess the potential impacts of weather from 
+        1980 to the current year on the timing of pest activity such as 
+        emergence (phenology) and potential for establishment of 18 invasive 
+        pest species in the contiguous United States."),
+      
+      accordion(
+        
+        open = FALSE,
+        
+        accordion_panel(
+          title = "Open to see more info on the 18 species",
+          status = "info",
+          tagList(
+            p("Of the 18 species with models, 12 are presently on Plant
+            Protection and Quarantine’s National Priority Pest List. Six were 
+            formerly included on the list, and two are Federal Program Pests. 
+            Most of the species do not occur in the contiguous United States 
+            (N = 13); however, five are established and may spread to additional 
+            regions. Real-time forecasts for these pests are available at ",
+              a("USPest.org", href = "https://uspest.org/CAPS",
+                target="_blank", style="text-decoration:underline;"),
+              "."),
+            tableOutput("intro_table")
+          )
+        )),
+      
       # Text
-      p("We use the Degree-Day, establishment Risk, and Phenological event 
-      mapping system (known as DDRP) to assess the potential impacts of weather 
-      between 1980 and 2024 on the timing of pest activity such as emergence 
-      (phenology) and potential for establishment of 18 invasive pest species in 
-      the contiguous United States (Table 1). The system is part of a suite of 
-      decision-support tools at ",
+      p("The system is part of a suite of decision-support tools at ",
         a("USPest.org", href = "https://uspest.org/wea/",
           target="_blank", style="text-decoration:underline;"),
         " that are developed and maintained by the Oregon Integrated Pest 
-        Management Center at Oregon State University. These tools provide 
-        thousands of end users nationwide with information to support timely 
-        and effective management activities for agricultural pests and diseases. 
-        This project will use the Degree-Day, establishment Risk, and 
-        Phenological event mapping system to predict where pests exhibit earlier 
-        activities, increases in the number of generations, and increases in 
-        habitat suitability. This information helps Plant Protection and 
-        Quarantine allocate survey resources more strategically, thereby 
-        reducing the likelihood of pest establishment and spread."
+        Management Center (OIPMC) at Oregon State University. These tools 
+        provide thousands of end users nationwide with information to support 
+        timely and effective management activities for agricultural pests and 
+        diseases. This project will use the DDRP event mapping system to predict
+        where pests may exhibit earlier activities, increases in the number of 
+        generations, and increases in habitat suitability. This information 
+        helps Plant Protection and Quarantine allocate survey resources more 
+        strategically, thereby reducing the likelihood of pest establishment and 
+        spread. "
       ),
-      
-      # Another paragraph
-      p("Of the 18 species with models, 12 are presently on Plant Protection and 
-      Quarantine’s National Priority Pest List, six were formerly included on 
-      the List, and two are Federal Program Pests. Most of the species do not 
-      occur in the contiguous United States (N = 13); however, five are 
-      established and may spread to additional regions. Real-time forecasts for 
-      these pests are available at ",
-        a("USPest.org", href = "https://uspest.org/CAPS",
-          target="_blank", style="text-decoration:underline;"),
-          ".")
-    ),
-    
-    # About
-    div(
-      class = "p-4 my-3",
-      h3(HTML("<b>DDRP Model</b>")),
       
       # Text
       p("The Degree-Day, establishment Risk, and Phenological event mapping system is
@@ -188,7 +191,9 @@ ui <- page_navbar(
     
     # Citations and references
     div(
+      
       class = "p-4 my-3",
+      
       h3(HTML("<b>References</b>")),
       
       tags$ul(
@@ -248,26 +253,22 @@ northwest-nurseries/")),
         
         h3(HTML("<b>DDRP Map</b>")),
         
-        p("Please select an insect pest of interest and then available variables 
-          for mapping will be shown."),
+        # Words
+        p("Due to a large amount of data being plotted,
+          the map may take a few seconds to load."),
         
-        # Divider line
+        # Add space
         hr(),
         
-        p("Due to a large amount of data being plotted, the map may take a few 
-          seconds to load."),
-        
-        hr(),
-        
-        # Buttons to select pest
+        # Select pest
         selectInput(
           "pest",
           label = tags$span(h4(HTML("<b>Select insect pest</b>"))),
-          choices = c("", sort(unique(raster_lookup$pest))),
-          selected = sort(unique(raster_lookup$pest))[1]
+          choices = sort(unique(raster_lookup$common_name)),
+          selected = sort(unique(raster_lookup$common_name))[1]
         ),
         
-        # Buttons to select a sub-region
+        # Select region filter
         selectInput(
           "region",
           label = tags$span(h4(HTML("<b>Select region</b>"))),
@@ -275,101 +276,87 @@ northwest-nurseries/")),
             "Contiguous U.S." = "CONUS",
             "Alabama" = "AL", "Arizona" = "AZ", "Arkansas" = "AR",
             "California" = "CA", "Colorado" = "CO", "Connecticut" = "CT",
-            "Florida" = "FL", "Georgia" = "GA",
-            "Idaho" = "ID", "Illinois" = "IL", "Indiana" = "IN",
-            "Iowa" = "IA", "Kansas" = "KS", "Kentucky" = "KY",
-            "Louisiana" = "LA", "Maine" = "ME", "Maryland" = "MD",
-            "Massachusetts" = "MA", "Michigan" = "MI", "Minnesota" = "MN",
-            "Missouri" = "MO", "Montana" = "MT", "Nebraska" = "NE",
-            "Nevada" = "NV", "New Hampshire" = "NH", "New Jersey" = "NJ",
-            "New Mexico" = "NM", "New York" = "NY",
-            "North Carolina" = "NC", "North Dakota" = "ND",
+            "Florida" = "FL", "Georgia" = "GA", "Idaho" = "ID",
+            "Illinois" = "IL", "Indiana" = "IN", "Iowa" = "IA",
+            "Kansas" = "KS", "Kentucky" = "KY", "Louisiana" = "LA",
+            "Maine" = "ME", "Maryland" = "MD", "Massachusetts" = "MA",
+            "Michigan" = "MI", "Minnesota" = "MN", "Missouri" = "MO",
+            "Montana" = "MT", "Nebraska" = "NE", "Nevada" = "NV",
+            "New Hampshire" = "NH", "New Jersey" = "NJ", "New Mexico" = "NM",
+            "New York" = "NY", "North Carolina" = "NC", "North Dakota" = "ND",
             "Ohio" = "OH", "Oklahoma" = "OK", "Oregon" = "OR",
-            "Pennsylvania" = "PA", "South Carolina" = "SC",
-            "South Dakota" = "SD", "Tennessee" = "TN",
-            "Texas" = "TX", "Utah" = "UT", "Virginia" = "VA",
-            "Washington" = "WA", "Wisconsin" = "WI", "Wyoming" = "WY"
+            "Pennsylvania" = "PA", "South Carolina" = "SC", 
+            "South Dakota" = "SD", "Tennessee" = "TN", "Texas" = "TX", 
+            "Utah" = "UT", "Virginia" = "VA", "Washington" = "WA", 
+            "Wisconsin" = "WI", "Wyoming" = "WY"
           ),
           selected = "CONUS"
         ),
         
-        # Select statistic
+        # Select trend metric
         selectInput(
           "trend_metric",
-          label = tags$span(h4(HTML("<b>Select metric</b>"))),,
+          label = tags$span(h4(HTML("<b>Select metric</b>"))),
           choices = c(
-            "Change in days per year (Sen’s slope)" = "sens",
-            "Direction of trend (Kendall’s τ)" = "tau"
+            "Change in days per year" = "sens",
+            "Direction of trend" = "tau"
           ),
           selected = "sens"
         ),
         
+        # Add space
         hr(),
         
-        # (Dynamic) To select type of map (show climate or phenology options)
+        # (Shows after pest is selected)
+        # Select climate or phenology variable
         conditionalPanel(
-          
-          condition = "input.pest && input.pest !== ''",
+          "input.pest && input.pest !== ''",
           
           selectInput(
             "var_type",
             label = tags$span(h4(HTML("<b>Select variable type</b>"))),
             choices = c(
               "Climate stress" = "climate",
-              "Phenology"      = "phenology"
+              "Phenology" = "phenology"
             ),
             selected = "climate"
           )
         ),
         
-        # (Dynamic) Buttons for climate variable
+        # (Shows if climate is selected)
+        # Select climate variable
         conditionalPanel(
-          
-          condition = 
-          "input.pest && input.pest !== '' && input.var_type === 'climate'",
+          "input.pest && input.var_type === 'climate'",
           
           selectInput(
             "clim_variable",
             label = tags$span(h4(HTML("<b>Select climate variable</b>"))),
-            choices = c(
-              "Cold Stress" = "Cold_Stress",
-              "Heat Stress" = "Heat_Stress"
-            ),
-            selected = "Cold_Stress"
+            choices = c("Cold Stress Units", "Heat Stress Units"),
+            selected = "Cold Stress Units"
           )
         ),
         
-        # (Dynamic) Buttons for phenology
+        # (Shows if phenology is selected)
+        # Select phenology variable
         conditionalPanel(
-          
-          condition 
-          = "input.pest && input.pest !== '' && input.var_type === 'phenology'",
+          "input.pest && input.var_type === 'phenology'",
           
           selectInput(
             "phenology",
             label = tags$span(h4(HTML("<b>Select phenology metric</b>"))),
-            choices = c(
-              "1st adult emergence" = "First_adult_emergence",
-              "1st egg hatch" = "First_egg_hatch"
-              ), 
-            selected = "First_adult_emergence"
+            choices = c("First Adult Emergence", "First Egg Hatch"),
+            selected = "First Adult Emergence"
           )
-        )
+        ),
         
         # Year range selection
-        #selectInput(
-        #  "year_range",
-        #  label = tags$span(h4(HTML("<b>Select time range</b>"))),
-        #  choices = c(
-        #    "2001–2010" = "01-10",
-        #    "2011–2020" = "11-20",
-        #    "1981–2024" = "81-24",
-        #    "1981–1990" = "81-90",
-        #    "1991–2020" = "91-20"
-        #  ),
-        #  selected = "81-24"
-        #)
-      ),
+        selectInput(
+          "year_range",
+          label = tags$span(h4(HTML("<b>Select time range</b>"))),
+          choices = c("1981–2025", "2001–2025"),
+          selected = "1981–2025"
+        )
+      ), # end side panel
       
       # ------ Visuals (Right side) -------------------------------------------
       
@@ -401,21 +388,18 @@ northwest-nurseries/")),
             
             class = "p-2",
             
+            uiOutput("clicked_years"),
             uiOutput("clicked_latlon"),
             uiOutput("clicked_pest"),
             uiOutput("clicked_variable"),
-            
-            tags$p(strong("Years:"), " 1981–2024"),
-            
             uiOutput("clicked_value"),
-            
             uiOutput("clicked_pval"),
   
           )
         )
-      ) # end main
-    )
-  ),
+      ) # end map div
+    ) # end layout_sidebar
+  ), # end nav_panel
   
   ##### * Tab 3: Pest Reports #####
   
@@ -925,114 +909,90 @@ northwest-nurseries/")),
 
 server <- function(input, output, session) {
   
-  # Check which variable is selected
+  #### * Check which variable is selected ####
   selected_variable <- reactive({
     
-    # Input a pest
-    req(input$pest)
-    
+    # If climate is selected, return climate
     if (input$var_type == "climate") return(input$clim_variable)
+    
+    # If phenology is selected, return phenology
     if (input$var_type == "phenology") return(input$phenology)
-    NULL
-  })
-  
-  #### * For display purposes ####
-  display_name <- reactive({
-    
-    # Get selected variable
-    var <- selected_variable()
-    
-    # Display-friendly name (without the underscores)
-    variable_labels[var] %||% var
     
   })
   
-  #### * Update input selection pane depending on pest selected ####
-  observeEvent(input$pest, {
+  
+  ### ---------------------------------------------------------------------- ###
+  
+  #### * Get row with raster of interest ####
+  selected_row <- reactive({
     
-    req(input$pest)
-    
-    # Filter lookup table for selected pest & fixed year
-    available_vars <- raster_lookup %>%
-      filter(pest == input$pest, year_range == "81-24") %>%
-      pull(variable) %>%
-      unique()
-    
-    # Keep only phenology variables
-    phenology_vars <- intersect(available_vars, names(variable_labels)[3:4])
-    
-    # Update phenology radio buttons
-    if (length(phenology_vars) > 0) {
-      choices <- phenology_vars
-      names(choices) <- variable_labels[phenology_vars]
-      
-      updateRadioButtons(
-        session,
-        "phenology",
-        choices = choices,
-        selected = phenology_vars[2]
+    # Get row with information
+    row <- raster_lookup %>%
+      dplyr::filter(
+        model_type == "MK_trends",
+        common_name == input$pest,
+        variable == selected_variable(),
+        year == input$year_range
       )
+    
+    # Make sure there's a row
+    validate(need(nrow(row) == 1, "No raster found"))
+    
+    # Return the row
+    row
+    
+  })
+  
+  
+  ### ---------------------------------------------------------------------- ###
+  
+  #### * Collect raster info ####
+  
+  # Tau
+  pest_raster_tau <- reactive({
+    rast_import(selected_row()$file_path, 1)
+  })
+  
+  # Sen
+  pest_raster_sen <- reactive({
+    rast_import(selected_row()$file_path, 2)
+  })
+  
+  # P-value
+  pest_raster_pval <- reactive({
+    rast_import(selected_row()$file_path, 3)
+  })
+  
+  
+  ### ---------------------------------------------------------------------- ###
+  
+  #### * Reactive for metric ####
+  selected_trend <- reactive({
+    
+    req(input$trend_metric)
+    
+    # If they select Sen (default)
+    if (input$trend_metric == "sens") {
+      
+      list(
+        rast = pest_raster_sen(),
+        title = "Change in days per year"
+      )
+      
+      # Else is if they select tau
+    } else {
+      
+      list(
+        rast = pest_raster_tau(),
+        title = "Direction of trend"
+      )
+      
     }
     
   })
   
   
-  #### * Collect p-value raster ####
-  pest_raster_pval <- reactive({
-    
-    req(input$pest, selected_variable())
-    
-    row <- raster_lookup %>%
-      filter(pest == input$pest,
-             variable == selected_variable(),
-             year_range == "81-24")
-    
-    validate(need(nrow(row) == 1, "No raster found"))
-    
-    rast_import_pval(row$file_path)
-    
-  })
-  
-  #### * Get file of interest ####
-  selected_file <- reactive({
-    
-    req(input$pest, selected_variable())
-    
-    row <- raster_lookup %>%
-      filter(
-        pest == input$pest,
-        variable == selected_variable(),
-        year_range == "81-24"
-      )
-    
-    validate(need(nrow(row) == 1, "No raster found"))
-    
-    row$file_path
-    
-  })
-  
-  
-  #### * Reactive for metric ####
-  selected_trend <- reactive({
-    
-    req(input$trend_metric, selected_file())
-    
-    layer <- switch(
-      input$trend_metric,
-      "sens" = 2,
-      "tau" = 1
-    )
-    
-    list(
-      rast  = rast_import(selected_file(), layer),
-      title = switch(
-        input$trend_metric,
-        "sens" = "Change in days per year",
-        "tau"  = "Direction of trend"
-      )
-    )
-  })
-  
+  ### ---------------------------------------------------------------------- ###
   
   #### * Initial map plotted ####
   output$map <- renderLeaflet({
@@ -1040,69 +1000,83 @@ server <- function(input, output, session) {
     trend <- selected_trend()
     
     # Plot map
-    produce_map(rast = trend$rast,
-                bounds = bounds,
-                metric = input$trend_metric,
-                legend_title = trend$title)
+    produce_map(
+      rast = trend$rast,
+      bounds = bounds,
+      metric = input$trend_metric,
+      legend_title = trend$title
+    )
+    
   })
   
   
+  ### ---------------------------------------------------------------------- ###
+  
+  #### * Reactive palette ####
+  palette_reactive <- reactive({
+    make_palette(selected_trend()$rast, input$trend_metric)
+  })
+  
+  
+  ### ---------------------------------------------------------------------- ###
   
   #### * Update map when pest changes ####
-  observeEvent(list(input$pest, input$var_type, input$clim_variable, 
-                    input$phenology, input$trend_metric), {
-                      
-                      trend <- selected_trend()
-                      
-                      # Build palette + limits
-                      pal_obj <- make_palette(trend$rast, input$trend_metric)
-                      pal     <- pal_obj$pal
-                      limits  <- pal_obj$limits
-                      
-                      # Build horizontal legend
-                      legend_html <- paste0(
-                        "<div style='background:white;padding:8px 10px;border-radius:6px;'>",
-                        
-                        "<div style='text-align:center;font-weight:bold;margin-bottom:4px;'>",
-                        trend$title,
-                        "</div>",
-                        
-                        "<div style='display:flex;flex-direction:column;align-items:center;'>",
-                        
-                        "<div style='width:160px;height:14px;border:1px solid #ccc;",
-                        "background:linear-gradient(to right,",
-                        paste(pal(seq(limits[1], limits[2], length.out = 50)), 
-                              collapse = ","),
-                        ");'></div>",
-                        
-                        "<div style='display:flex;justify-content:space-between;",
-                        "width:160px;font-size:11px;margin-top:2px;'>",
-                        "<span>", round(limits[1],2), "</span>",
-                        "<span>0</span>",
-                        "<span>", round(limits[2],2), "</span>",
-                        "</div>",
-                        
-                        "</div></div>"
-                      )
-                      
-                      # Plot updated map
-                      leafletProxy("map") %>%
-                        clearImages() %>%
-                        clearControls() %>%
-                        clearGroup("click_marker") %>%
-                        addRasterImage(
-                          trend$rast,
-                          colors  = pal,
-                          opacity = 0.65,
-                          layerId = "Value"
-                        ) %>%
-                        addControl(
-                          html = HTML(legend_html),
-                          position = "bottomright"
-                        )
-                    }, 
-               ignoreInit = TRUE)
+  observeEvent(list(selected_row(), input$trend_metric), {
+    
+    trend <- selected_trend()
+    
+    # Build palette + limits
+    pal_obj <- palette_reactive()
+    pal <- pal_obj$pal
+    limits <- pal_obj$limits
+    
+    # Build horizontal legend
+    legend_html <- paste0(
+      "<div style='background:white;padding:8px 10px;border-radius:6px;'>",
+      
+      "<div style='text-align:center;font-weight:bold;margin-bottom:4px;'>",
+      trend$title,
+      "</div>",
+      
+      "<div style='display:flex;flex-direction:column;align-items:center;'>",
+      
+      "<div style='width:160px;height:14px;border:1px solid #ccc;",
+      "background:linear-gradient(to right,",
+      paste(pal(seq(limits[1], limits[2], length.out = 50)), 
+            collapse = ","),
+      ");'></div>",
+      
+      "<div style='display:flex;justify-content:space-between;",
+      "width:160px;font-size:11px;margin-top:2px;'>",
+      "<span>", round(limits[1],2), "</span>",
+      "<span>0</span>",
+      "<span>", round(limits[2],2), "</span>",
+      "</div>",
+      
+      "</div></div>"
+    )
+    
+    # Plot updated map
+    leafletProxy("map") %>%
+      clearImages() %>%
+      clearControls() %>%
+      clearGroup("click_marker") %>%
+      addRasterImage(
+        trend$rast,
+        colors  = pal,
+        opacity = 0.65,
+        layerId = "Value",
+        project = FALSE
+      ) %>%
+      addControl(
+        html = HTML(legend_html),
+        position = "bottomright"
+      )
+  }, 
+  ignoreInit = TRUE)
   
+  
+  ### ---------------------------------------------------------------------- ###
   
   #### * Settings on map bounds (prevent over-zooming) ####
   
@@ -1128,6 +1102,9 @@ server <- function(input, output, session) {
     }
   })
   
+  
+  ### ---------------------------------------------------------------------- ###
+  
   #### * Adjust to another region when selected ####
   observeEvent(input$region, {
     
@@ -1150,6 +1127,9 @@ server <- function(input, output, session) {
       clearGroup("click_marker")
     
   })
+  
+  
+  ### ---------------------------------------------------------------------- ###
   
   #### * Panel that holds location click outputs ####
   observeEvent(input$map_click, {
@@ -1180,22 +1160,27 @@ server <- function(input, output, session) {
     # Extract p-value
     pval_val <- terra::extract(pest_raster_pval(), xy)[1,2]
     
+    # Year range (MK_trends)
+    output$clicked_years <- renderUI({
+      tags$div(tags$b("Prediction compiled for the years:"), input$year_range)
+    })
+    
     # Coordinates
     output$clicked_latlon <- renderUI({
-      tags$div(tags$b("Coordinates:"), 
+      tags$div(tags$b("Location at coordinates:"), 
                round(click$lat, 4), ", ", round(click$lng, 4))
     })
     
     # Pest
     output$clicked_pest <- renderUI({
-      tags$div(tags$b("Pest:"), input$pest)
+      tags$div(tags$b("Pest selected:"), input$pest)
     })
     
     # Variable
     output$clicked_variable <- renderUI({
       var <- selected_variable()
       display_name <- variable_labels[var] %||% var %||% "Not available"
-      tags$div(tags$b("Variable:"), display_name)
+      tags$div(tags$b("Variable of interest:"), display_name)
     })
     
     # Selected metric value
@@ -1251,15 +1236,28 @@ server <- function(input, output, session) {
     
   })
   
+  
+  ### ---------------------------------------------------------------------- ###
+  
   #### * Clear absolutePanel() when pest / variable changes ####
   observeEvent(list(input$var_type, input$clim_variable, input$phenology), {
     
+    output$clicked_years    <- renderUI(NULL)
     output$clicked_latlon   <- renderUI(NULL)
     output$clicked_pest     <- renderUI(NULL)
     output$clicked_variable <- renderUI(NULL)
     output$clicked_value    <- renderUI(NULL)
     output$clicked_pval     <- renderUI(NULL)
     
+  })
+  
+  
+  ### ---------------------------------------------------------------------- ###
+  
+  # Table for intro
+  output$intro_table <- renderTable({
+    intro_tab <- read.csv("intro_table.csv")
+    intro_tab
   })
   
   

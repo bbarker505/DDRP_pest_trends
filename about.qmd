@@ -16,7 +16,7 @@ We use the Degree-Day, establishment Risk, and Phenological (DDRP) event mapping
 Of the 18 species with models, 12 are presently on Plant Protection and Quarantine’s National Priority Pest List. Six were formerly included on the list, and two are Federal Program Pests. Most of the species do not occur in the contiguous United States (N = 13); however, five are established and may spread to additional regions. Real-time forecasts for these pests are available at [USPEST.org](https://uspest.org/CAPS).
 
 | Species | Common name | Present in United States | National Priority Pest | Federal Program Pest |
-|----|----|----|----|----|
+|---------------|---------------|---------------|---------------|---------------|
 | Anoplophora glabripennis | Asian longhorned beetle | **Yes** | **Yes** | **Yes** |
 | Chilo suppressalis | Asiatic rice borer | No | **Yes** | No |
 | Cryptoblabes gnidiella | Christmas berry webworm | No | **Yes** | No |

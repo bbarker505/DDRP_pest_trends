@@ -103,7 +103,10 @@ lookup_table <- tibble(file_path = files) %>%
       stringr::str_remove("_[0-9]{2}-[0-9]{2}$") %>%
       
       # Remove MK prefix from MK_trends files
-      stringr::str_remove(paste0("^", abbr, "_MK_"))
+      stringr::str_remove(paste0("^", abbr, "_MK_")) %>%
+      
+      # Replace underscores with spaces
+      stringr::str_replace_all("_", " ")
     
   ) %>%
   
@@ -112,10 +115,10 @@ lookup_table <- tibble(file_path = files) %>%
     
     variable = ifelse(
       
-      stringr::str_detect(variable, "^Earliest_PEM"),
+      stringr::str_detect(variable, "^Earliest PEM"),
       dplyr::case_when(
-        stringr::str_detect(variable, "p0|a0") ~ "First_Adult_Emergence",
-        stringr::str_detect(variable, "e0|e1") ~ "First_Egg_Hatch",
+        stringr::str_detect(variable, "p0|a0") ~ "First Adult Emergence",
+        stringr::str_detect(variable, "e0|e1") ~ "First Egg Hatch",
         TRUE ~ variable
         
       ),
