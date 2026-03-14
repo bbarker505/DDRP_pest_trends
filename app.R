@@ -326,7 +326,7 @@ northwest-nurseries/")),
         # (Shows if climate is selected)
         # Select climate variable
         conditionalPanel(
-          "input.pest && input.var_type === 'climate'",
+          "input.pest && input.var_type == 'climate'",
           
           selectInput(
             "clim_variable",
@@ -339,7 +339,7 @@ northwest-nurseries/")),
         # (Shows if phenology is selected)
         # Select phenology variable
         conditionalPanel(
-          "input.pest && input.var_type === 'phenology'",
+          "input.pest && input.var_type == 'phenology'",
           
           selectInput(
             "phenology",
@@ -353,8 +353,8 @@ northwest-nurseries/")),
         selectInput(
           "year_range",
           label = tags$span(h4(HTML("<b>Select time range</b>"))),
-          choices = c("1981–2025", "2001–2025"),
-          selected = "1981–2025"
+          choices = c("1981-2025", "2001-2025"),
+          selected = "1981-2025"
         )
       ), # end side panel
       
@@ -912,12 +912,22 @@ server <- function(input, output, session) {
   #### * Check which variable is selected ####
   selected_variable <- reactive({
     
+    req(input$var_type)
+  
+    if (input$var_type == "climate") {
+      req(input$clim_variable)
+      return(input$clim_variable)
+    }
+    
+    if (input$var_type == "phenology") {
+      req(input$phenology)
+      return(input$phenology)
+    }
     # If climate is selected, return climate
-    if (input$var_type == "climate") return(input$clim_variable)
+    #if (input$var_type == "climate") return(input$clim_variable)
     
     # If phenology is selected, return phenology
-    if (input$var_type == "phenology") return(input$phenology)
-    
+    #if (input$var_type == "phenology") return(input$phenology)
   })
   
   
@@ -926,12 +936,19 @@ server <- function(input, output, session) {
   #### * Get row with raster of interest ####
   selected_row <- reactive({
     
+    req(
+      input$pest,
+      input$year_range,
+      input$var_type,
+      selected_variable()
+    )
+    
     # Get row with information
     row <- raster_lookup %>%
       dplyr::filter(
-        model_type == "MK_trends",
-        common_name == input$pest,
-        variable == selected_variable(),
+        model_type == "MK_trends" &
+        common_name == input$pest &
+        variable == selected_variable() &
         year == input$year_range
       )
     
@@ -1021,8 +1038,8 @@ server <- function(input, output, session) {
   ### ---------------------------------------------------------------------- ###
   
   #### * Update map when pest changes ####
-  observeEvent(list(selected_row(), input$trend_metric), {
-    
+  #observeEvent(list(selected_row(), input$trend_metric), {
+  observeEvent(list(selected_trend(), input$trend_metric), { 
     trend <- selected_trend()
     
     # Build palette + limits
