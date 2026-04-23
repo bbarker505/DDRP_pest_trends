@@ -1,5 +1,3 @@
-# Last modified: 11 October 2025
-
 # ----- ABOUT ------------------------------------------------------------------
 
 # Contains custom functions to be loaded into the app.R file
@@ -23,9 +21,6 @@ rast_import <- function(file, layer = 1) {
     # Select layer
     r <- terra::rast(file)[[layer]]
     
-    # Reproject to WGS84
-    r <- project(r, "EPSG:4326")
-    
     assign(key, r, envir = .raster_cache)
     
   }
@@ -38,7 +33,7 @@ rast_import <- function(file, layer = 1) {
 
 
 
-# ----- Produce a leaflet map showing risk of infection ------------------------
+# ----- Produce a leaflet map showing metrics ----------------------------------
 
 # Color palette for map
 make_palette <- function(rast, metric) {
@@ -108,7 +103,7 @@ produce_map <- function(rast, bounds, metric, legend_title) {
       colors  = pal,
       opacity = 0.8,
       layerId = layerID,
-      project = FALSE
+      project = TRUE
     ) %>%
     
     # Add legend depending on statistic
@@ -168,8 +163,6 @@ produce_map <- function(rast, bounds, metric, legend_title) {
     # Adds coordinates from hovering
     addMouseCoordinates
 }
-
-
 
 
 
@@ -285,5 +278,96 @@ ext_to_bounds <- function(ext) {
 
 
 
+
+
+# ----- Trend plot -------------------------------------------------------------
+
+# Note: Seems like renderPlot doesn't like it when the plotting is in a
+# function. So this function isn't used.
+
+make_trend_plot <- function(lng, lat, species, var_selected, years) {
+  
+  # Convert click to spatial point
+  site <- terra::vect(
+    data.frame(x = lng, y = lat),
+    geom = c("x", "y"),
+    crs = "EPSG:4326"
+  )
+  
+  # Get files for this species/variable
+  files <- raster_lookup %>%
+    dplyr::filter(
+      model_type == "DDRP",
+      common_name == species,
+      variable == var_selected,
+      year %in% years) %>%
+    dplyr::arrange(year)
+  
+  if (nrow(files) == 0) return(NULL)
+  
+  # Load rasters
+  rasts <- lapply(files$file_path, rast_import)
+  rasts <- terra::rast(rasts)
+  names(rasts) <- files$year
+  
+  # Match CRS to raster
+  site <- terra::project(site, rasts)
+  
+  # Extract location values
+  site_data <- terra::extract(rasts, site) %>%
+    dplyr::select(-ID) %>%
+    tidyr::pivot_longer(
+      cols = everything(),
+      names_to = "year",
+      values_to = "value") %>%
+    dplyr::mutate(
+      year = as.numeric(year),
+      value = as.numeric(value))
+  
+  # If no variation
+  if (all(site_data$value == 0 | is.na(site_data$value))) {
+    
+    ggplot2::ggplot(site_data,
+                         ggplot2::aes(x = year, y = value)) +
+      ggplot2::geom_point() +
+      ggplot2::geom_line(color = "steelblue") +
+      ggplot2::theme_bw() +
+      ggplot2::labs(
+        title = paste("Predicted", var_selected, "for", species),
+        x = "Year",
+        y = var_selected
+      )
+    
+  # Otherwise
+  } else {
+    
+    # Mann-Kendall trend
+    pwmk_test <- modifiedmk::pwmk(site_data$value)
+    slope <- as.numeric(pwmk_test[["Sen's Slope"]])
+    pval  <- as.numeric(pwmk_test[["P-value"]])
+    median_x <- median(site_data$year)
+    median_y <- median(site_data$value)
+    intercept <- median_y - slope * median_x
+    
+    # Create plot
+    ggplot2::ggplot(site_data,
+                         ggplot2::aes(x = year, y = value)) +
+      ggplot2::geom_point() +
+      ggplot2::geom_line(color = "steelblue") +
+      ggplot2::geom_abline(
+        intercept = intercept,
+        slope = slope,
+        color = "red"
+      ) +
+      ggplot2::theme_bw() +
+      ggplot2::labs(
+        title = paste("Predicted", var_selected, "for", species),
+        x = "Year",
+        y = var_selected
+      )
+    
+  }
+  
+}
 
 

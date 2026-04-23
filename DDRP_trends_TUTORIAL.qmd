@@ -24,7 +24,11 @@ To use the mapping tool, you will need access to internet connection and a compu
 
 ## Map Controls
 
-Upon opening the mapping tool, the inputs will be preset and a map will display. These presets may be changed based on your desired output. Below we outline the available options: \newline
+Upon opening the mapping tool, map controls will be present on the left side on the screen.
+
+![](www/Screenshot 2026-04-23 074447.png)
+
+The inputs will be preset and a map will display automatically. These presets may be changed based on your desired output. Below, we outline the available options: \newline
 
 #### i. Insect pest
 
@@ -74,34 +78,38 @@ All 48 states in the United States. In other words, Alaska and Hawaii are not in
 
 ### iii. Variable type
 
--   **Climate stress** - Pertains to environmental stress on the pest.
+- **Climate stress** - Pertains to environmental temperature stress accumulation on the pest.
 
--   **Phenology** - Pertains to landmark life cycle stages of the pest.
+- **Phenology** - Pertains to landmark life cycle stages of the pest.
+
+- **All stress exclusion** -
 
 ### iv. Climate variable (will show if Variable type = "Climate stress")
 
--   Cold stress -
+- Cold stress
 
--   Heat stress -
+- Heat stress
 
 ### v. Phenology metric (will show if Variable type = "Phenology")
 
--   **First adult emergence** - Estimated date of when first generation adults would start emerging.
+- **First adult emergence** - Estimated date of when first generation adults would start emerging.
 
--   **First egg hatch** - Estimated date of when eggs of the first generation adults would start hatching.
+- **First egg hatch** - Estimated date of when eggs of the first generation adults would start hatching.
 
 ### vi. Metric
 
--   **Direction of trend (**$\tau$**)** - This statistic is a measure of the trend based on the Mann-Kendall test. The Mann-Kendall test determines if a time series contains a monotonic trend over time. As such, positive values of $\tau$ suggest an upward trend, and negative values of $\tau$ suggest a downward trend. P-values less than 0.05 suggest that the trend is statistically significant from zero (no trend).
+- **Direction of trend (**$\tau$**)** - This statistic is a measure of the trend based on the Mann-Kendall test. The Mann-Kendall test determines if a time series contains a monotonic trend over time. As such, positive values of $\tau$ suggest an upward trend, and negative values of $\tau$ suggest a downward trend. P-values less than 0.05 suggest that the trend is statistically significant from zero (no trend).
 
--   **Change in days per year (Sen's slope)** - This statistic is another measure of the trend based on the Mann-Kendall test. Sen's slope is interpreted the same as any slope. For example, if the Sen's slope is 0.3, then in this context the change (positive or negative) is occurring at a rate of 0.3 per year.
+- **Change in days per year (Sen's slope)** - This statistic is another measure of the trend based on the Mann-Kendall test. Sen's slope is interpreted the same as any slope. For example, if the Sen's slope is 0.3, then in this context the change (positive or negative) is occurring at a rate of 0.3 per year.
 
--   **Climate stress exclusion** - The cumulative link model (CLM) was used to assess changes in predictions in potential distributions, given that those predictions are categorical (in this case, no / moderate / severe climate stress exclusion). The coefficient that outputs from the CLM can either be indicative of an increase (positive coefficient) or decrease (negative coefficient) in the likelihood of establishment owing to reductions in survival-limiting climate stressors.
+- **Climate stress exclusion** - The cumulative link model (CLM) was used to assess changes in predictions in potential distributions, given that those predictions are categorical (in this case, no / moderate / severe climate stress exclusion). The coefficient that outputs from the CLM can either be indicative of an increase (positive coefficient) or decrease (negative coefficient) in the likelihood of establishment owing to reductions in survival-limiting climate stressors.
 
 ### vii. Time range
 
--   **1981-2025** - Provides trend information accounting for the *historical* time period.
+- **1981-2025** - Provides trend information accounting for the *historical* time period.
 
--   **2001-2025** - Provides trend information accounting for the *more recent* time period.
+- **1981-2000**
+
+- **2001-2025** - Provides trend information accounting for the *more recent* time period.
 
 ## Description of Maps

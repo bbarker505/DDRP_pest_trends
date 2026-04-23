@@ -72,11 +72,10 @@ ui <- page_navbar(
   
   # Theme
   theme = bs_theme(
-    bootswatch = "sandstone",
+    bootswatch = "minty",
     bg = "#FAFCFF",
     fg = "#434C5E",
-    base_font = font_google("Golos Text"),
-    heading_font = font_google("Crimson Text")
+    base_font = font_google("Golos Text")
   ),
   
   # Custom CSS
@@ -128,11 +127,15 @@ ui <- page_navbar(
       
       h3(HTML("<b>Overview</b>")),
       
-      p("We use the Degree-Day, establishment Risk, and Phenological (DDRP) 
+      p("Here, we use the Degree-Day, establishment Risk, and Phenological (DDRP) 
         event mapping system to assess the potential impacts of weather from 
         1980 to the current year on the timing of pest activity such as 
         emergence (phenology) and potential for establishment of 18 invasive 
         pest species in the contiguous United States."),
+      
+      p(HTML("<b>Note:</b> 
+             The contiguous United States pertains to all states excluding 
+             Alaska and Hawaii.")),
       
       accordion(
         
@@ -155,6 +158,8 @@ ui <- page_navbar(
           )
         )),
       
+      br(),
+      
       # Text
       p("The system is part of a suite of decision-support tools at ",
         a("USPest.org", href = "https://uspest.org/wea/",
@@ -163,7 +168,7 @@ ui <- page_navbar(
         Management Center (OIPMC) at Oregon State University. These tools 
         provide thousands of end users nationwide with information to support 
         timely and effective management activities for agricultural pests and 
-        diseases. This project will use the DDRP event mapping system to predict
+        diseases. This project implements the DDRP event mapping system to predict
         where pests may exhibit earlier activities, increases in the number of 
         generations, and increases in habitat suitability. This information 
         helps Plant Protection and Quarantine allocate survey resources more 
@@ -186,7 +191,7 @@ ui <- page_navbar(
         "Additionally, its ability to accept daily weather
      data for any time frame allows evaluation of historical conditions and impacts
      of weather changes on pest phenology and establishment."
-      ),
+      )
     ),
     
     # Citations and references
@@ -264,7 +269,8 @@ northwest-nurseries/")),
         selectInput(
           "pest",
           label = tags$span(h4(HTML("<b>Select insect pest</b>"))),
-          choices = sort(unique(raster_lookup$common_name)),
+          choices = c("All species (comparisons)" = "All 18 spp", 
+                      sort(unique(raster_lookup$common_name))),
           selected = sort(unique(raster_lookup$common_name))[1]
         ),
         
@@ -293,17 +299,6 @@ northwest-nurseries/")),
           selected = "CONUS"
         ),
         
-        # Select trend metric
-        selectInput(
-          "trend_metric",
-          label = tags$span(h4(HTML("<b>Select metric</b>"))),
-          choices = c(
-            "Change in days per year" = "sens",
-            "Direction of trend" = "tau"
-          ),
-          selected = "sens"
-        ),
-        
         # Add space
         hr(),
         
@@ -317,9 +312,10 @@ northwest-nurseries/")),
             label = tags$span(h4(HTML("<b>Select variable type</b>"))),
             choices = c(
               "Climate stress" = "climate",
-              "Phenology" = "phenology"
+              "Phenology" = "phenology",
+              "All stress exclusion" = "clm"
             ),
-            selected = "climate"
+            selected = "phenology"
           )
         ),
         
@@ -331,8 +327,8 @@ northwest-nurseries/")),
           selectInput(
             "clim_variable",
             label = tags$span(h4(HTML("<b>Select climate variable</b>"))),
-            choices = c("Cold Stress Units", "Heat Stress Units"),
-            selected = "Cold Stress Units"
+            choices = c("Cold Stress", "Heat Stress"),
+            selected = "Cold Stress"
           )
         ),
         
@@ -349,14 +345,29 @@ northwest-nurseries/")),
           )
         ),
         
+        # Select trend metric (shows unles CLM is selected)
+        conditionalPanel(
+          condition = "input.var_type != 'clm'",
+          selectInput(
+            "trend_metric",
+            label = tags$span(h4(HTML("<b>Select metric</b>"))),
+            choices = c(
+              "Change per year" = "sens",
+              "Direction of trend" = "tau"
+            ),
+            selected = "sens"
+          )
+        ),
+        
         # Year range selection
         selectInput(
           "year_range",
           label = tags$span(h4(HTML("<b>Select time range</b>"))),
-          choices = c("1981-2025", "2001-2025"),
+          choices = c("1981-2025", "1981-2000", "2001-2025"),
           selected = "1981-2025"
         )
-      ), # end side panel
+        
+      ), # End side panel
       
       # ------ Visuals (Right side) -------------------------------------------
       
@@ -379,26 +390,49 @@ northwest-nurseries/")),
         card(
           
           class = "mt-3",
-          card_header(tags$b("Location statistics")),
+          card_header(tags$b("Location-based information")),
           
           tags$p("Please click on your location of interest on the map to 
                  trigger the results below."),
           
-          div(
+          layout_columns(
             
-            class = "p-2",
+            # Left side: statistics
+            div(
+              
+              h5("Summary statistics"),
+              tags$hr(),
+              uiOutput("clicked_years"),
+              tags$br(),
+              uiOutput("clicked_latlon"),
+              tags$br(),
+              uiOutput("clicked_pest"),
+              tags$br(),
+              uiOutput("clicked_variable"),
+              tags$br(),
+              uiOutput("clicked_value"),
+              tags$br(),
+              uiOutput("clicked_pval")
+              
+            ),
             
-            uiOutput("clicked_years"),
-            uiOutput("clicked_latlon"),
-            uiOutput("clicked_pest"),
-            uiOutput("clicked_variable"),
-            uiOutput("clicked_value"),
-            uiOutput("clicked_pval"),
-  
+            # Right side: trend plot
+            div(
+              
+              h5("Trend plot"),
+              plotOutput("loc_plot")
+              
+            ),
+            
+            col_widths = c(5, 7)
+            
           )
         )
+
       ) # end map div
+      
     ) # end layout_sidebar
+    
   ), # end nav_panel
   
   ##### * Tab 3: Pest Reports #####
@@ -913,21 +947,24 @@ server <- function(input, output, session) {
   selected_variable <- reactive({
     
     req(input$var_type)
+    
+    # If CLM
+    if (input$var_type == "clm") {
+      return("All Stress Excl")
+    }
   
+    # If climate selected, return selected climate variable
     if (input$var_type == "climate") {
       req(input$clim_variable)
       return(input$clim_variable)
     }
     
+    # If phenology selected, return selected phenology variable
     if (input$var_type == "phenology") {
       req(input$phenology)
       return(input$phenology)
     }
-    # If climate is selected, return climate
-    #if (input$var_type == "climate") return(input$clim_variable)
     
-    # If phenology is selected, return phenology
-    #if (input$var_type == "phenology") return(input$phenology)
   })
   
   
@@ -936,32 +973,51 @@ server <- function(input, output, session) {
   #### * Get row with raster of interest ####
   selected_row <- reactive({
     
-    req(
-      input$pest,
-      input$year_range,
-      input$var_type,
-      selected_variable()
-    )
+    req(input$pest, input$year_range, input$var_type)
     
-    # Get row with information
-    row <- raster_lookup %>%
-      dplyr::filter(
-        model_type == "MK_trends" &
-        common_name == input$pest &
-        variable == selected_variable() &
-        year == input$year_range
-      )
+    # Comparisons
+    if (input$pest == "All 18 spp") {
+      
+      # Comparisons rasters
+      row <- raster_lookup %>%
+        dplyr::filter(
+          model_type == "Comparisons",
+          variable == selected_variable(),
+          year == input$year_range
+        )
     
-    # Make sure there's a row
+    # CLM
+    } else if (input$var_type == "clm") {
+      
+      row <- raster_lookup %>%
+        dplyr::filter(
+          model_type == "CLM",   
+          common_name == input$pest,
+          year == input$year_range
+        )
+    
+    # MK 
+    } else {
+      
+      row <- raster_lookup %>%
+        dplyr::filter(
+          model_type == "MK_trends",
+          common_name == input$pest,
+          variable == selected_variable(),
+          year == input$year_range
+        )
+      
+    }
+    
     validate(need(nrow(row) == 1, "No raster found"))
     
-    # Return the row
     row
-    
   })
   
   
   ### ---------------------------------------------------------------------- ###
+  
+  # Note: 1 = tau, 2 = sen, and 3 = p-value, as organized in the .tif file
   
   #### * Collect raster info ####
   
@@ -980,32 +1036,62 @@ server <- function(input, output, session) {
     rast_import(selected_row()$file_path, 3)
   })
   
+  # CLM
+  pest_raster_clm <- reactive({
+    rast_import(selected_row()$file_path)
+  })
+  
+  # Comparisons
+  #pest_raster_comp <- reactive({
+  #  rast(selected_row()$file_path)
+  #})
+  
+  # Comparisons - layer names
+  
+  #layer_names <- names(pest_raster_comp())
+  
   
   ### ---------------------------------------------------------------------- ###
   
   #### * Reactive for metric ####
   selected_trend <- reactive({
     
-    req(input$trend_metric)
+    req(input$var_type, input$trend_metric)
     
-    # If they select Sen (default)
-    if (input$trend_metric == "sens") {
+    # CLM
+    if (input$var_type == "clm") {
       
-      list(
-        rast = pest_raster_sen(),
-        title = "Change in days per year"
-      )
-      
-      # Else is if they select tau
-    } else {
-      
-      list(
-        rast = pest_raster_tau(),
-        title = "Direction of trend"
-      )
+      return(list(
+        rast = pest_raster_clm(),
+        title = "All stress exclusion"
+      ))
       
     }
     
+    # Sen title depending on selection
+    sens_title <- if (input$var_type == "phenology") {
+      "Change in days per year"
+    } else {
+      "Change in units per year"
+    }
+    
+    # Sen's
+    if (input$trend_metric == "sens") {
+      
+      return(list(
+        rast = pest_raster_sen(),
+        title = sens_title
+      ))
+      
+    # Tau
+    } else {
+      
+      return(list(
+        rast = pest_raster_tau(),
+        title = "Direction of trend"
+      ))
+      
+    }
   })
   
   
@@ -1030,6 +1116,8 @@ server <- function(input, output, session) {
   ### ---------------------------------------------------------------------- ###
   
   #### * Reactive palette ####
+  
+  # For legend
   palette_reactive <- reactive({
     make_palette(selected_trend()$rast, input$trend_metric)
   })
@@ -1038,8 +1126,8 @@ server <- function(input, output, session) {
   ### ---------------------------------------------------------------------- ###
   
   #### * Update map when pest changes ####
-  #observeEvent(list(selected_row(), input$trend_metric), {
   observeEvent(list(selected_trend(), input$trend_metric), { 
+    
     trend <- selected_trend()
     
     # Build palette + limits
@@ -1048,30 +1136,51 @@ server <- function(input, output, session) {
     limits <- pal_obj$limits
     
     # Build horizontal legend
-    legend_html <- paste0(
-      "<div style='background:white;padding:8px 10px;border-radius:6px;'>",
+    if (input$trend_metric == "clm") {
       
-      "<div style='text-align:center;font-weight:bold;margin-bottom:4px;'>",
-      trend$title,
-      "</div>",
+      legend_html <- paste0(
+        "<div style='background:white;padding:8px 10px;border-radius:6px;'>",
+        
+        "<div style='text-align:center;font-weight:bold;margin-bottom:4px;'>",
+        trend$title,
+        "</div>",
+        
+        "<div style='display:flex;flex-direction:column;gap:4px;'>",
+        
+        "<div><span style='display:inline-block;width:12px;height:12px;background:#d9d9d9;margin-right:6px;'></span>Unsuitable</div>",
+        "<div><span style='display:inline-block;width:12px;height:12px;background:#1a9850;margin-right:6px;'></span>Suitable</div>",
+        
+        "</div></div>"
+      )
       
-      "<div style='display:flex;flex-direction:column;align-items:center;'>",
+    } else {
       
-      "<div style='width:160px;height:14px;border:1px solid #ccc;",
-      "background:linear-gradient(to right,",
-      paste(pal(seq(limits[1], limits[2], length.out = 50)), 
-            collapse = ","),
-      ");'></div>",
-      
-      "<div style='display:flex;justify-content:space-between;",
-      "width:160px;font-size:11px;margin-top:2px;'>",
-      "<span>", round(limits[1],2), "</span>",
-      "<span>0</span>",
-      "<span>", round(limits[2],2), "</span>",
-      "</div>",
-      
-      "</div></div>"
-    )
+      legend_html <- paste0(
+        "<div style='background:white;padding:8px 10px;border-radius:6px;'>",
+        
+        "<div style='text-align:center;font-weight:bold;margin-bottom:4px;'>",
+        trend$title,
+        "</div>",
+        
+        "<div style='display:flex;flex-direction:column;align-items:center;'>",
+        
+        "<div style='width:160px;height:14px;border:1px solid #ccc;",
+        "background:linear-gradient(to right,",
+        paste(pal(seq(limits[1], limits[2], length.out = 50)), 
+              collapse = ","),
+        ");'></div>",
+        
+        "<div style='display:flex;justify-content:space-between;",
+        "width:160px;font-size:11px;margin-top:2px;'>",
+        "<span>", round(limits[1],2), "</span>",
+        "<span>0</span>",
+        "<span>", round(limits[2],2), "</span>",
+        "</div>",
+        
+        "</div></div>"
+        
+      )
+    }
     
     # Plot updated map
     leafletProxy("map") %>%
@@ -1081,16 +1190,21 @@ server <- function(input, output, session) {
       addRasterImage(
         trend$rast,
         colors  = pal,
-        opacity = 0.65,
+        opacity = 0.8,
         layerId = "Value",
-        project = FALSE
-      ) %>%
+        project = TRUE)  %>%
       addControl(
         html = HTML(legend_html),
-        position = "bottomright"
-      )
-  }, 
-  ignoreInit = TRUE)
+        position = "bottomright")
+    
+    b <- current_bounds()
+    
+    if (!is.null(b)) {
+      leafletProxy("map") %>%
+        fitBounds(b$west, b$south, b$east, b$north)
+    }
+    
+  }, ignoreInit = TRUE)
   
   
   ### ---------------------------------------------------------------------- ###
@@ -1100,23 +1214,35 @@ server <- function(input, output, session) {
   # Observe bounds of current map in order to
   # keep the bounds from resetting when map selected changes
   
-  observeEvent(input$map_bounds, {
+  #observeEvent(input$map_bounds, {
     
     # Map zoom can't be entire area (level 6) or get weird behavior
     # (non-stop loop of zooming) when select risk maps multiple times
+ #   bounds <- input$map_bounds
+ #   mapzoom <- input$map_zoom
+    
+    # Keep bounds from resetting
+ #   if (mapzoom > 6) {
+      
+      # Update map
+ #     leafletProxy("map") %>%
+ #       fitBounds(bounds$west, bounds$south, bounds$east, bounds$north) %>%
+ #       clearGroup("click_marker")
+      
+      
+   # }
+  #})
+  
+  current_bounds <- reactiveVal(NULL)
+  
+  observeEvent(input$map_bounds, {
+    
     bounds <- input$map_bounds
     mapzoom <- input$map_zoom
     
-    # Keep bounds from resetting
     if (mapzoom > 6) {
-      
-      # Update map
-      leafletProxy("map") %>%
-        fitBounds(bounds$west, bounds$south, bounds$east, bounds$north) %>%
-        clearGroup("click_marker")
-      
-      
-    }
+      current_bounds(bounds) 
+      }
   })
   
   
@@ -1125,6 +1251,7 @@ server <- function(input, output, session) {
   #### * Adjust to another region when selected ####
   observeEvent(input$region, {
     
+    # Check
     req(input$region)
     
     # Get extent from your helper
@@ -1146,21 +1273,52 @@ server <- function(input, output, session) {
   })
   
   
+  
   ### ---------------------------------------------------------------------- ###
   
-  #### * Panel that holds location click outputs ####
+  #### * Reactive for where person clicked on map ####
+  
+  # NULL until click
+  click_val <- reactiveVal(NULL)
+  
+  # When clicked
   observeEvent(input$map_click, {
+    click_val(input$map_click)
+  })
+  
+  # If anything changes, make it null again
+  observeEvent(
+    list(input$year_range, input$pest, input$var_type,
+         input$clim_variable, input$phenology, input$trend_metric),
+    {
+      click_val(NULL)
+    },
+    ignoreInit = TRUE
+  )
+  
+  
+  
+  ### ---------------------------------------------------------------------- ###
+  
+  #### * Update panel that holds location click outputs ####
+  observeEvent(click_val(), {
     
+    # Define metric being used
     trend <- selected_trend()
     
-    req(input$map_click, trend$rast, pest_raster_pval())
+    # Checks
+    req(click_val(), trend$rast)
+    
+    if (input$trend_metric != "clm") {
+      req(pest_raster_pval())
+    }
     
     # Store click info
-    click <- input$map_click
+    click <- click_val()
     
     # Add marker where user clicked
     leafletProxy("map") %>%
-      clearGroup("click_marker") %>%   # removes old marker
+      clearGroup("click_marker") %>% 
       addMarkers(
         lng = click$lng,
         lat = click$lat,
@@ -1174,49 +1332,81 @@ server <- function(input, output, session) {
     # Extract selected metric value
     value <- terra::extract(trend$rast, xy)[1,2]
     
-    # Extract p-value
-    pval_val <- terra::extract(pest_raster_pval(), xy)[1,2]
+    # Extract p-value (only if not CLM)
+    pval_val <- NULL
+
+    if (input$trend_metric != "clm") {
+      pval_val <- terra::extract(pest_raster_pval(), xy)[1,2]
+    }
     
     # Year range (MK_trends)
     output$clicked_years <- renderUI({
+      
       tags$div(tags$b("Prediction compiled for the years:"), input$year_range)
-    })
+    
+      })
     
     # Coordinates
     output$clicked_latlon <- renderUI({
-      tags$div(tags$b("Location at coordinates:"), 
+      
+      tags$div(tags$b("Location coordinates:"), 
                round(click$lat, 4), ", ", round(click$lng, 4))
+      
     })
     
     # Pest
     output$clicked_pest <- renderUI({
+      
       tags$div(tags$b("Pest selected:"), input$pest)
+      
     })
     
     # Variable
     output$clicked_variable <- renderUI({
-      var <- selected_variable()
-      display_name <- variable_labels[var] %||% var %||% "Not available"
-      tags$div(tags$b("Variable of interest:"), display_name)
+      
+      tags$div(tags$b("Variable of interest:"), selected_variable())
+      
     })
     
     # Selected metric value
     output$clicked_value <- renderUI({
       
+      # Info text if MK
       info_text <- if (input$trend_metric == "tau") {
+        
         "Kendall’s τ indicates the direction and consistency of a trend over
         time. Positive values suggest the variable is generally increasing / 
         occurring progressively later over time, while negative values suggest 
         decreasing / earlier timing."
-      } else {
+        
+      # If Sen's
+      } else if (input$trend_metric == "sens") {
+        
         "Sen’s slope estimates the annual rate of change in timing. Positive 
         values suggest increasing x units per year; negative values suggest a
         decrease of x units per year."
+        
+      # If CLM
+      } else {
+        
+        "The cumulative link model (CLM) was used to assess changes in 
+        ordinal predictions of potential distribution. In other words, there are 
+        three categories corresponding to climate stress exclusions: none, 
+        moderate, and severe stress exclusion. Positive values in the CLM 
+        indicate an increase in the likelihood of establishment, occurring
+        because survival-limiting climate stresses are lessening. Similarly but 
+        on the contrary, negative values suggest a decrease in likelihood."
+        
       }
       
+      
       tags$div(
+        
+        # Print value
         tags$b(paste0(trend$title, ": ")),
         round(value, 3), " ",
+        
+        # Info circle next to printed value
         tags$span(
           tags$i(class = "bi bi-info-circle"),
           style = "cursor:pointer;",
@@ -1228,12 +1418,21 @@ server <- function(input, output, session) {
           `data-bs-content` = info_text
         )
       )
+      
     })
     
     # P-value
     output$clicked_pval <- renderUI({
+      
+      # Only render if not CLM
+      if (input$trend_metric == "clm") return(NULL)
+      
       tags$div(
+        
+        # Print value
         tags$b("P-value:"), signif(pval_val, 3),
+        
+        # Info circle next to printed value
         tags$span(
           tags$i(class = "bi bi-info-circle"),
           style = "cursor:pointer;",
@@ -1243,12 +1442,171 @@ server <- function(input, output, session) {
           `data-bs-html` = "true",
           title = "About the p-value",
           `data-bs-content` = HTML(
-            "The p-value describes the strength of evidence for a trend.
-          Values less than 0.05 are typically considered statistically 
-            significant."
-          )
+            "The p-value describes the strength of our statistic.
+        Values less than 0.05 are typically considered statistically 
+        significant.")
         )
       )
+    })
+    
+    # Trend plot
+    output$loc_plot <- renderPlot({
+      
+      # Precursor message
+      validate(need(click_val(), "Click on the map to generate a plot!"))
+      
+      # Require map click
+      req(click_val(), cancelOutput = TRUE)
+      click <- click_val()
+      
+      # For checking on Console
+      message("Rendering plot...")
+      
+      # Convert years from character to index (to pull in files)
+      range_vals <- strsplit(input$year_range, "-")[[1]]
+      yrs <- as.numeric(range_vals[1]):as.numeric(range_vals[2])
+      
+      # Variable name modifications
+      var_raw <- selected_variable()
+      label <- stringr::str_to_sentence(gsub("_", " ", var_raw))
+      
+      is_pem <- var_raw %in% c("First_adult_emergence", "First_egg_hatch")
+      
+      # Spatial point
+      site <- terra::vect(
+        data.frame(x = click$lng, y = click$lat),
+        geom = c("x", "y"),
+        crs = "EPSG:4326"
+      )
+      
+      # File lookup
+      files <- raster_lookup %>%
+        dplyr::filter(
+          model_type == "DDRP",
+          common_name == input$pest,
+          variable == var_raw,
+          year %in% yrs
+        ) %>%
+        dplyr::arrange(year)
+      
+      if (nrow(files) == 0) return(NULL)
+      
+      # Load rasters
+      rasts <- lapply(files$file_path, rast_import)
+      rasts <- terra::rast(rasts)
+      names(rasts) <- files$year
+      
+      site <- terra::project(site, rasts)
+      
+      # Extract data
+      site_data <- terra::extract(rasts, site) %>%
+        dplyr::select(-ID) %>%
+        tidyr::pivot_longer(
+          cols = everything(),
+          names_to = "year",
+          values_to = "value") %>%
+        dplyr::mutate(
+          year = as.numeric(year),
+          value = as.numeric(value))
+      
+      # Axis setup
+      x_brks <- if (length(yrs) == 20) 2 else 5
+      yr_first <- if (min(yrs) == 1981) 1980 else min(yrs)
+      yr_last  <- if (max(yrs) >= 2024) 2025 else max(yrs)
+      breaks_func <- scales::breaks_pretty(n = 6)
+      y_brks <- breaks_func(site_data$value)
+      ymax_pt <- max(site_data$value, na.rm = TRUE)
+      ymax_df <- dplyr::slice(dplyr::filter(site_data, value == ymax_pt), 1) %>%
+        dplyr::mutate(year = max(site_data$year), value = NA)
+      
+      # Custom plot theme
+      custom_theme <- theme(
+        axis.text.x = element_text(size = 14, angle = 60, hjust = 1),
+        axis.text.y = element_text(size = 14),
+        plot.title = element_text(size = 16, face = "bold"),
+        axis.title = element_text(size = 16, face = "bold"))
+      
+      # PEM date conversion
+      if (is_pem) {
+        
+        doys <- c(
+          min(terra::values(rasts), na.rm = TRUE),
+          max(terra::values(rasts), na.rm = TRUE)
+        )
+        
+        range_date <- as.Date(doys - 1, origin = "2025-01-01")
+        all_dates <- format(seq(range_date[1], range_date[2], by = 1), "%b-%d")
+        dates_df <- data.frame(
+          value = seq(doys[1], doys[2], by = 1),
+          dates = all_dates
+        )
+        
+        site_data <- dplyr::left_join(site_data, dates_df, by = "value")
+        
+      }
+      
+      # If no variation
+      if (all(site_data$value == 0 | is.na(site_data$value))) {
+        
+        p <- ggplot(site_data, aes(x = year, y = value)) +
+          geom_point() +
+          geom_line(color = "steelblue") +
+          scale_x_continuous(limits = c(yr_first, yr_last),
+                             breaks = seq(yr_first, yr_last, x_brks)) +
+          scale_y_continuous(breaks = y_brks) +
+          labs(title = paste("Predicted", label, "for", input$pest),
+               x = "Year",
+               y = label) +
+          geom_text_repel(data = ymax_df,
+                          aes(x = Inf, y = ymax_pt + 1.5, label = "No trend"),
+                          size = 4.5) +
+          theme_bw() +
+          custom_theme +
+          theme(legend.position = "none")
+        
+        # If there is variation
+      } else {
+        
+        # Mann-Kendall
+        pwmk_test <- modifiedmk::pwmk(site_data$value)
+        slope <- round(as.numeric(pwmk_test[["Sen's Slope"]]), 4)
+        pval  <- round(as.numeric(pwmk_test[["P-value"]]), 4)
+        median_x <- median(site_data$year, na.rm = TRUE)
+        median_y <- median(site_data$value, na.rm = TRUE)
+        intercept <- median_y - slope * median_x
+        
+        # Plot
+        p <- ggplot(site_data, aes(x = year, y = value)) +
+          geom_point() +
+          geom_line(color = "steelblue") +
+          geom_abline(intercept = intercept,
+                      slope = slope,
+                      color = "red") +
+          scale_x_continuous(limits = c(yr_first, yr_last),
+                             breaks = seq(yr_first, yr_last, x_brks)) +
+          scale_y_continuous(breaks = y_brks) +
+          labs(title = paste("Predicted", label, "for", input$pest),
+               x = "Year",
+               y = label) +
+          geom_text_repel(data = ymax_df,
+            aes(x = Inf,
+                y = ymax_pt + 1.5,
+                label = paste0("Slope: ", slope, ", P-value: ", pval)),
+            size = 4.5) +
+          theme_bw() +
+          custom_theme
+      }
+      
+      # Replace DOY with dates for PEM
+      if (is_pem) {
+        p <- p + scale_y_continuous(
+          breaks = y_brks,
+          labels = dates_df$dates
+        )
+      }
+      
+      return(p)
+      
     })
     
   })
@@ -1256,8 +1614,18 @@ server <- function(input, output, session) {
   
   ### ---------------------------------------------------------------------- ###
   
-  #### * Clear absolutePanel() when pest / variable changes ####
-  observeEvent(list(input$var_type, input$clim_variable, input$phenology), {
+  #### * Table for intro ####
+  output$intro_table <- renderTable({
+    intro_tab <- read.csv("intro_table.csv", check.names = FALSE)
+    intro_tab
+  })
+  
+  
+  ### ---------------------------------------------------------------------- ###
+  
+  #### * Clear absolutePanel() when selection changes ####
+  observeEvent(list(input$var_type, input$clim_variable, input$phenology,
+                    input$pest, input$region, input$trend_metric), {
     
     output$clicked_years    <- renderUI(NULL)
     output$clicked_latlon   <- renderUI(NULL)
@@ -1265,16 +1633,9 @@ server <- function(input, output, session) {
     output$clicked_variable <- renderUI(NULL)
     output$clicked_value    <- renderUI(NULL)
     output$clicked_pval     <- renderUI(NULL)
+    output$loc_plot         <- renderPlot(NULL)
     
-  })
-  
-  
-  ### ---------------------------------------------------------------------- ###
-  
-  # Table for intro
-  output$intro_table <- renderTable({
-    intro_tab <- read.csv("intro_table.csv")
-    intro_tab
+    
   })
   
   
