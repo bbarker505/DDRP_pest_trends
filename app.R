@@ -419,8 +419,26 @@ northwest-nurseries/")),
             # Right side: trend plot
             div(
               
-              h5("Trend plot"),
-              plotOutput("loc_plot")
+              h5("Trend plot ",
+                tags$span(
+                  tags$i(class = "bi bi-info-circle"),
+                  style = "cursor:pointer; margin-left:5px;",
+                  `data-bs-toggle` = "popover",
+                  `data-bs-trigger` = "click",
+                  `data-bs-placement` = "right",
+                  `data-bs-html` = "true",
+                  title = "About this plot",
+                  `data-bs-content` = "This plot shows predicted values at the 
+                  selected location over time. The red line represents Sen’s 
+                  slope (trend), and the p-value indicates statistical 
+                  significance. If the plot you selected shows missing points,
+                  those points are due to conditions being unsatisfactory for
+                  the selected event to occur."
+                )
+              ),
+              plotOutput("loc_plot"),
+              tags$br(),
+              downloadButton("download_plot", "Download this plot")
               
             ),
             
@@ -1450,7 +1468,7 @@ server <- function(input, output, session) {
     })
     
     # Trend plot
-    output$loc_plot <- renderPlot({
+    loc_plot_obj <- reactive({
       
       # Precursor message
       validate(need(click_val(), "Click on the map to generate a plot!"))
@@ -1558,7 +1576,9 @@ server <- function(input, output, session) {
                x = "Year",
                y = label) +
           geom_text_repel(data = ymax_df,
-                          aes(x = Inf, y = ymax_pt + 1.5, label = "No trend"),
+                          aes(x = max(site_data$year) + 1, 
+                              y = ymax_pt + 1.5, 
+                              label = "No trend"),
                           size = 4.5) +
           theme_bw() +
           custom_theme +
@@ -1589,7 +1609,7 @@ server <- function(input, output, session) {
                x = "Year",
                y = label) +
           geom_text_repel(data = ymax_df,
-            aes(x = Inf,
+            aes(x = max(site_data$year) + 1,
                 y = ymax_pt + 1.5,
                 label = paste0("Slope: ", slope, ", P-value: ", pval)),
             size = 4.5) +
@@ -1608,6 +1628,20 @@ server <- function(input, output, session) {
       return(p)
       
     })
+    
+    output$loc_plot <- renderPlot({
+      loc_plot_obj()
+    })
+    
+    # Option to download plot 
+    output$download_plot <- downloadHandler(
+      filename = function() {
+        paste0("trend_plot_", input$pest, "_", input$year_range, ".png")
+      },
+      content = function(file) {
+        ggsave(file, plot = loc_plot_obj(), width = 8, height = 5, dpi = 300)
+      }
+    )
     
   })
   
