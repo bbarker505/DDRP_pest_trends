@@ -1,197 +1,204 @@
 # ----- ABOUT ------------------------------------------------------------------
-
 # Contains custom functions to be loaded into the app.R file
 
-
-
-
-
 # ----- Function to import outputs (rasters) -----------------------------------
-
-# 1 = Tau statistic
-# 2 = Sen's slope
-# 3 = p-value
+# 1 = Tau statistic, 2 = Sen's slope, 3 = p-value
+# rast_import <- function(file, layer = 1) {
+#   key <- paste0(file, "_", layer)
+#   if (!exists(key, envir = .raster_cache)) {
+#     r <- terra::rast(file)[[layer]]
+#     assign(key, r, envir = .raster_cache)
+#   }
+#   get(key, envir = .raster_cache)
+# }
 
 rast_import <- function(file, layer = 1) {
-  
   key <- paste0(file, "_", layer)
-  
   if (!exists(key, envir = .raster_cache)) {
-    
-    # Select layer
     r <- terra::rast(file)[[layer]]
-    
     assign(key, r, envir = .raster_cache)
-    
   }
-  
   get(key, envir = .raster_cache)
-  
 }
 
+# Helper to convert terra extent to a list of numeric bounds
+ext_to_list <- function(ext) {
+  list(
+    north = as.numeric(terra::ymax(ext)),
+    south = as.numeric(terra::ymin(ext)),
+    east  = as.numeric(terra::xmax(ext)),
+    west  = as.numeric(terra::xmin(ext))
+  )
+}
 
+# An alias often used in the region observer
+ext_to_bounds <- ext_to_list
 
+# ----- Produce a color palette ------------------------------------------------
 
+# Helper function to generate a colorNumeric palette
+gen_pal <- function(pal, limits) {
+  pal <- colorNumeric(
+    palette = pal, domain = limits, na.color = "transparent")
+}
 
-# ----- Produce a leaflet map showing metrics ----------------------------------
-
-# Color palette for map
+# Make the reactive palette
 make_palette <- function(rast, metric) {
   
-  vals <- terra::values(rast, na.rm = TRUE)
+  # Palette for maps for iniviual spe3cies
+  #sp_pal <-  scico::scico(100, palette = "vik")
+  sp_pal <- colorRampPalette(
+    c("#053061","#2166AC","#67A9CF","#FFF7BC","#EF8A62","#D73027","#67001F")
+    )(100)
+  comp_pal <- "viridis"
+  #rb_pal <- rev(RColorBrewer::brewer.pal(11, "RdBu"))
   
-  # Define symmetric limits
-  limits <- switch(
-    metric,
-    "tau"  = c(-1, 1),
-    "sens" = {
-      max_abs <- max(abs(vals))
-      c(-max_abs, max_abs)
-    }
-  )
+  if (is.null(rast)) return(NULL)
   
-  pal <- colorNumeric(
-    palette  = rev(RColorBrewer::brewer.pal(11, "RdBu")),
-    domain   = limits,
-    na.color = "transparent"
-  )
+  is_comparison <- grepl("species_num", metric)
   
-  list(
-    pal    = pal,
-    limits = limits
-  )
+  # Spp. comparison maps
+  if (is_comparison) {
+    # Continuous scale for species counts (0 to 18)
+    limits <- c(0, 18)
+    pal <- gen_pal(comp_pal, limits)
+  } else if (metric == "tau") {
+    limits <- c(-1, 1)
+    pal <- gen_pal(sp_pal, limits)
+    # Individual species maps
+  } else if (metric == "sens") {
+    # Use minmax for speed and to prevent crashes
+    mm <- as.vector(terra::minmax(rast))
+    max_abs <- max(abs(mm), na.rm = TRUE)
+    if (is.infinite(max_abs) || max_abs == 0) max_abs <- 0.1
+    limits <- c(-max_abs, max_abs)
+    pal <- gen_pal(sp_pal, limits)
+  } else {
+    limits <- c(0, 1)
+    pal <- gen_pal(comp_pal, limits)
+  }
+  
+  list(pal = pal, limits = limits)
 }
 
+# ----- Consolidated legend builder --------------------------------------------
+create_legend_html <- function(metric, title, pal, limits) {
+  is_comparison <- grepl("species_num", metric)
+  
+  if (is_comparison) {
+    # 1. Generate colors for the gradient bar
+    grad_colors <- paste(pal(seq(0, 18, length.out = 50)), collapse = ",")
+    
+    # 2. Generate the numeric labels first
+    ticks <- seq(0, 18, by = 2)
+    
+    # 3. Create the HTML string for labels
+    # We use flexbox to ensure they spread evenly across the 240px width
+    tick_labels <- paste0("<span style='flex: 1; text-align: center;'>", ticks, "</span>", collapse = "")
+    
+    # 4. Now the sub() function will work because tick_labels exists
+    tick_labels <- sub("<span>18</span>$", "<span>18</span>", tick_labels)
+    
+    paste0(
+      "<div style='background:white;padding:8px 10px;border-radius:6px;box-shadow:0 0 5px rgba(0,0,0,0.2);'>",
+      "<div style='text-align:center;font-weight:bold;margin-bottom:4px;'>", title, "</div>",
+      "<div style='width:240px;height:14px;border:1px solid #ccc;background:linear-gradient(to right,", grad_colors, ");'></div>",
+      "<div style='display:flex;justify-content:space-between;font-size:9px;margin-top:2px;'>",
+      tick_labels,
+      "</div>",
+      "<div style='text-align:right; font-size:9px; margin-top:2px;'>",
+      "</div></div>"
+    )
+  } else {
+    # Continuous gradient for Trends (Tau/Sens)
+    paste0(
+      "<div style='background:white;padding:8px 10px;border-radius:6px;box-shadow:0 0 5px rgba(0,0,0,0.2);'>",
+      "<div style='text-align:center;font-weight:bold;margin-bottom:4px;'>", title, "</div>",
+      "<div style='width:160px;height:14px;border:1px solid #ccc;background:linear-gradient(to right,",
+      paste(pal(seq(limits[1], limits[2], length.out = 50)), collapse = ","),
+      ");'></div>",
+      "<div style='display:flex;justify-content:space-between;font-size:11px;margin-top:2px;'>",
+      "<span>", round(limits[1], 2), "</span><span>0</span><span>", round(limits[2], 2), "</span>",
+      "</div></div>"
+    )
+  }
+}
 
-produce_map <- function(rast, bounds, metric, legend_title) {
+# ----- Mask out non-significant areas -----------------------------------------
+mask_by_pval <- function(value_rast, pval_rast, threshold = 0.1) {
+  # Ensure alignment (important if rasters differ slightly)
+  if (!terra::compareGeom(value_rast, pval_rast, stopOnError = FALSE)) {
+    pval_rast <- terra::resample(pval_rast, value_rast)
+  }
   
-  layerID <- "Value"
+  # Apply mask (fast, vectorized)
+  value_rast[pval_rast > threshold] <- NA
   
-  # Palette to use
-  pal_obj <- make_palette(rast, metric)
+  return(value_rast)
+}
+
+# Apply p-value mask 
+apply_sig_mask <- function(r, pval, sig_only) {
   
-  pal    <- pal_obj$pal
-  limits <- pal_obj$limits
+  # No masking requested
+  if (is.null(pval) || !isTRUE(sig_only)) {
+    return(r)
+  }
   
-  # Leaflet options
+  # Apply significance mask
+  mask_by_pval(
+    value_rast = r,
+    pval_rast = pval,
+    threshold = 0.1
+  )
+  
+}
+
+# ----- Initial map render setup -----------------------------------------------
+produce_map_base <- function(bounds) {
   leaflet(
-    options = leafletOptions(attributionControl = FALSE,
-                             zoomControl = FALSE,
-                             minZoom = 4.75,
-                             zoomSnap = 0.25,
-                             zoomDelta = 0.25,
-                             maxBounds = list(c(bounds$south, bounds$west),
-                                              c(bounds$north, bounds$east)
-                                              ),
-                             maxBoundsViscosity = 1.0
-                             )
-    ) %>%
-    
-    # Javascript settings
-    htmlwidgets::onRender("
-      function(el, x) {
-        L.control.zoom({ position: 'topright' }).addTo(this);
-      }
-    ") %>%
-    
-    # Add background tiles
-    addProviderTiles(providers$CartoDB.Voyager) %>%
-    
-    # Add our raster
-    addRasterImage(
-      rast,
-      colors  = pal,
-      opacity = 0.8,
-      layerId = layerID,
-      project = TRUE
-    ) %>%
-    
-    # Add legend depending on statistic
-    addControl(
-      html = HTML(paste0(
-        "<div style='background:white;padding:8px 10px;border-radius:6px;'>",
-        "<div style='text-align:center;font-weight:bold;margin-bottom:4px;'>",
-        legend_title,
-        "</div>",
-        
-        "<div style='display:flex;flex-direction:column;align-items:center;'>",
-        
-        # gradient bar
-        "<div style='width:160px;height:14px;border:1px solid #ccc;",
-        "background:linear-gradient(to right,",
-        paste(pal(seq(limits[1], limits[2], length.out = 50)), collapse = ","),
-        ");'></div>",
-        
-        # labels
-        "<div style='display:flex;justify-content:space-between;",
-        "width:160px;font-size:11px;margin-top:2px;'>",
-        "<span>", round(limits[1],2), "</span>",
-        "<span>0</span>",
-        "<span>", round(limits[2],2), "</span>",
-        "</div>",
-        
-        "</div></div>"
-      )),
-      position = "bottomright"
-    ) %>%
-    
-    # Add county lines
+    options = leafletOptions(
+      attributionControl = FALSE, 
+      zoomControl = FALSE,
+      minZoom = 4, # min zoom = CONUS
+      zoomSnap = 0.25, 
+      zoomDelta = 0.25,
+      # Prevent zooming when clicking a location 
+      doubleClickZoom = FALSE,
+      # Prevents the user from panning away from North America
+      maxBounds = list(c(bounds$south - 10, bounds$west - 10), 
+                       c(bounds$north + 10, bounds$east + 10))
+    )
+  ) %>% 
+    # Map tiles
+    addProviderTiles(providers$CartoDB.Positron) %>% 
+    #addProviderTiles(providers$CartoDB.Voyager) %>%
+    # Fit the initial view to the provided bounds (CONUS)
+    fitBounds(lng1 = bounds$west, lat1 = bounds$south, 
+              lng2 = bounds$east, lat2 = bounds$north) %>%
+    # Always-on State Boundaries
     addPolylines(
-      data = county_sf,
-      options = pathOptions(interactive = FALSE),
-      group  = "Counties",
-      opacity = 0.1,
-      color  = "grey",
-      weight = 1.25
+      data = us_states, # Assumes this object is loaded in setup.R
+      opacity = 0.6, 
+      color = "#444444", 
+      weight = 1.2, 
+      group = "permanent_states"
     ) %>%
-    
-    # Add state lines
-    addPolylines(data = us_states,
-                 options = pathOptions(interactive = FALSE),
-                 group  = "Counties",
-                 opacity = 0.5,
-                 color  = "grey",
-                 weight = 1.25
+    # County Boundaries (Initially Hidden)
+    addPolylines(
+      data = us_counties, # Assumes this object is loaded in setup.R
+      opacity = 0.4, 
+      color = "#777777", 
+      weight = 0.5, 
+      group = "dynamic_counties"
     ) %>%
-    
-    # Set view
-    setView(lng  = mean(c(bounds$west, bounds$east)),
-            lat  = mean(c(bounds$south, bounds$north)),
-            zoom = 4.75
-    ) %>%
-    
-    # Adds coordinates from hovering
-    addMouseCoordinates
+    hideGroup("dynamic_counties")
 }
-
-
-
-
-
-
-# ----- Function to clear absolutePanel stats when pest is changed -------------
-
-clear_click_info <- function(output) {
-  output$clicked_years <- renderUI(NULL)
-  output$clicked_latlon <- renderUI(NULL)
-  output$clicked_value  <- renderUI(NULL)
-  output$clicked_pval   <- renderUI(NULL)
-}
-
-
-
-
-
-
-# ----- Function to filter content to state ------------------------------------
-
-# Taken from https://github.com/bbarker505/ddrp_v3/blob/main/DDRP_v3_funcs.R
 
 # Assign_extent: assign geographic extent
 # Add new extent definitions here for use in models and plots
 # Set up regions
 # Use switch() (works like a single use hash) 
-
 assign_extent <- function(region_param) {
   REGION <- switch(region_param,
                    "CONUS"        = ext(-125.0, -66.5, 24.54, 49.4),
@@ -259,115 +266,126 @@ assign_extent <- function(region_param) {
   return(REGION)
 }
 
+# ----- Additional spatial features in map -------------------------------------
 
-
-
-
-
-# ----- Help to fix bounds after selectiong a region ---------------------------
-
-ext_to_bounds <- function(ext) {
-  list(
-    west  = ext$xmin,
-    south = ext$ymin,
-    east  = ext$xmax,
-    north = ext$ymax
+# Create polygon for CLM raster for map to make more visible
+create_clm_outline <- function(clm_raster) {
+  
+  # Create binary raster from non-NA cells
+  clm_mask <- terra::ifel(
+    !is.na(clm_raster),
+    1,
+    NA
   )
+  
+  # Create polygon from non-NA raster cells
+  clm_poly <- terra::as.polygons(
+    clm_mask,
+    dissolve = TRUE,
+    na.rm = TRUE
+  )
+  
+  # Convert to sf, project, and create a polyline
+  clm_poly_sf <- st_as_sf(clm_poly) %>% 
+    st_transform(crs = 4326) %>% 
+    st_boundary(.)
+  
+}
+
+# Apply boundary visibility when map is zoomed to >= 6.5
+apply_boundary_visibility <- function(map, zoom_level) {
+  
+  if (is.null(zoom_level)) return(map)
+  
+  if (zoom_level >= 6.5) {
+    map %>%
+      showGroup("dynamic_counties") %>%
+      hideGroup("permanent_states")
+  } else {
+    map %>%
+      hideGroup("dynamic_counties") %>%
+      showGroup("permanent_states")
+  }
 }
 
 
+# ----- Functions for location-based plots -------------------------------------
 
+# For generating labels for location-based plots for species comparisons 
+assign_comparison <- function(comparison_metric) {
+  switch(comparison_metric,
+         "species_num_adult" = "Earlier adult emergence",
+         "species_num_egg"   = "Earlier egg hatch",
+         "species_num_cold"  = "Decreasing cold stress",
+         "species_num_heat"  = "Increasing heat stress",
+         "Species comparison")
+}
 
-
-
-# ----- Trend plot -------------------------------------------------------------
-
-# Note: Seems like renderPlot doesn't like it when the plotting is in a
-# function. So this function isn't used.
-
-make_trend_plot <- function(lng, lat, species, var_selected, years) {
+# Helper function for "check_na" to check for NA values at a map location
+inside_us_states <- function(xy) {
   
-  # Convert click to spatial point
-  site <- terra::vect(
-    data.frame(x = lng, y = lat),
-    geom = c("x", "y"),
-    crs = "EPSG:4326"
+  click_sf <- sf::st_as_sf(
+    data.frame(
+      x = xy$x,
+      y = xy$y
+    ),
+    coords = c("x", "y"),
+    crs = sf::st_crs(us_states)
   )
   
-  # Get files for this species/variable
-  files <- raster_lookup %>%
-    dplyr::filter(
-      model_type == "DDRP",
-      common_name == species,
-      variable == var_selected,
-      year %in% years) %>%
-    dplyr::arrange(year)
+  inside_us <- lengths(
+    sf::st_intersects(click_sf, us_states)
+  ) > 0
   
-  if (nrow(files) == 0) return(NULL)
+}
+
+# Check for NA values on clicked location 
+# Return messaged depends on nature of NA value (if inside vs. outside US)
+check_NA <- function(xy, site_data, is_comparison) {
   
-  # Load rasters
-  rasts <- lapply(files$file_path, rast_import)
-  rasts <- terra::rast(rasts)
-  names(rasts) <- files$year
+  inside_us <- inside_us_states(xy)
+  #is_comparison <- isTRUE(is_comparison)
   
-  # Match CRS to raster
-  site <- terra::project(site, rasts)
+  if (!inside_us) {
+    validate(need(FALSE, "No data available for this location"))
+    return(NULL)
+  }
   
-  # Extract location values
-  site_data <- terra::extract(rasts, site) %>%
-    dplyr::select(-ID) %>%
-    tidyr::pivot_longer(
-      cols = everything(),
-      names_to = "year",
-      values_to = "value") %>%
-    dplyr::mutate(
-      year = as.numeric(year),
-      value = as.numeric(value))
-  
-  # If no variation
-  if (all(site_data$value == 0 | is.na(site_data$value))) {
+  # No raster values
+  if (
+    is.null(site_data) ||
+    nrow(site_data) == 0 ||
+    all(is.na(site_data$value))
+  ) {
     
-    ggplot2::ggplot(site_data,
-                         ggplot2::aes(x = year, y = value)) +
-      ggplot2::geom_point() +
-      ggplot2::geom_line(color = "steelblue") +
-      ggplot2::theme_bw() +
-      ggplot2::labs(
-        title = paste("Predicted", var_selected, "for", species),
-        x = "Year",
-        y = var_selected
+    validate(
+      need(
+        FALSE,
+        if (is_comparison) {
+          "No significant trends at this location for any species"
+        } else {
+          "No predicted phenological event for this location"
+        }
       )
+    )
     
-  # Otherwise
-  } else {
-    
-    # Mann-Kendall trend
-    pwmk_test <- modifiedmk::pwmk(site_data$value)
-    slope <- as.numeric(pwmk_test[["Sen's Slope"]])
-    pval  <- as.numeric(pwmk_test[["P-value"]])
-    median_x <- median(site_data$year)
-    median_y <- median(site_data$value)
-    intercept <- median_y - slope * median_x
-    
-    # Create plot
-    ggplot2::ggplot(site_data,
-                         ggplot2::aes(x = year, y = value)) +
-      ggplot2::geom_point() +
-      ggplot2::geom_line(color = "steelblue") +
-      ggplot2::geom_abline(
-        intercept = intercept,
-        slope = slope,
-        color = "red"
-      ) +
-      ggplot2::theme_bw() +
-      ggplot2::labs(
-        title = paste("Predicted", var_selected, "for", species),
-        x = "Year",
-        y = var_selected
-      )
+    return(NULL)
     
   }
   
 }
 
+# Plot themes
 
+# Individual species
+custom_theme_indiv <- theme(
+  axis.text.x = element_text(size = 14, angle = 60, hjust = 1),
+  axis.text.y = element_text(size = 14),
+  plot.title = element_text(size = 16, face = "bold"),
+  axis.title = element_text(size = 16, face = "bold"))
+
+# Comparison
+custom_theme_comp <- theme(
+  axis.text = element_text(size = 14),
+  plot.title = element_text(size = 16, face = "bold"),
+  axis.title = element_text(size = 16, face = "bold"))

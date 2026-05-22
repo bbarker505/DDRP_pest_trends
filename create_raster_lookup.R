@@ -208,7 +208,7 @@ head(raster_lookup, 5)
 
 # ----- SAVE TABLE -------------------------------------------------------------
 
-write.csv(raster_lookup, "raster_lookup.csv", row.names = FALSE)
+write.csv(full_raster_lookup, "raster_lookup.csv", row.names = FALSE)
 
 
 

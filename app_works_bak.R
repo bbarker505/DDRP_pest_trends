@@ -356,6 +356,20 @@ northwest-nurseries/")),
           )
         ),
         
+        # Select trend metric for a species (shows unless All spp or CLM is selected)
+        # conditionalPanel(
+        #   condition = "input.pest != 'All 18 spp' && input.var_type != 'clm'",
+        #   selectInput(
+        #     "trend_metric",
+        #     label = tags$span(h4(HTML("<b>Select metric</b>"))),
+        #     choices = c(
+        #       "Change per year" = "sens",
+        #       "Direction of trend" = "tau"
+        #     ),
+        #     selected = "sens"
+        #   )
+        # ),
+        
         # Year range selection
         selectInput(
           "year_range",
@@ -435,12 +449,16 @@ northwest-nurseries/")),
               tags$b("Location-based information", style = "font-size: 16px")
             ),
     
-            # Show results after click
+            # Show instructions before click
             conditionalPanel(
-              condition = "input.map_click !== null",
+              condition = "output.has_click != 'TRUE'",
               tags$p("Click on a location of interest on the map to 
                    produce location-based results.")
               ),
+              
+              # Show results after click
+              conditionalPanel(
+                condition = "output.has_click == 'TRUE'",
                 
               layout_columns(
                 
@@ -449,15 +467,23 @@ northwest-nurseries/")),
                   h5("Summary statistics", style = "font-size: 18px"),
                   tags$hr(),
                   
+                  uiOutput("clicked_years", style = "font-size: 14px; line-height: 2.0"),
+                  uiOutput("clicked_latlon", style = "font-size: 14px; line-height: 2.0"),
+                  uiOutput("clicked_pest", style = "font-size: 14px; line-height: 2.0"),
+                  uiOutput("clicked_variable", style = "font-size: 14px; line-height: 2.0"),
+                  uiOutput("clicked_value", style = "font-size: 14px; line-height: 2.0"),
+                  
+                  # Individual species stats
                   conditionalPanel(
                     condition = "input.pest != 'All 18 spp'",
-                    uiOutput("location_summary", style = "font-size: 14px; line-height: 2.0")
+                    uiOutput("clicked_pval", style = "font-size: 14px; line-height: 2.0")
                   ),
                   
                   # All species stats
                   conditionalPanel(
                     condition = "input.pest == 'All 18 spp'",
-                    uiOutput("comparison_summary", style = "font-size: 14px; line-height: 2.0")
+                    uiOutput("clicked_slopemed", style = "font-size: 14px; line-height: 2.0"),
+                    uiOutput("clicked_sloperange", style = "font-size: 14px; line-height: 2.0")
                   )
                 ),
                 
@@ -471,6 +497,7 @@ northwest-nurseries/")),
                     h5(
                       "Trend plot ",
                       style = "font-size: 18px",
+                      
                       tags$span(
                         tags$i(class = "bi bi-info-circle"),
                         style = "cursor:pointer; margin-left:5px;",
@@ -490,12 +517,19 @@ northwest-nurseries/")),
                     ),
                     
                     # Plot
-                    plotOutput("loc_plot_indiv", height = "400px"),
+                    plotOutput("loc_plot_indiv"),
                     tags$br(),
                     
+                    # Download plot (conditional if plot appears)
+                    
+                    #   downloadButton(
+                    #     "download_plot_indiv", 
+                    #     "Download Plot",
+                    #     class = "btn-info btn-sm")
+                    # ),
                     
                     conditionalPanel(
-                      condition = "output.has_click !== null && input.pest != 'All 18 spp'",
+                      condition = "input.map_click && input.pest != 'All 18 spp'",
                       
                       downloadButton(
                         "download_plot_indiv",
@@ -542,6 +576,7 @@ northwest-nurseries/")),
                 # Column widths
                 col_widths = c(5, 7)
               )
+            )
             
           ) # end map div
           
@@ -1166,43 +1201,46 @@ server <- function(input, output, session) {
   )
   
   #### * Check which variable is selected ####
+  # selected_variable <- reactive({
+  #   
+  #   req(input$var_type)
+  #   
+  #   # If CLM
+  #   if (input$var_type == "clm") {
+  #     return("All Stress Excl")
+  #   }
+  # 
+  #   # If climate selected, return selected climate variable
+  #   if (input$var_type == "climate") {
+  #     req(input$clim_variable)
+  #     return(input$clim_variable)
+  #   }
+  #   
+  #   # If phenology selected, return selected phenology variable
+  #   if (input$var_type == "phenology") {
+  #     req(input$phenology)
+  #     return(input$phenology)
+  #   }
+  #   
+  # })
+  
   selected_variable <- reactive({
-    req(input$pest, input$var_type)
+    # Use a default if the input hasn't initialized yet
+    v_type <- if (is.null(input$var_type)) "phenology" else input$var_type
     
-    # ----- All 18 spp comparisons -----
-    if (input$pest == "All 18 spp") {
-      
-      metric <- input$trend_metric
-      
-      # During updateSelectInput transition,
-      # trend_metric is temporarily sens/tau
-      if (
-        is.null(metric) ||
-        metric == "" ||
-        metric %in% c("sens", "tau")
-      ) {
-        return(NULL)
-      }
-      
-      return(
-        switch(
-          metric,
-          "species_num_adult" = "First Adult Emergence",
-          "species_num_egg" = "First Egg Hatch",
-          "species_num_cold" = "Cold Stress",
-          "species_num_heat" = "Heat Stress",
-          NULL
-        )
-      )
+    if (v_type == "clm") {
+      return("All Stress Excl")
     }
     
-    # ----- Individual species -----
-    if (input$var_type == "clm") {
-      return("All Stress Excl")
-    } else if (input$var_type == "climate") {
-      return(input$clim_variable)
-    } else {
-      return(input$phenology)
+    if (v_type == "climate") {
+      # Default to Cold Stress if clim_variable is null
+      return(if (is.null(input$clim_variable)) "Cold Stress" else input$clim_variable)
+    }
+    
+    if (v_type == "phenology") {
+      # Default to First Adult Emergence if phenology is null
+      # Ensure this matches the string in your raster_lookup exactly
+      return(if (is.null(input$phenology)) "First Adult Emergence" else input$phenology)
     }
   })
   
@@ -1211,23 +1249,12 @@ server <- function(input, output, session) {
   #### * Get row with raster of interest ####
   selected_row <- reactive({
     
-    req(input$pest, input$year_range, input$var_type, input$trend_metric)
+    req(input$pest, input$year_range, input$var_type)
     
     # Comparisons
     if (input$pest == "All 18 spp") {
       
-      # Wait until comparison metric is fully updated
-      req(
-        input$trend_metric %in% c(
-          "species_num_adult",
-          "species_num_egg",
-          "species_num_cold",
-          "species_num_heat"
-        )
-      )
-      
-      req(selected_variable())
-      
+      # Comparisons rasters
       row <- raster_lookup %>%
         dplyr::filter(
           model_type == "Comparisons",
@@ -1271,6 +1298,8 @@ server <- function(input, output, session) {
   #### * Collect raster info ####
   
   # P-value
+  #pest_raster_pval <- reactive({ rast_import(selected_row()$file_path, 3) })
+  
   pest_raster_pval <- reactive({
     
     req(selected_row())
@@ -1324,30 +1353,6 @@ server <- function(input, output, session) {
   
   # Comparisons - sum across 18 species
   pest_raster_sum <- reactive({ rast_import(selected_row()$file_path, 1) })
-  
-  # pest_raster_sum <- reactive({
-  #   
-  #   req(input$trend_metric)
-  #   
-  #   comp_variable <- switch(input$trend_metric,
-  #            "species_num_adult" = "Earlier adult emergence",
-  #            "species_num_egg"   = "Earlier egg hatch",
-  #            "species_num_cold"  = "Decreasing cold stress",
-  #            "species_num_heat"  = "Increasing heat stress",
-  #            "Species comparison")
-  #   
-  #   comparison_file <- raster_lookup %>%
-  #     dplyr::filter(
-  #       variable == comp_variable
-  #     ) %>%
-  #     dplyr::slice(1)
-  #   
-  #   req(nrow(comparison_file) > 0)
-  #   
-  #   terra::rast(comparison_file$file_path)
-  #   
-  # })
-  
   pest_raster_slopemed <- reactive({ rast_import(selected_row()$file_path, 6) })
   pest_raster_slopese <- reactive({ rast_import(selected_row()$file_path, 7) })
   pest_raster_slopemin <- reactive({ rast_import(selected_row()$file_path, 8) })
@@ -1391,8 +1396,8 @@ server <- function(input, output, session) {
     if (input$pest == "All 18 spp") {
       
       return(list(
-        rast = pest_raster_sum(),  # or correct comparison raster loader
-        title = "Num. species with signficant trend"
+        rast = pest_raster_sum(),
+        title = "Num. species with significant trend"
       ))
     }
     
@@ -1428,7 +1433,6 @@ server <- function(input, output, session) {
     }
     
   })
-
   
   ### ---------------------------------------------------------------------- ###
   
@@ -1441,7 +1445,6 @@ server <- function(input, output, session) {
   # Initial Map Render WITH default raster
   # Default is ALB First Adult Emergence sens slope for 1981-2025
   output$map <- renderLeaflet({
-    options = leafletOptions(doubleClickZoom = FALSE, minZoom = 4)
     
     # Default startup raster
     startup_row <- raster_lookup %>%
@@ -1530,24 +1533,16 @@ server <- function(input, output, session) {
     # Required inputs
     req(input$pest, input$region, input$var_type, 
         input$year_range)
-    
-    # Should prevent flashing to wrong palette and legend for comparison maps
-    is_pest_all <- (input$pest == "All 18 spp")
-    is_metric_all <- grepl("species_num", input$trend_metric)
-           
-    if (is_pest_all != is_metric_all) {
-     return()
-    }
-    
-    # Trend and trend metric
-    trend <- selected_trend()
+  
     trend_metric <- input$trend_metric %||% "sens"
-    req(trend$rast)
     
-    # Reactive palette
     pal_obj <- palette_reactive()
     
     if (is.null(pal_obj)) return()
+    
+    trend <- selected_trend()
+    
+    req(trend$rast)
     
     # Explicitly extract the function from the list
     pal_func <- pal_obj$pal
@@ -1560,14 +1555,19 @@ server <- function(input, output, session) {
       pal_obj$limits
     )
 
-    # Immediately clear old legend,raster and polyline for CLM raster (if present)
+    # Immediately clear old legend
     leafletProxy(
       "map",
       deferUntilFlush = FALSE
     ) %>%
-      clearControls() %>% 
-      clearImages() %>% 
-      clearGroup("clm_outline")
+      clearControls()
+    
+    # Immediately remove old raster
+    leafletProxy(
+      "map",
+      deferUntilFlush = FALSE
+    ) %>%
+      clearImages()
     
     # Add new raster, controls, and boundaries
     proxy <- leafletProxy("map") %>% 
@@ -1585,23 +1585,15 @@ server <- function(input, output, session) {
         position = "bottomright"
       )
     
-    # Add outline only for CLM rasters
-    if (input$var_type == "clm") {
-      
-      clm_outline <- create_clm_outline(trend$rast)
-      
-      proxy <- proxy %>%
-        
-        addPolylines(
-          data = clm_outline,
-          color = "purple",
-          weight = 1,
-          opacity = 1,
-          smoothFactor = 0,
-          group = "clm_outline"
-        )
-      
-    }    
+    # # Zoom to selected extent (all regions inc. CONUS)
+    # ext <- assign_extent(input$region)
+    # 
+    # proxy %>% fitBounds(
+    #   xmin(ext),
+    #   ymin(ext),
+    #   xmax(ext),
+    #   ymax(ext)
+    # )
   }, ignoreInit = FALSE)
   
   # Zoom to selected extent
@@ -1665,8 +1657,7 @@ server <- function(input, output, session) {
       center_lat <- (bounds$north + bounds$south) / 2
       
       # START CLEAN (no groups)
-      m <- leaflet(options = leafletOptions(
-        zoomControl = FALSE, minZoom = 4)) %>%
+      m <- leaflet(options = leafletOptions(zoomControl = FALSE)) %>%
         addProviderTiles(providers$CartoDB.Voyager) %>%
         setView(
           lng = center_lng,
@@ -1764,6 +1755,28 @@ server <- function(input, output, session) {
   
   #### * Settings on map bounds (prevent over-zooming) ####
   
+  # Observe bounds of current map in order to
+  # keep the bounds from resetting when map selected changes
+  
+  #observeEvent(input$map_bounds, {
+    
+    # Map zoom can't be entire area (level 6) or get weird behavior
+    # (non-stop loop of zooming) when select risk maps multiple times
+ #   bounds <- input$map_bounds
+ #   mapzoom <- input$map_zoom
+    
+    # Keep bounds from resetting
+ #   if (mapzoom > 6) {
+      
+      # Update map
+ #     leafletProxy("map") %>%
+ #       fitBounds(bounds$west, bounds$south, bounds$east, bounds$north) %>%
+ #       clearGroup("click_marker")
+      
+      
+   # }
+  #})
+  
   counties_visible <- reactiveVal(FALSE)
   
   observe({
@@ -1827,449 +1840,211 @@ server <- function(input, output, session) {
   
   #### * Reactive for where person clicked on map ####
   
-  # Add marker only
-  observeEvent(location_data(), {
-    
-    loc <- location_data()
-    
-    leafletProxy("map") %>%
-      clearGroup("click_marker") %>%
-      addMarkers(
-        lng = loc$click$lng,
-        lat = loc$click$lat,
-        group = "click_marker"
-      )
-    
+  # NULL until click
+  click_val <- reactiveVal(NULL)
+  
+  # When clicked
+  observeEvent(input$map_click, {
+    click_val(input$map_click)
   }, ignoreInit = TRUE)
   
-  
-  # Debounced map click to prevent double-rendering
-  click_val <- debounce(
-    reactive(input$map_click),
-    150
+  # If anything changes, make it null again
+  observeEvent(
+    list(input$year_range, input$pest, input$var_type,
+         input$clim_variable, input$phenology, input$trend_metric),
+    {
+      click_val(NULL)
+    },
+    ignoreInit = TRUE
   )
   
-  # Get location data when a location is clicked
-  location_data <- reactive({
-    
-    click <- click_val()
-    req(click)
-    
-    # XY coordinates
-    xy <- data.frame(x = click$lng, y = click$lat)
-    
-    list(click = click, xy = xy
-    )
-    
-  })
-  
-  # Conditional panel helper
   output$has_click <- renderText({
-    
     if (is.null(click_val())) {
       ""
     } else {
       "TRUE"
     }
-    
   })
   
-  #### * Summary statistics ####
-  output$location_summary <- renderUI({
+  outputOptions(output, "has_click", suspendWhenHidden = FALSE)
+  
+  ### ---------------------------------------------------------------------- ###
+  
+  #### * Update panel that holds location click outputs ####
+   observeEvent(click_val(), {
+    req(click_val())
     
-    req(location_data())
+    is_comparison <- grepl("species_num", input$trend_metric)
+    trend <- selected_trend()
+    req(trend$rast)
     
-    loc <- location_data()
-    click <- loc$click
-    xy <- loc$xy
+    click <- click_val()
     
-    # Variable text
-    variable_text <- names(input$trend_metric)
+    # Add marker where user clicked
+    leafletProxy("map") %>%
+      clearGroup("click_marker") %>% 
+      addMarkers(
+        lng = click$lng,
+        lat = click$lat,
+        group = "click_marker"
+      )
     
-    if (input$pest == "All 18 spp") {
-      variable_text <- assign_comparison(input$trend_metric)
-    } else if (input$var_type == "clm") {
-      variable_text <- "All stress exclusion"
-    } else if (input$var_type == "climate") {
-      variable_text <- input$clim_variable
+    # Store coordinates
+    xy <- data.frame(x = click$lng, y = click$lat)
+    
+    # Extractions for all species comparison only
+    if (is_comparison) {
+      value <- terra::extract(pest_raster_sum(), xy)[1,2]
     } else {
-      variable_text <- input$phenology
+      if (input$var_type == "clm") {
+        value <- terra::extract(pest_raster_clm(), xy)[,2]
+      } else {
+        value <- as.numeric(terra::extract(trend$rast, xy)[1,2])
+      }
     }
     
-    # Raster value
-    value_ui <- NULL
+    if (is.na(value) || length(value) == 0) value <- NA
     
-    if (isTRUE(input$pest == "All 18 spp")) {
-      
-      rast <- pest_raster_sum()
-      req(rast)
-      
-      val <- terra::extract(rast, xy)[1,2]
-      
-      value_ui <- tags$div(
-        tags$b("Num. species with significant trend: "),
-        round(val, 3)
-      )
-      
-    } else if (isTRUE(input$var_type == "clm")) {
-      
-      rast <- pest_raster_clm()
-      req(rast)
-      
-      val <- terra::extract(rast, xy)[1,2]
-      
-      value_ui <- tags$div(
-        tags$b("Beta coefficient: "),
-        round(val, 3)
-      )
-      
+    # Text UI elements
+    output$clicked_years <- renderUI({
+      req(input$map_click, cancelOutput = TRUE)
+      tags$div(tags$b("Year range:"), input$year_range)
+    })
+    
+    output$clicked_latlon <- renderUI({
+      req(input$map_click, cancelOutput = TRUE)
+      tags$div(tags$b("Location:"), round(click$lat, 4), ", ", round(click$lng, 4))
+    })
+    
+    output$clicked_pest <- renderUI({
+      req(input$map_click, cancelOutput = TRUE)
+      tags$div(tags$b("Pest selected:"), input$pest)
+    })
+    
+    variable_text <- if (is_comparison) {
+      assign_comparison(input$trend_metric)
     } else {
+      str_to_sentence(selected_variable())
+    }
+    
+    if (is_comparison) {
+      unit_text <- if (grepl("stress", input$trend_metric)) "units" else "days"
       
-      trend_metric <- input$trend_metric %||% "sens"
+      # Re-extract local temporary text representations safely for UI panels
+      text_med <- round(terra::extract(pest_raster_slopemed(), xy)[1,2], 2)
+      text_se  <- round(terra::extract(pest_raster_slopese(), xy)[1,2], 2)
+      text_min <- round(terra::extract(pest_raster_slopemin(), xy)[1,2], 2)
+      text_max <- round(terra::extract(pest_raster_slopemax(), xy)[1,2], 2)
       
-      rast <- if (trend_metric == "sens") {
-        pest_raster_sen()
+      output$clicked_variable <- renderUI({
+        req(input$map_click, cancelOutput = TRUE)
+        tags$div(tags$b("Variable:"), variable_text)
+      })
+      
+      output$clicked_slopemed  <- renderUI({
+        req(input$map_click, cancelOutput = TRUE)
+        tags$div(tags$b(paste0("Median change (", unit_text, "/year): ")), 
+                 paste0(text_med, " (SE = ", text_se, ")"))
+      })
+      
+      output$clicked_sloperange  <- renderUI({
+        req(input$map_click, cancelOutput = TRUE)
+        tags$div(tags$b(paste0("Range (", unit_text, "/year): ")), 
+                 paste0(text_min, " to ", text_max))
+      })
+    } else {
+      output$clicked_variable <- renderUI({
+        req(input$map_click, cancelOutput = TRUE)
+        tags$div(tags$b("Variable:"), variable_text)
+      })
+    }
+    
+    output$clicked_value <- renderUI({
+      req(input$map_click, cancelOutput = TRUE)
+      
+      info_text <- if (input$trend_metric == "tau") {
+        "Kendall’s τ indicates direction..."
+      } else if (input$trend_metric == "sens") {
+        "Sen’s slope estimates..."
+      } else if (is_comparison) {
+        "The number of species..."
       } else {
-        pest_raster_tau()
+        "The cumulative link model..."
       }
       
-      req(rast)
-      
-      val <- terra::extract(rast, xy)[1,2]
-      
-      value_label <- if (trend_metric == "sens") {
-        
-        if (isTRUE(input$var_type == "phenology")) {
-          "Change (days/year)"
-        } else {
-          "Change (units/year)"
-        }
-        
-      } else {
-        "Direction of trend"
-      }
-      
-      # Add to UI
-      value_ui <- tags$div(
-        tags$b(paste0(value_label, ": ")),
-        round(val, 3)
-      )
-      
-    }
-    
-    # P-value
-    pval_ui <- NULL
-    
-    if (input$pest != "All 18 spp" && input$var_type != "clm") {
-      
-      pval_rast <- pest_raster_pval()
-      
-      req(pval_rast)
-      
-      pval <- terra::extract(
-        pval_rast,
-        xy
-      )[1, 2]
-      
-      validate(
-        need(length(pval) > 0, "")
-      )
-      
-      req(!is.null(pval))
-      
-      # Handle NA values
-      if (isTRUE(is.na(pval))) {
-        
-        pval_ui <- tags$div(
-          tags$b("P-value: "),
-          "NA"
+      tags$div(
+        tags$b(paste0(trend$title, ": ")),
+        if (is.na(value)) "No data" else round(value, 3),
+        tags$span(
+          tags$i(class = "bi bi-info-circle"), style = "cursor:pointer;",
+          `data-bs-toggle` = "popover", `data-bs-trigger` = "hover",
+          `data-bs-placement` = "right", `data-bs-html` = "true",
+          title = "About the statistic", `data-bs-content` = info_text
         )
-        
-      } else if (isTRUE(pval < 0.1)) {
-        
-        pval_ui <- tags$div(
-          tags$b("P-value: "),
-          round(pval, 3),
-          tags$span(
-            " (Significant)",
-            style = "color: green;"
-          )
-        )
-        
-      } else {
-        
-        pval_ui <- tags$div(
-          tags$b("P-value: "),
-          round(pval, 3),
-          tags$span(
-            " (Not significant)",
-            style = "color: red;"
-          )
-        )
-        
-      }
-      
-    }
-    
-    tagList(
-      
-      # Add to UI
-      tags$div(
-        tags$b("Year range: "),
-        input$year_range
-      ),
-      
-      tags$div(
-        tags$b("Coordinates: "),
-        round(click$lat, 4),
-        ", ",
-        round(click$lng, 4)
-      ),
-      
-      tags$div(
-        tags$b("Pest: "),
-        input$pest
-      ),
-      
-      tags$div(
-        tags$b("Variable: "),
-        variable_text
-      ),
-      
-      value_ui,
-      
-      pval_ui
-      
-    )
-    
-  })
-  
-  # Comparison slope statistics
-  # Slope median across species
-  output$clicked_slopemed <- renderUI({
-    
-    req(location_data())
-    
-    if (!isTRUE(input$pest == "All 18 spp")) {
-      return(NULL)
-    }
-    
-    # Location coords
-    loc <- location_data()
-    xy <- loc$xy
-    
-    # Return NULL if location outside of US states
-    if (!inside_us_states(xy)) {
-      return(NULL)
-    }
-    
-    # Slope median raster and extract value
-    rast <- pest_raster_slopemed()
-    
-    req(rast)
-    
-    val <- terra::extract(rast,xy)[1, 2]
-    
-    validate(
-      need(length(val) > 0, "")
-    )
-    
-    req(!is.null(val))
-    
-    # Add to UI
-    tags$div(
-      tags$b("Median slope across species: "),
-      round(val, 3)
-    )
-    
-  })
-  
-  output$comparison_summary <- renderUI({
-    
-    req(location_data())
-    
-    if (!isTRUE(input$pest == "All 18 spp")) {
-      return(NULL)
-    }
-    
-    loc <- location_data()
-    click <- loc$click
-    xy <- loc$xy
-    
-    # Trend metric
-    trend_metric <- input$trend_metric
-    
-    # Variable text
-    variable_text <- assign_comparison(
-      trend_metric
-    )
-    
-    # Sum raster
-    sum_rast <- pest_raster_sum()
-    
-    req(sum_rast)
-    
-    sum_val <- terra::extract(
-      sum_rast,
-      xy
-    )[1, 2]
-    
-    validate(
-      need(length(sum_val) > 0, "")
-    )
-    
-    req(!is.null(sum_val))
-    
-    # Median slope
-    med_rast <- pest_raster_slopemed()
-    
-    req(med_rast)
-    
-    med_val <- terra::extract(
-      med_rast,
-      xy
-    )[1, 2]
-    
-    validate(
-      need(length(med_val) > 0, "")
-    )
-    
-    req(!is.null(med_val))
-    
-    # Slope range
-    min_rast <- pest_raster_slopemin()
-    max_rast <- pest_raster_slopemax()
-    
-    req(min_rast, max_rast)
-    
-    min_val <- terra::extract(
-      min_rast,
-      xy
-    )[1, 2]
-    
-    max_val <- terra::extract(
-      max_rast,
-      xy
-    )[1, 2]
-    
-    validate(
-      need(length(min_val) > 0, ""),
-      need(length(max_val) > 0, "")
-    )
-    
-    req(!is.null(min_val))
-    req(!is.null(max_val))
-    
-    # Add to UI
-    tagList(
-      
-      tags$div(
-        tags$b("Year range: "),
-        input$year_range
-      ),
-      
-      tags$div(
-        tags$b("Coordinates: "),
-        round(click$lat, 4),
-        ", ",
-        round(click$lng, 4)
-      ),
-      
-      tags$div(
-        tags$b("Variable: "),
-        variable_text
-      ),
-      
-      tags$div(
-        tags$b("Num. species with significant trend: "),
-        round(sum_val, 2)
-      ),
-      
-      tags$div(
-        tags$b("Median slope: "),
-        round(med_val, 2)
-      ),
-      
-      tags$div(
-        tags$b("Slope range: "),
-        round(min_val, 2),
-        " to ",
-        round(max_val, 2)
       )
-      
-    )
+    })
     
+    output$clicked_pval <- renderUI({
+      req(input$map_click, cancelOutput = TRUE)
+      if (input$var_type == "clm" || is_comparison) return(NULL)
+      pval_val <- terra::extract(pest_raster_pval(), xy)[1,2]
+      
+      tags$div(
+        tags$b("P-value:"), signif(pval_val, 3),
+        tags$span(
+          tags$i(class = "bi bi-info-circle"), style = "cursor:pointer;",
+          `data-bs-toggle` = "popover", `data-bs-trigger` = "hover",
+          `data-bs-placement` = "right", `data-bs-html` = "true",
+          title = "About the p-value",
+          `data-bs-content` = HTML("The p-value describes the strength...")
+        )
+      )
+    })
   })
+    
+    ### ---------------------------------------------------------------------- ###
+    
+    #### * Generate a trend plot for location ####
+  ### ---------------------------------------------------------------------- ###
   
-  #### * Individual species plot ####
+  #### * Generate a trend plot for location ####
   
-  # 1. INDIVIDUAL SPECIES PLOT DATA GENERATOR
+  # 1. INDIVIDUAL PEST TREND PLOT DATA GENERATOR
   loc_plot_obj_indiv <- reactive({
+    # Precursor message
+    validate(need(click_val(), "Click on the map to generate a plot!"))
     
-    req(input$pest)
+    # Require map click and verify it's not a comparison view
+    req(click_val(), cancelOutput = TRUE)
+    if (grepl("species_num", input$trend_metric)) return(NULL)
     
-    # 1. Clear guards that do not require any input values to evaluate
-    if (input$pest == "All 18 spp") { return(NULL) }
-    
-    # 4. Guard against individual metrics leaking into comparison choices
-    if (isolate(input$trend_metric) %in% 
-        c("species_num_adult", "species_num_egg", 
-          "species_num_cold", "species_num_heat")) {
-      return(NULL)
-    }
-    
-    # 2. This is your ONLY active dependency tracker. 
-    # It fires EXACTLY once when a user releases their mouse click on the map.
-    loc <- req(location_data())
-    
-    # 3. ABSOLUTELY ISOLATE EVERY OTHER VARIABLE. 
-    # This stops sidebar updates and legend redraws from stealing focus.
-    xy                 <- isolate(loc$xy)
-    pest               <- input$pest
-    input_var_type     <- isolate(input$var_type)
-    input_clim_var     <- input$clim_variable
-    year_range         <- input$year_range
-    
-    # Isolate both the reactive wrappers and their outputs completely!
-    selected_var       <- selected_variable()
-    trend              <- isolate(selected_trend()) 
-    #phenology_var      <- isolate(input$phenology)
-    
-    is_pem             <- grepl("First", selected_var)
-    is_comparison      <- (pest == "All 18 spp")
-    
-    # Return no plot if species comparison
-    if (is_comparison) { return(NULL) }
+    click <- click_val()
     
     # For checking on Console
-    message("Rendering plot...")
-
+    message("Rendering individual plot...")
+    
     # Convert years from character to index (to pull in files)
-    range_vals <- strsplit(year_range, "-")[[1]]
+    range_vals <- strsplit(input$year_range, "-")[[1]]
     yrs <- as.numeric(range_vals[1]):as.numeric(range_vals[2])
     
-    # Species abbreviation for plot title
-    abbrev <- species_abbrev[[input$pest]] # for plot title
+    # Variable name modifications
+    var_raw <- selected_variable()
+    label <- tolower(gsub("_", " ", var_raw))
+    is_pem <- grepl("First", var_raw)
     
-    # Y-axis labels
-    ylab_text <- if (input_var_type == "clm") {
-      "Climate Stress Exclusion"
-    } else if (is_pem) {
-      "Date"
-    } else {
-      if (grepl("Cold", input_clim_var)) {
-        "Accumulated cold stress units"
-      } else {
-        "Accumulated heat stress units"
-      }
-    } 
+    # Spatial point
+    site <- terra::vect(
+      data.frame(x = click$lng, y = click$lat),
+      geom = c("x", "y"),
+      crs = "EPSG:4326"
+    )
     
     # File lookup
     files <- raster_lookup %>%
       dplyr::filter(
         model_type == "DDRP",
-        common_name == pest,
-        variable == selected_var,
+        common_name == input$pest,
+        variable == var_raw,
         year %in% yrs
       ) %>%
       dplyr::arrange(year)
@@ -2278,17 +2053,9 @@ server <- function(input, output, session) {
     
     # Load rasters
     rasts <- lapply(files$file_path, rast_import)
-    rasts <- isolate(terra::rast(rasts))
+    rasts <- terra::rast(rasts)
     names(rasts) <- files$year
     
-    # Spatial point
-    site <- terra::vect(
-      data.frame(x = xy$x, y = xy$y),
-      geom = c("x", "y"),
-      crs = "EPSG:4326"
-    )
-    
-    # Needs to be in same projection
     site <- terra::project(site, rasts)
     
     # Extract data
@@ -2302,8 +2069,7 @@ server <- function(input, output, session) {
         year = as.numeric(year),
         value = as.numeric(value))
     
-    # Check that click occurs in the US states or has missing PEM values
-    check_NA(xy, site_data, FALSE)
+    validate(need(nrow(site_data) > 0, "No data available for this location"))
     
     # Axis setup
     x_brks <- if (length(yrs) == 20) 2 else 5
@@ -2317,7 +2083,6 @@ server <- function(input, output, session) {
     
     # PEM date conversion
     if (is_pem) {
-      
       doys <- c(
         min(terra::values(rasts), na.rm = TRUE),
         max(terra::values(rasts), na.rm = TRUE)
@@ -2331,20 +2096,17 @@ server <- function(input, output, session) {
       )
       
       site_data <- dplyr::left_join(site_data, dates_df, by = "value")
-      
     }
     
-    if (input_var_type == "clm") {
-      
+    if (input$var_type == "clm") {
       p <- ggplot(site_data, aes(x = year, y = value)) +
         geom_point() +
         geom_line(color = "steelblue") +
         scale_x_continuous(limits = c(yr_first, yr_last),
                            breaks = seq(yr_first, yr_last, x_brks)) +
-        #scale_y_continuous(breaks = y_brks) +
-        labs(title = paste("Predicted climate stress exclusion for", abbrev),
+        labs(title = paste("Predicted stress exclusion for", input$pest),
              x = "Year",
-             y = str_to_sentence(ylab_text)) +
+             y = "Climate Stress Exclusion") +
         scale_y_continuous(
           breaks = c(-2, -1, 0),
           labels = c("Severe", "Moderate", "None")
@@ -2353,33 +2115,31 @@ server <- function(input, output, session) {
         custom_theme_indiv +
         theme(legend.position = "none")
       
-    } else {
+      return(p)
       
+    } else {
       # If no variation
       if (all(site_data$value == 0 | is.na(site_data$value))) {
-        
         p <- ggplot(site_data, aes(x = year, y = value)) +
           geom_point() +
           geom_line(color = "steelblue") +
           scale_x_continuous(limits = c(yr_first, yr_last),
                              breaks = seq(yr_first, yr_last, x_brks)) +
           scale_y_continuous(breaks = y_brks) +
-          labs(title = paste("Predicted", tolower(ylab_text), "for", abbrev),
+          labs(title = paste("Predicted", label, "for", input$pest),
                x = "Year",
-               y = str_to_sentence(ylab_text)) +
-          geom_text_repel(data = ymax_df,
-                          aes(x = max(site_data$year) + 1,
-                              y = ymax_pt + 1.5,
-                              label = "No trend"),
-                          size = 4.5) +
+               y = label) +
+          ggrepel::geom_text_repel(data = ymax_df,
+                                   aes(x = max(site_data$year) + 1,
+                                       y = ymax_pt + 1.5,
+                                       label = "No trend"),
+                                   size = 4.5) +
           theme_bw() +
           custom_theme_indiv +
           theme(legend.position = "none")
         
         # If there is variation
       } else {
-        
-        #p <- make_loc_plot(site_data, is_pem)
         # Mann-Kendall
         pwmk_test <- modifiedmk::pwmk(site_data$value)
         slope <- round(as.numeric(pwmk_test[["Sen's Slope"]]), 4)
@@ -2398,43 +2158,34 @@ server <- function(input, output, session) {
           scale_x_continuous(limits = c(yr_first, yr_last),
                              breaks = seq(yr_first, yr_last, x_brks)) +
           scale_y_continuous(breaks = y_brks) +
-          labs(title = paste("Predicted", tolower(ylab_text), "for", abbrev),
+          labs(title = paste("Predicted", label, "for", input$pest),
                x = "Year",
-               y = str_to_sentence(ylab_text)) +
-          geom_text_repel(data = ymax_df,
-                          aes(x = max(site_data$year) + 1,
-                              y = ymax_pt + 1.5,
-                              label = paste0("Slope: ", slope, ", P-value: ", pval)),
-                          size = 4.5) +
+               y = label) +
+          ggrepel::geom_text_repel(data = ymax_df,
+                                   aes(x = max(site_data$year) + 1,
+                                       y = ymax_pt + 1.5,
+                                       label = paste0("Slope: ", slope, ", P-value: ", pval)),
+                                   size = 4.5) +
           theme_bw() +
           custom_theme_indiv
       }
       
-      # Replace DOY with dates for PEM and add new title for event
+      # Replace DOY with dates for PEM
       if (is_pem) {
-
-        pem_title <- tolower(gsub("_", " ", selected_var))
-        # Verify y-breaks is same length as date values - no NA values
         valid_idx <- match(y_brks, dates_df$value)
-        # Plot
-        p <- p + 
-          scale_y_continuous(
+        p <- p + scale_y_continuous(
           breaks = y_brks[!is.na(valid_idx)],
           labels = dates_df$dates[valid_idx[!is.na(valid_idx)]]
         ) +
-          labs(title = paste("Predicted", pem_title, "for", abbrev),
-               y = "Date")
+          labs(y = "Date")
       }
       
       return(p)
-      
     }
   })
   
   # Render individual plot
   output$loc_plot_indiv <- renderPlot({
-    # Ensure input$pest isn't switching over to comparison mode
-    req(input$pest != "All 18 spp")
     p <- loc_plot_obj_indiv()
     req(p)
     p
@@ -2447,100 +2198,47 @@ server <- function(input, output, session) {
       if (is.null(abbrev)) abbrev <- gsub(" ", "_", input$pest)
       
       if (input$var_type == "clm") {
-        paste0("Trend_plot_", abbrev, "_", input$var_type, 
-               "_", input$year_range, ".png")
+        paste0("Trend_plot_", abbrev, "_", input$var_type, "_", input$year_range, ".png")
       } else {
-        paste0("Trend_plot_", abbrev, "_", input$var_type, 
-               "_", input$trend_metric, "_", input$year_range, ".png")
+        paste0("Trend_plot_", abbrev, "_", input$var_type, "_", input$trend_metric, "_", input$year_range, ".png")
       }
     },
     content = function(file) {
-      p <- isolate(loc_plot_obj_indiv())
-      req(p) 
-      ggsave(file, plot = p, width = 9, height = 6, dpi = 300)
+      req(loc_plot_obj_indiv()) 
+      ggsave(file, plot = loc_plot_obj_indiv(), width = 9, height = 6, dpi = 300)
     }
   )
   
-  #### * Comparison plot ####
   
   # 2. SPECIES COMPARISON PLOT DATA GENERATOR
   loc_plot_obj_comp <- reactive({
     
-    req(input$pest, input$trend_metric)
-    
-    # Only run for comparisons
-    if (input$pest != "All 18 spp") {
-      return(NULL)
-    }
-    
-    # Wait until comparison metric stabilizes
-    req(
-      input$trend_metric %in% c(
-        "species_num_adult",
-        "species_num_egg",
-        "species_num_cold",
-        "species_num_heat"
-      )
-    )
-    
-    # Require location
-    loc <- req(location_data())
-    
-    # Require map click
-    click <- click_val()
-    
-    # Coordinates for location
-    xy <- loc$xy
-    
-    # Spatial point
-    site <- terra::vect(
-      data.frame(x = xy$x, y = xy$y),
-      geom = c("x", "y"),
-      crs = "EPSG:4326"
-    ) 
-    
-    # Needs to be in same projection
-    site <- terra::project(site, pest_raster_slopemed())
-    
-    # Isolate inputs
-    selected_var <- isolate(selected_variable())
-    input_trend_metric <- isolate(input$trend_metric)
     is_pest_all <- (input$pest == "All 18 spp")
-    is_metric_all <- grepl("species_num", input_trend_metric)
+    is_metric_all <- grepl("species_num", input$trend_metric)
     
     if (is_pest_all != is_metric_all) return(NULL)
- 
-    req(click_val(), cancelOutput = TRUE)
     
-    if (!grepl("species_num", input_trend_metric)) return(NULL)
+    validate(need(click_val(), "Click on the map to generate a plot!"))
+    
+    req(click_val(), cancelOutput = TRUE)
+    if (!grepl("species_num", input$trend_metric)) return(NULL)
+    
+    click <- click_val()
+    xy <- data.frame(x = click$lng, y = click$lat)
     
     # For checking on Console
     message("Rendering comparison plot...")
     
-    # Isolate rasters to prevent double-rendering
-    sum_rast <- isolate(pest_raster_sum())
-    slopemed_rast <- isolate(pest_raster_slopemed())
-    slopese_rast  <- isolate(pest_raster_slopese())
-    slopemin_rast <- isolate(pest_raster_slopemin())
-    slopemax_rast <- isolate(pest_raster_slopemax())
+    slopemed_val <- round(terra::extract(pest_raster_slopemed(), xy)[1,2], 2)
+    slopese_val  <- round(terra::extract(pest_raster_slopese(), xy)[1,2], 2)
+    slopemin_val <- round(terra::extract(pest_raster_slopemin(), xy)[1,2], 2)
+    slopemax_val <- round(terra::extract(pest_raster_slopemax(), xy)[1,2], 2)
     
-    # Extract values
-    sum_val <- round(terra::extract(sum_rast, site)[1,2], 2)
-    slopemed_val <- round(terra::extract(slopemed_rast, site)[1,2], 2)
-    slopese_val  <- round(terra::extract(slopese_rast, site)[1,2], 2)
-    slopemin_val <- round(terra::extract(slopemin_rast, site)[1,2], 2)
-    slopemax_val <- round(terra::extract(slopemax_rast, site)[1,2], 2)
+    variable_text <- assign_comparison(input$trend_metric)
     
-    # Check that click occurs in the US states or has missing values
-    # Areas w/ no sig trends across spp are ignored (sum = 0)
-    site_data <- data.frame("value" = sum_val)
-    check_NA(xy, site_data, TRUE)
-    
-    variable_text <- assign_comparison(input_trend_metric)
-    
-    if (grepl("cold|heat", variable_text)) {
+    if (grepl("stress", input$trend_metric)) {
       ylab <- "Change (units/year)"
-      plot_title <- if (grepl("cold", variable_text)) {
+      plot_title <- if (grepl("cold", input$trend_metric)) {
         "Change (units/year) in cold stress across 18 spp."
       } else {
         "Change (units/year) in heat stress across 18 spp."
@@ -2562,12 +2260,9 @@ server <- function(input, output, session) {
       max_val = slopemax_val
     )
     
-    # Final plot
     p <- ggplot(df, aes(x = group, y = med)) +
-      geom_errorbar(aes(ymin = min_val, ymax = max_val), 
-                    width = 0.1, color = "grey") +
-      geom_crossbar(aes(ymin = med - se, ymax = med + se), 
-                    width = 0.2, fill = "skyblue") +
+      geom_errorbar(aes(ymin = min_val, ymax = max_val), width = 0.1, color = "grey") +
+      geom_crossbar(aes(ymin = med - se, ymax = med + se), width = 0.2, fill = "skyblue") +
       geom_point(size = 3) +
       theme_bw() +
       labs(title = plot_title, y = ylab, x = "") +
@@ -2590,9 +2285,8 @@ server <- function(input, output, session) {
       paste0("Plot_", tolower(gsub(" ", "_", variable_text)), "_18spp_", input$year_range, ".png")
     },
     content = function(file) {
-      p <- isolate(loc_plot_obj_comp())
-      req(p) 
-      ggsave(file, plot = p6, width = 8, height = 6, dpi = 300)
+      req(loc_plot_obj_comp()) 
+      ggsave(file, plot = loc_plot_obj_comp(), width = 8, height = 6, dpi = 300)
     }
   )
   ### ---------------------------------------------------------------------- ###

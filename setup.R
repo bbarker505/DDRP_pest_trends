@@ -29,15 +29,17 @@ options(shiny.sanitize.errors = FALSE)
 # -- sHAPEFILE STUFF --
 
 # Shapefile of county boundaries (to overlay map)
-county_sf <- st_read("./features/counties_CONUS.shp")
+us_counties <- st_read("./features/cb_2018_us_county_5m.shp") %>% 
+  dplyr::filter(!STATEFP %in% c("02", "15", "66", "72", "78", "69", "60")) %>% 
+  st_transform(crs = 4326)
 
 # Reproject to WGS84
-county_sf <- st_transform(county_sf, crs = 4326)
+#us_counties <- st_transform(us_counties, crs = 4326)
 
 # US state borders
-us_states <- states(cb = TRUE, year = 2022) %>%
-  st_transform(4326) %>%
-  dplyr::select(STUSPS, geometry)
+us_states <- st_read("./features/cb_2018_us_state_20m.shp") %>% 
+  dplyr::filter(!STATEFP %in% c("AK", "HI", "GU", "PR", "VI", "MP", "AS"))  %>% 
+  st_transform(crs = 4326)
 
 # Define bounds (United States bounds)
 bounds <- list(
@@ -53,5 +55,24 @@ bounds <- list(
 # File of all raster files
 raster_lookup <- read.csv("raster_lookup.csv")
 
-
-
+# -- Species abbr. for PNG file exports --
+species_abbrev <- c(
+  "Asian longhorned beetle"	= "ALB",
+  "Asiatic rice borer" = "ASRB",
+  "Honeydew moth" =	"CGN",
+  "Emerald ash borer"	= "EAB",
+  "Egyptian cottonworm" =	"ECW",
+  "False codling moth" = "FCM",
+  "Japanese beetle" =	"JPB",
+  "Japanese pine sawyer beetle", "JPSB",
+  "Light brown apple moth" = "LBAM",
+  "Oak ambrosia beetle" = "OAB",
+  "Old world bollworm" = "OWBW",
+  "Pine-tree lappet moth" =	"PTLM",
+  "Spotted lanternfly" = "SLF",
+  "Common or Cotton cutworm" = "SLI",
+  "Silver Y moth" = "SLYM",
+  "Small tomato borer" = "STB",
+  "Sunn pest" = "SUNP",
+  "Tomato leaf miner" = "TABS"
+)
