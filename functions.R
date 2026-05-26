@@ -1,5 +1,75 @@
 # ----- ABOUT ------------------------------------------------------------------
+
 # Contains custom functions to be loaded into the app.R file
+
+# ----- Make the pest panels for UI --------------------------------------------
+# Formats the species titles, descriptions, and reports and images for UI
+make_pest_panel <- function(
+    common_name,
+    scientific_name,
+    abbreviation,
+    description,
+    image_file,
+    photo_credit
+) {
+  
+  accordion_panel(
+    
+    HTML(
+      paste0(
+        "<b>", common_name, "</b> ",
+        "(<i>", scientific_name, "</i>)"
+      )
+    ),
+    
+    layout_columns(
+      
+      # Left column
+      div(
+        
+        style = "font-size: 13px;",
+        
+        p(description),
+        
+        tags$div(style = "margin-top: 2px;"),
+        
+        tags$a(
+          href = "#",
+          paste0("Download PDF report for ", abbreviation),
+          target = "_blank",
+          style = "text-decoration: underline;"
+        )
+        
+      ),
+      
+      # Right column
+      div(
+        
+        style = "width:160px; margin:auto;",
+        
+        tags$img(
+          src = image_file,
+          style = "width:100%; max-width:200px;
+                 border-radius:8px;"
+        ),
+        
+        tags$p(
+          photo_credit,
+          style = "font-size:9px; color:#666;
+                 margin-top:4px;
+                 margin-bottom:0px;
+                 text-align:left;
+                 line-height:1;"
+        )
+        
+      ),
+      
+      col_widths = c(10, 2)
+      
+    )
+  )
+  
+}
 
 # ----- Function to import outputs (rasters) -----------------------------------
 # 1 = Tau statistic, 2 = Sen's slope, 3 = p-value
@@ -11,15 +81,13 @@
 #   }
 #   get(key, envir = .raster_cache)
 # }
-
-rast_import <- function(file, layer = 1) {
-  key <- paste0(file, "_", layer)
-  if (!exists(key, envir = .raster_cache)) {
-    r <- terra::rast(file)[[layer]]
-    assign(key, r, envir = .raster_cache)
-  }
-  get(key, envir = .raster_cache)
+# Base loading function
+raw_rast_import <- function(file, layer = 1) {
+  terra::rast(file)[[layer]]
 }
+
+# Automatically wraps the loading function in a managed in-memory cache
+rast_import <- memoise::memoise(raw_rast_import)
 
 # Helper to convert terra extent to a list of numeric bounds
 ext_to_list <- function(ext) {
@@ -166,8 +234,8 @@ produce_map_base <- function(bounds) {
       # Prevent zooming when clicking a location 
       doubleClickZoom = FALSE,
       # Prevents the user from panning away from North America
-      maxBounds = list(c(bounds$south - 10, bounds$west - 10), 
-                       c(bounds$north + 10, bounds$east + 10))
+      maxBounds = list(c(bounds$south - 1, bounds$west - 1), 
+                       c(bounds$north + 1, bounds$east + 1))
     )
   ) %>% 
     # Map tiles

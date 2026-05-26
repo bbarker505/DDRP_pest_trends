@@ -15,10 +15,6 @@
 # Load packages (we need dplyr, stringr, and fs)
 source("packages.R")
 
-
-
-
-
 # ----- CREATE TABLE -----------------------------------------------------------
 
 # Set raster directory
