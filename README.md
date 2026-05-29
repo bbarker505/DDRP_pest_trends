@@ -198,7 +198,7 @@ If you use this application, please cite:
 
 Barker, B. S., L. Coop, T. Wepprich, F. Grevstad, and G. Cook. 2020. DDRP: real-time phenology and climatic suitability modeling of invasive insects. PLoS ONE 15:e0244005
 
-Barker, B. S., L. Coop, J. J. Duan, and T. R. Petrice. 2023. An integrative phenology and climatic suitability model for emerald ash borer. Frontiers in Insect Science 3:1239173.
+Barker, B. S., L. Coop, J. J. Duan, and T. R. Petrice. 2023. An integrative phenology and climatic suitability model for emerald ash borer. Frontiers in Insect Science. 3:1239173.
 
 ## 💵 Funding
 
