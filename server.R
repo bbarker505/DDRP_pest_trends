@@ -1,19 +1,28 @@
 # ---------- SERVER ------------------------------------------------------------
 
+# Server for DDRP Pest Trends app 
+
 # Shiny server requires this is loaded: Set-up
 source("setup.R")
 
 # Print all error messages 
 options(shiny.sanitize.errors = FALSE)
 
-# Server for DDRP Pest Trends app
-
+# Server function
 server <- function(input, output, session) {
+  
+  #### * Table for intro ####
+  output$intro_table <- renderTable({
+    intro_tab <- read.csv("intro_table.csv", check.names = FALSE)
+    intro_tab
+  })
   
   # Clicked location
   clicked_loc <- reactiveVal(NULL)
   
-  # Selected variable type
+  # Selected variable ----
+  
+  #### * Observe selected variable ####
   observeEvent(input$pest, {
     
     current_value <- isolate(input$var_type)
@@ -48,7 +57,52 @@ server <- function(input, output, session) {
     
   }, ignoreInit = TRUE)
   
-  # Selected metric
+  #### * Check which variable is selected ####
+  selected_variable <- reactive({
+    req(input$pest, input$var_type)
+  
+    # All 18 spp comparisons 
+    if (input$pest == "All 18 spp") {
+      
+      metric <- input$trend_metric
+      
+      # During updateSelectInput transition,
+      # trend_metric is temporarily sens/tau
+      if (
+        is.null(metric) ||
+        metric == "" ||
+        metric %in% c("sens", "tau")
+      ) {
+        return(NULL)
+      }
+      
+      return(
+        switch(
+          metric,
+          "species_num_adult" = "First Adult Emergence",
+          "species_num_egg" = "First Egg Hatch",
+          "species_num_cold" = "Cold Stress",
+          "species_num_heat" = "Heat Stress",
+          NULL
+        )
+      )
+    }
+    
+    # Individual species
+    if (input$var_type == "clm") {
+      return("All Stress Excl")
+    } else if (input$var_type == "climate") {
+      return(input$clim_variable)
+    } else {
+      return(input$phenology)
+    }
+  })
+  
+  ### ---------------------------------------------------------------------- ###
+  
+  # Selected metric ----
+  
+  #### * Observe selected metric ####
   observeEvent(
     list(input$pest, input$var_type), {
       
@@ -59,13 +113,13 @@ server <- function(input, output, session) {
       # --- CLM ---
       if (input$var_type == "clm") {
         
-        shinyjs::hide("trend_metric_container")
+        shinyjs::hide("trend_metric")
         
         return()
         
       } else {
         
-        shinyjs::show("trend_metric_container")
+        shinyjs::show("trend_metric")
       }
       
       # --- All-species comparisons ---
@@ -118,50 +172,77 @@ server <- function(input, output, session) {
     ignoreInit = FALSE
   )
   
-  #### * Check which variable is selected ####
-  selected_variable <- reactive({
-    req(input$pest, input$var_type)
   
-    # All 18 spp comparisons 
-    if (input$pest == "All 18 spp") {
-      
-      metric <- input$trend_metric
-      
-      # During updateSelectInput transition,
-      # trend_metric is temporarily sens/tau
-      if (
-        is.null(metric) ||
-        metric == "" ||
-        metric %in% c("sens", "tau")
-      ) {
-        return(NULL)
-      }
-      
-      return(
-        switch(
-          metric,
-          "species_num_adult" = "First Adult Emergence",
-          "species_num_egg" = "First Egg Hatch",
-          "species_num_cold" = "Cold Stress",
-          "species_num_heat" = "Heat Stress",
-          NULL
-        )
-      )
+  #### * Reactive for metric ####
+  selected_trend <- reactive({
+    
+    # Force reactivity to significance mask
+    sig_only <- input$sig_only
+    
+    # Variable
+    v_type <- if (is.null(input$var_type)) {
+      "phenology"
+    } else {
+      input$var_type
     }
     
-    # Individual species
-    if (input$var_type == "clm") {
-      return("All Stress Excl")
-    } else if (input$var_type == "climate") {
-      return(input$clim_variable)
+    # Trend metric
+    trend_metric <- if (is.null(input$trend_metric)) {
+      "sens"
     } else {
-      return(input$phenology)
+      input$trend_metric
     }
+    
+    req(selected_row())
+    
+    # --- Comparisons ---
+    if (input$pest == "All 18 spp") {
+      
+      return(list(
+        rast = pest_raster_sum(),  # or correct comparison raster loader
+        title = "Num. species with signficant trend"
+      ))
+    }
+    
+    # --- CLM ---
+    if (v_type == "clm") {
+      
+      return(list(
+        rast = pest_raster_clm(),
+        title = "Beta coefficient"
+      ))
+    }
+    
+    # Change units
+    sens_title <- if (v_type == "phenology") {
+      "Change (days/year)"
+    } else {
+      "Change (units/year)"
+    }
+    
+    if (trend_metric == "sens") {
+      
+      return(list(
+        rast = pest_raster_sen(),
+        title = sens_title
+      ))
+      
+    } else {
+      
+      return(list(
+        rast = pest_raster_tau(),
+        title = "Direction of trend"
+      ))
+      
+    }
+    
   })
   
   ### ---------------------------------------------------------------------- ###
   
-  #### * Get row with raster of interest ####
+  # Get raster ----
+  
+  #### * Filter row from loookup table ####
   selected_row <- reactive({
     
     req(input$pest, input$year_range, input$var_type, input$trend_metric)
@@ -216,13 +297,9 @@ server <- function(input, output, session) {
     row
   })
   
-  
-  ### ---------------------------------------------------------------------- ###
-  
-  # Note: 1 = tau, 2 = sen, and 3 = p-value, as organized in the .tif file
-  
   #### * Collect raster info ####
   
+  # Note: 1 = tau, 2 = sen, and 3 = p-value, as organized in the .tif file
   # P-value
   pest_raster_pval <- reactive({
     
@@ -305,6 +382,10 @@ server <- function(input, output, session) {
   pest_raster_slopemin <- reactive({ rast_import(selected_row()$file_path, 8) })
   pest_raster_slopemax <- reactive({ rast_import(selected_row()$file_path, 9) })
   
+  ### ---------------------------------------------------------------------- ###
+  
+  # Respond to significance checkbox ----
+  
   # Show check-box "Show significant areas only" only for individual spp
   observeEvent(list(input$pest, input$var_type), {
     
@@ -316,77 +397,10 @@ server <- function(input, output, session) {
     
   }, ignoreInit = TRUE)
   
-  ### ---------------------------------------------------------------------- ###
-  
-  #### * Reactive for metric ####
-  selected_trend <- reactive({
-    
-    # Force reactivity to significance mask
-    sig_only <- input$sig_only
-    
-    # Variable
-    v_type <- if (is.null(input$var_type)) {
-      "phenology"
-    } else {
-      input$var_type
-    }
-    
-    # Trend metric
-    trend_metric <- if (is.null(input$trend_metric)) {
-      "sens"
-    } else {
-      input$trend_metric
-    }
-    
-    req(selected_row())
-    
-    # --- Comparisons ---
-    if (input$pest == "All 18 spp") {
-      
-      return(list(
-        rast = pest_raster_sum(),  # or correct comparison raster loader
-        title = "Num. species with signficant trend"
-      ))
-    }
-    
-    # --- CLM ---
-    if (v_type == "clm") {
-      
-      return(list(
-        rast = pest_raster_clm(),
-        title = "Beta coefficient"
-      ))
-    }
-    
-    # Change units
-    sens_title <- if (v_type == "phenology") {
-      "Change (days/year)"
-    } else {
-      "Change (units/year)"
-    }
-    
-    if (trend_metric == "sens") {
-      
-      return(list(
-        rast = pest_raster_sen(),
-        title = sens_title
-      ))
-      
-    } else {
-      
-      return(list(
-        rast = pest_raster_tau(),
-        title = "Direction of trend"
-      ))
-      
-    }
-    
-  })
-  
   
   ### ---------------------------------------------------------------------- ###
   
-  # 1. Initialize the base map once (stops the flashing)
+  # Initialize base map  ----
   
   # Calculate initial CONUS bounds using your new function
   conus_extent <- assign_extent("CONUS")
@@ -395,7 +409,12 @@ server <- function(input, output, session) {
   # Initial Map Render WITH default raster
   # Default is ALB First Adult Emergence sens slope for 1981-2025
   output$map <- renderLeaflet({
-    options = leafletOptions(doubleClickZoom = FALSE, minZoom = 4)
+    options = leafletOptions(
+      doubleClickZoom = FALSE, 
+      minZoom = 4,
+      maxBounds = list(
+        c(bounds$west, bounds$south), c(bounds$east, bounds$north))
+      )
     
     # Default startup raster
     startup_row <- raster_lookup %>%
@@ -445,28 +464,7 @@ server <- function(input, output, session) {
   
   ### ---------------------------------------------------------------------- ###
   
-  #### * Reactive palette ####
-  
-  # For legend
-  palette_reactive <- reactive({
-    
-    req(selected_trend(), input$pest)
-    
-    # Default metric during startup / UI re-render
-    trend_metric <- input$trend_metric %||% "sens"
-    
-    trend <- selected_trend()
-    
-    req(trend$rast)
-    
-    make_palette(
-      trend$rast,
-      trend_metric
-    )
-    
-  })
-  
-  ### ---------------------------------------------------------------------- ###
+  # Update map based on selections ----
   
   #### * Update map when pest changes ####
   observeEvent(
@@ -565,9 +563,68 @@ server <- function(input, output, session) {
     
   }, ignoreInit = TRUE)
   
+  
+  #### * Reactive palette ####
+  
+  # For legend
+  palette_reactive <- reactive({
+    
+    req(selected_trend(), input$pest)
+    
+    # Default metric during startup / UI re-render
+    trend_metric <- input$trend_metric %||% "sens"
+    
+    trend <- selected_trend()
+    
+    req(trend$rast)
+    
+    make_palette(
+      trend$rast,
+      trend_metric
+    )
+    
+  })
+  
+  #### * Show counties when zoomed in ####
+  
+  # Observer to toggle County Lines based on zoom level
+  observe({
+    req(input$map_zoom)
+    
+    leafletProxy("map") %>%
+      apply_boundary_visibility(input$map_zoom)
+  })
+  
+  #### * Adjust to another region when selected ####
+  observeEvent(input$region, {
+    
+    # Check
+    req(input$region)
+    
+    # Get extent from your helper
+    ext <- assign_extent(input$region)
+    
+    # Fix bounds
+    bounds <- ext_to_bounds(ext)
+    
+    # Clear clicked location immediately
+    clicked_loc(NULL)
+    
+    # Adjust map
+    leafletProxy("map") %>%
+      fitBounds(
+        lng1 = xmin(ext),
+        lat1 = ymin(ext),
+        lng2 = xmax(ext),
+        lat2 = ymax(ext)
+      ) %>%
+      clearGroup("click_marker")
+    
+  })
+  
   ### ---------------------------------------------------------------------- ###
   
-  #### * Download map as PNG ####
+  # Download map as PNG ----
   
   # Different file names used for comparison vs. individual spp
   output$download_map <- downloadHandler(
@@ -612,12 +669,17 @@ server <- function(input, output, session) {
       
       # START CLEAN (no groups)
       m <- leaflet(options = leafletOptions(
-        zoomControl = TRUE, minZoom = 4)) %>%
+        doubleClickZoom = FALSE, 
+        minZoom = 4,
+        maxBounds = list(
+          c(bounds$west, bounds$south), c(bounds$east, bounds$north))
+      )) %>%
         addProviderTiles(providers$CartoDB.Voyager) %>%
-        setView(
-          lng = center_lng,
-          lat = center_lat,
-          zoom = zoom
+        fitBounds(
+          lng1 = bounds$west,
+          lat1 = bounds$south,
+          lng2 = bounds$east,
+          lat2 = bounds$north
         )
       
       # Add states and counties at high zoom levels
@@ -713,46 +775,7 @@ server <- function(input, output, session) {
   
   ### ---------------------------------------------------------------------- ###
   
-  #### * Show counties when zoomed in ####
-  
-  # Observer to toggle County Lines based on zoom level
-  observe({
-    req(input$map_zoom)
-    
-    leafletProxy("map") %>%
-      apply_boundary_visibility(input$map_zoom)
-  })
-  
-  #### * Adjust to another region when selected ####
-  observeEvent(input$region, {
-    
-    # Check
-    req(input$region)
-    
-    # Get extent from your helper
-    ext <- assign_extent(input$region)
-    
-    # Fix bounds
-    bounds <- ext_to_bounds(ext)
-    
-    # Clear clicked location immediately
-    clicked_loc(NULL)
-    
-    # Adjust map
-    leafletProxy("map") %>%
-      fitBounds(
-        lng1 = xmin(ext),
-        lat1 = ymin(ext),
-        lng2 = xmax(ext),
-        lat2 = ymax(ext)
-      ) %>%
-      clearGroup("click_marker")
-    
-  })
-  
-  ### ---------------------------------------------------------------------- ###
-  
-  #### * Reactive map click ####
+  # Map click ----
   
   # Add marker only
   observeEvent(location_data(), {
@@ -1527,12 +1550,6 @@ server <- function(input, output, session) {
     }
   )
   ### ---------------------------------------------------------------------- ###
-  
-  #### * Table for intro ####
-  output$intro_table <- renderTable({
-    intro_tab <- read.csv("intro_table.csv", check.names = FALSE)
-    intro_tab
-  })
   
   
 } # END OF SERVER

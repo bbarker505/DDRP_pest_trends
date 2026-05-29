@@ -1,5 +1,7 @@
 # ---------- DEFINE USER INTERFACE (UI) ----------------------------------------
 
+# User interface for DDRP Pest Trends app 
+
 # R Shiny Server requires packages, raster lookup and functions to be loaded here
 source("packages.R")
 
@@ -373,8 +375,7 @@ ui <- page_navbar(
             id = "ref_barker2020",
             class = "reference-entry",
             
-            "Barker, B. S., L. Coop, T. Wepprich, F. Grevstad, and G. Cook. 
-            2020. PLoS ONE 15:e0244005. ",
+            "Barker, B. S., L. Coop, T. Wepprich, F. Grevstad, and G. Cook. 2020. DDRP: real-time phenology and climatic suitability modeling of invasive insects. PLoS ONE 15:e0244005.",
             
             a("https://doi.org/10.1371/journal.pone.0244005",
               href = "https://doi.org/10.1371/journal.pone.0244005"
@@ -387,7 +388,7 @@ ui <- page_navbar(
             id = "ref_barker2023",
             class = "reference-entry",
             
-            "Barker et al. 2023. Frontiers in Insect Science 3:1239173. ",
+            "Barker et al. 2023. An integrative phenology and climatic suitability model for emerald ash borer. Frontiers in Insect Science 3:1239173 Frontiers in Insect Science 3:1239173.",
             
             a("https://doi.org/10.3389/finsc.2023.1239173",
               href = "https://doi.org/10.3389/finsc.2023.1239173"
@@ -400,8 +401,7 @@ ui <- page_navbar(
             id = "ref_chang2026",
             class = "reference-entry",
             
-          "Chang, W., J. Cheng, J. J. Allaire, C. Sievert, et al. 2026. 
-        shiny: Web Application Framework for R. R package version 1.13.0.9000.",
+          "Chang, W., J. Cheng, J. J. Allaire, C. Sievert, et al. 2026. shiny: Web Application Framework for R. R package version 1.13.0.9000.",
             
             a("https://github.com/rstudio/shiny",
               href = "https://github.com/rstudio/shiny"
@@ -413,8 +413,7 @@ ui <- page_navbar(
             id = "ref_chatgpt2026",
             class = "reference-entry",
             
-            "OpenAI. 2026. ChatGPT (GPT-5.5, May 27 version) 
-            [Large language model].",
+            "OpenAI. 2026. ChatGPT (GPT-5.5, May 27 version) [Large language model].",
             
             a(
               "https://chat.openai.com/chat/",
@@ -587,7 +586,7 @@ ui <- page_navbar(
         
       ), # End side panel
       
-      # ------ Visuals (Right side) -------------------------------------------
+      # Visuals (Right side) ----
       
       div(
         
@@ -609,11 +608,12 @@ ui <- page_navbar(
           style = "display:flex;
            justify-content:space-between;
            align-items:center;
+           margin-top:10px;
            width:100%;",
           
           # Left side
           conditionalPanel(
-            condition = "input.pest != 'All 18 spp' && input.var_type != 'clm'",
+            condition = "input.pest != 'All 18 spp'",
             
             div(
               style = "padding-left:5px;",
@@ -791,16 +791,28 @@ ui <- page_navbar(
     div(
       
       style = "
-    font-size:14px;
-    margin-bottom:15px;
-    line-height:1.4;
-  ",
+      margin-bottom:15px;
+      line-height:1.4;
+    ",
+    
+      tags$style(HTML("
+      .accordion-body {
+        padding-top: 10px !important;
+        padding-bottom: 10px !important;
+      }
+    
+      .accordion-body p {
+        margin-top: 6px !important;
+        margin-bottom: 10px !important;
+        line-height: 1.35 !important;
+      }
+    ")),
       
-      "Below are profiles and research reports for the 18 invasive pest species 
-  modeled for this project. Each report provides background information on the
-  species, presents and interprets models predictions, and discusses the 
-  relevance of the results to the surveillance and management of the pest in
-  in the contiguous United States."
+    "Below are profiles and research reports for the 18 invasive pest species 
+    modeled for this project. Each report provides background information on the
+    species, presents and interprets models predictions, and discusses the 
+    relevance of the results to the surveillance and management of the pest in
+    in the contiguous United States."
       
     ),
     

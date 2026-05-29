@@ -32,7 +32,7 @@ make_pest_panel <- function(
       # Left column
       div(
         
-        style = "font-size: 13px;",
+        style = "font-size: 14px;",
         
         p(description),
         
@@ -250,6 +250,8 @@ produce_map_base <- function(bounds) {
     # Fit the initial view to the provided bounds (CONUS)
     fitBounds(lng1 = bounds$west, lat1 = bounds$south, 
               lng2 = bounds$east, lat2 = bounds$north) %>%
+    setMaxBounds(lng1 = bounds$west, lat1 = bounds$south, 
+              lng2 = bounds$east, lat2 = bounds$north) %>% 
     # Always-on State Boundaries
     addPolylines(
       data = us_states, # Assumes this object is loaded in setup.R
