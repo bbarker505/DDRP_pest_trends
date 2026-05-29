@@ -4,7 +4,7 @@
 
 Oregon Integrated Pest Management Center, Oregon State University  
 
-***Questions?*** 📧 Contact Brittany Barker at [bbarker505\@gmail.com](mailto:bbarker505@gmail.com){.email} or [brittany.barker\@oregonstate.edu](mailto:brittany.barker@oregonstate.edu){.email}
+***Questions?*** 📧 Contact Brittany Barker at [bbarker505\@gmail.com](mailto:bbarker505@gmail.com) or [brittany.barker\@oregonstate.edu](mailto:brittany.barker@oregonstate.edu)
 
 ## 📜 Summary
 
@@ -210,4 +210,4 @@ Funding for this project was provided by:
 
 *Last updated: June 2026*
 
-![](www/OIPMC_for_README.png){width="171"}
+![](www/OIPMC_for_README.png)
