@@ -70,17 +70,80 @@ ui <- page_navbar(
     div(style = "display:inline-block; margin: 0 15px;",
         tags$img(src = "OIPMC.png", height = "50px")),
     
-    # PRISM logo
-    div(style = "display:inline-block; margin: 0 15px;",
-        tags$img(src = "PRISM.png", height = "50px")),
-    
     # USDA logo
     div(style = "display:inline-block; margin: 0 15px;",
-        tags$img(src = "usda-logo_original.png", height = "50px"))
+        tags$img(src = "usda-logo_original.png", height = "50px")),
+    
+    # APHISlogo
+    div(style = "display:inline-block; margin: 0 15px;",
+        tags$img(src = "APHIS.png", height = "50px")),
+    
+    # NIFA logo
+    div(style = "display:inline-block; margin: 0 15px;",
+        tags$img(src = "NIFA.png", height = "50px")),
+    
+    # OSU ARF logo
+    div(style = "display:inline-block; margin: 0 15px;",
+        tags$img(src = "arf-logo.png", height = "50px")),
+    
+    # PRISM logo
+    div(style = "display:inline-block; margin: 0 15px;",
+        tags$img(src = "PRISM.png", height = "50px"))
+    
   ),
   
   # Tab 1: About site ----
   
+  # HTML code for allowing species table to open when clicked in Overview tab
+  tags$script(HTML("
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('a[href=\"#species\"]').forEach(function(link) {
+      link.addEventListener('click', function() {
+        setTimeout(function() {
+          const title = document.getElementById('species');
+          if (!title) return;
+          const accordionItem = title.closest('.accordion-item');
+          if (!accordionItem) return;
+          const button = accordionItem.querySelector('.accordion-button');
+          if (button && button.classList.contains('collapsed')) {
+            button.click();
+          }
+        }, 100);
+      });
+    });
+  });
+")),
+  
+  # Opens up reference section when citation clicked
+  tags$script(HTML("
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href^=\"#ref_\"]').forEach(function(link) {
+        link.addEventListener('click', function(e) {
+          e.preventDefault();
+          const targetId = this.getAttribute('href').substring(1);
+          const refPanel = document.getElementById('references_panel');
+          if (!refPanel) return;
+            const accordionItem = refPanel.closest('.accordion-item');
+          if (!accordionItem) return;
+            const button = accordionItem.querySelector('.accordion-button');
+          if (button && button.classList.contains('collapsed')) {
+            button.click();
+          }
+          setTimeout(function() {
+            const target = document.getElementById(targetId);
+          if (target) {
+            target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      }, 250);
+    });
+  });
+});
+")),
+  
+  # Landing page - About this site
   nav_panel(
     
     title = "About this site",
@@ -97,119 +160,272 @@ ui <- page_navbar(
     # Overview
     div(
       
-      class = "p-4 my-3",
+      class = "p-4 my-1",
       
       h3(HTML("<b>Overview</b>")),
       
-      p("Here, we use the Degree-Day, establishment Risk, and Phenological (DDRP) 
-        event mapping system to assess the potential impacts of weather from 
-        1980 to the current year on the timing of pest activity such as 
-        emergence (phenology) and potential for establishment of 18 invasive 
-        pest species in the contiguous United States."),
+      p(style = "margin-bottom: 8px;",
+        "Here, we use the ", 
+        a("DDRP platform", href = "https://uspest.org/CAPS",
+          target="_blank", style="text-decoration:underline;"), 
+      " to assess the potential impacts of weather changes from 1980 to the 
+      current year on the timing of pest activities, such as spring emergence 
+      (phenology) and potential for establishment of ", 
+        a("18 invasive pest species", href = "#species"),
+      " in the contiguous United States (CONUS). Recent weather trends are 
+      likely promoting overwintering survival and increasing developmental 
+      rates of invasive insects, allowing some to expand their range, emerge 
+      earlier, and attain higher densities over a longer growing season. 
+      Model products available on this app can inform strategic planning by 
+      the USDA Plant Protection and Quarantine’s (PPQ) and state agencies in 
+      terms of both when and where to conduct pest surveillance. For example, 
+      a trend towards the earlier appearance of adult insects may indicate that 
+      monitoring traps should be installed earlier in the season, whereas areas 
+      that are becoming increasingly suitable for pest establishment should be 
+      prioritized for surveillance. Allocating survey resources more 
+      strategically may reduce the likelihood of pest establishment and spread, 
+      thereby incrasing the productivity of U.S. farms, rangelands, and forests.")
+    
+      ), # end overview
       
       accordion(
         
         open = FALSE,
         
+        tags$style(HTML("
+        .accordion-body {
+        padding-top: 10px !important;
+        padding-bottom: 10px !important;
+        }
+
+        .accordion-body p {
+        margin-top: 6px !important;
+        margin-bottom: 10px !important;
+        line-height: 1.35 !important;
+        }
+      ")),
+        
+        ##### * Species #####
         accordion_panel(
-          title = "Click here for more info on the 18 species",
+          value = "species",
+          title = div(
+            id = "species",
+            tagList(bs_icon("plus-circle"), strong("Species")
+            )
+          ),
           status = "info",
           tagList(
-            p("Of the 18 species with models, 12 are presently on Plant
-            Protection and Quarantine’s National Priority Pest List. Six were 
-            formerly included on the list, and two are Federal Program Pests. 
-            Most of the species do not occur in the contiguous United States 
-            (N = 13); however, five are established and may spread to additional 
-            regions. Real-time forecasts for these pests are available at ",
-              a("USPest.org", href = "https://uspest.org/CAPS",
+            p("The 18 species with DDRP models are shown below. Five species 
+            are established in CONUS, 12 are on PPQ's ",
+              a("National Priority Pest List", 
+                href = "https://approvedmethods.ceris.purdue.edu/", 
                 target="_blank", style="text-decoration:underline;"),
-              "."),
+              ", six were formerly included on the list, and two are Federal 
+                Program Pests."),
             tableOutput("intro_table")
           )
-        )),
-      
-      br(),
-      
-      # Text
-      p("DDRP is part of a suite of decision-support tools at ",
-        a("USPest.org", href = "https://uspest.org/wea/",
-          target="_blank", style="text-decoration:underline;"),
-        " that are developed and maintained by the ", 
-        a("Oregon IPM Center", href = "https://agsci.oregonstate.edu/oipmc",
-          target="_blank", style="text-decoration:underline;"), " at Oregon 
-        State University. These tools provide thousands of end users nationwide 
-        with information to support timely and effective management activities 
-        for agricultural pests and diseases. This project implements the DDRP 
-        event mapping system to predict where pests may exhibit earlier 
-        activities, increases in the number of generations, and increases in 
-        habitat suitability. This information helps Plant Protection and 
-        Quarantine allocate survey resources more strategically, thereby 
-        reducing the likelihood of pest establishment and spread. "
-      ),
-      
-      # Text
-      p("The Degree-Day, establishment Risk, and Phenological event mapping system is
-     distinct from existing pest decision-support systems in its combination of ",
-        tags$ol(
-          tags$li(" integrated phenology and habitat suitability mapping to fully
-     address both when and where a pest life stage may occur over a year (Fig. 1), "),
-          tags$li(" incorporation of biologically meaningful parameters that
-     increase model realism in contrast with simple degree-day models, and "),
-          tags$li( " inclusion of survival-limiting cold and heat stresses to
-     predict habitat suitability over a year, whereas most other systems use
-     simpler models based on weather averages (Barker et al. 2020; Grevstad et al.
-     2022; Barker et al. 2023).")),
-        "Additionally, its ability to accept daily weather
-     data for any time frame allows evaluation of historical conditions and impacts
-     of weather changes on pest phenology and establishment."
-      )
-    ),
+        ), # end species table
+        
+     ##### * Instructions for use #####
+     accordion_panel(
+       
+       value = "instructions",
+       title = tagList(bs_icon("plus-circle"), strong("Instructions for Use")),
+         
+         p("The 'DDRP Maps' page delivers predictions of how long-term weather
+         changes may impact the the timing of pest activities, climate 
+         suitability, and the potential distribution of the 18 species. The
+         'Pest reports' page provides reports that present the major results for
+         each species and their potential applications for surveillance. The 
+         tutorial below describes app usage, explains the different map 
+         types, and provides guidance on how to interpret maps. Note that this 
+         app requires an internet connection and will therefore not work in 
+         airplane or off-line mode."),
+         
+         tags$div(style = "margin-top: 2px;"),
+         
+         tags$a(
+           href = "#",
+           paste0("Download tutorial"),
+           target = "_blank",
+           style = "text-decoration: underline;"
+         )
+     ), # end instructions
+   
+   ##### * About DDRP #####
+   accordion_panel(
+     
+     value = "DDRP",
+     title = tagList(bs_icon("plus-circle"), strong("About DDRP")),
+     
+     p("DDRP is part of a suite of decision-support tools at ",
+       a("USPest.org", href = "https://uspest.org/wea/",
+         target="_blank", style="text-decoration:underline;"),
+       " that are developed and maintained by the ", 
+       a("Oregon IPM Center", href = "https://agsci.oregonstate.edu/oipmc",
+         target="_blank", style="text-decoration:underline;"), 
+       " at Oregon State University. These tools provide thousands of end users 
+       nationwide with information to support timely and effective management 
+       activities for agricultural pests and diseases. The ", 
+       a("homepage for DDRP", href = "https://uspest.org/CAPS",
+         target="_blank", style="text-decoration:underline;"), 
+       " provides near-real time forecasts for the 18 pest species as well as
+       spreadsheets, technical reports, and peer-reviewed publications 
+       associated with the models."),
+     
+     p("Details on the mechanics of DDRP are presented in",
+       a("Barker et al. (2020)", href = "#ref_barker2020"), 
+     " Briefly, DDRP uses a process-based modeling approach in which degree-days 
+     and climate stress are calculated daily and accumulate over time to model 
+     phenology and climatic suitability, respectively. Figure 1 in ",
+     a("Barker et al. (2023)", href = "#ref_barker2023"),
+     " provides a schematic of the DDRP model for the emerald ash borer", 
+     HTML("<i>Agrilus planipennesis</i>."), "Required inputs for modeling include 
+     gridded daily minimum and maximum temperature data. The phenology model
+     includes one phenological event each for five life stages: the overwintering
+     stage, egg, larva, pupa, and adult. To model the potential distribution 
+     of a pest, DDRP compares estimates of climate stress accumulations to 
+     user-defined moderate and severe stress limits. Moderate stress may 
+     inhibit long-term establishment, in which short-term (one complete year) 
+     establishment may occur only during favorable years, whereas areas under 
+     severe stress would likely prevent even short-term establishment. 
+     Areas excluded by moderate stress may also be used to 
+     communicate uncertainty in the potential for establishment.")
+     ),
+     
+      ##### * Source code and feedback #####
+      accordion_panel(
+        
+        value = "source_code",
+        title = tagList(bs_icon("plus-circle"), strong("Source code")),
+        
+        p("The source code and raw outputs of this project are available on ",
+          a("GitHub.",
+            href = "https://github.com/bbarker505/DDRP_pest_trends",
+            target = "_blank",
+            style = "text-decoration:underline;"
+          ), "Source code and model parameter files used for modeling are 
+          available in the ",
+          a("GitHub repo for DDRP.",
+            href = "https://github.com/bbarker505/ddrp_v3",
+            target = "_blank",
+            style = "text-decoration:underline;")
+        )
+     ), # end source code
+     
+      ##### * Contact #####
+      accordion_panel(
+        
+        value = "contact",
+        title = tagList(bs_icon("plus-circle"), strong("Contact")),
+        
+        p(
+          "Please feel free to reach out to ",
+          tags$a(
+            href = "mailto:brittany.barker@oregonstate.edu",
+            "Dr. Brittany Barker"
+          ),
+          " for any questions or comments regarding the project or app.")
+        ), # end contact
     
-    # Citations and references
-    div(
-      
-      class = "p-4 my-3",
-      
-      h3(HTML("<b>References</b>")),
-      
-      tags$ul(
-        tags$li("Barker, B. S., L. Coop, T. Wepprich, F. Grevstad, and G. Cook. 
-        2020. Public Library of Science ONE 15:e0244005. ", 
-                a("https://doi.org/10.1371/journal.pone.0244005",
-                  href = "https://doi.org/10.1371/journal.pone.0244005")),
-        tags$li("Barker, B. S., L. Coop, J. J. Duan, and T. R. Petrice. 2023. 
-        Frontiers in Insect Science 3:1239173. ", 
-                a("https://doi.org/10.3389/finsc.2023.1239173",
-                  href = "https://doi.org/10.3389/finsc.2023.1239173")),
-        tags$li("Barker, B. S., and L. Coop. 2024. Digger. June 2024, pp. 41−45. 
-                Online at: ", 
-                a("https://diggermagazine.com/new-tools-to-forecast-boxwood-blight-infection-risk-in-pacific-
-northwest-nurseries/",
-                  href = "https://diggermagazine.com/new-tools-to-forecast-boxwood-blight-infection-risk-in-pacific-
-northwest-nurseries/")),
-        tags$li("Takeuchi, Y., A. Tripodi, and K. Montgomery. 2023. Frontiers in 
-                Insect Science 3:1198355. ", 
-                a("https://doi.org/10.3389/finsc.2023.1198355",
-                  href = "https://doi.org/10.3389/finsc.2023.1198355"))
+      ##### * Acknowledgements #####
+      accordion_panel(
+        
+        value = "acknowledgements",
+        title = tagList(bs_icon("plus-circle"), strong("Acknowledgements")),
+        
+        p("Funding for this project was provided by the USDA's National 
+          Institute of Food and Agriculture, the PPQ Plant Protection Act 7721
+          program, and OSU's Agricultural Research Fund. The web application 
+          was developed using the ",
+          a("Shiny package for R",
+            href = "https://shiny.posit.co/",
+            target = "_blank",
+            style = "text-decoration:underline;"),
+          a("(Chang et al. 2026)", href = "#ref_chang2026"),
+          " We would like to thank the developers at Posit (formerly RStudio) 
+          and the broader R community for providing the open-source tools that 
+          powered this project. Portions of the code were developed with 
+          assistance from ChatGPT", 
+          a("(OpenAI 2026).", href = "#ref_chatgpt2026")
+          ) # end acknowledgements
       ),
-      
-      p(strong("Source code and feedback: "),
-        "To view the source code, visit the GitHub repo ",
-        a("here",
-          href = "https://github.com/bbarker505/DDRP_pest_trends",
-          target = "_blank", style = "text-decoration:underline;"),
-        "."
-      ),
-      
-      p(strong("Contact: "),
-        "For any questions or comments regarding this work, please feel free to
-        reach out to Dr. Brittany Barker at ",
-        a("brittany.barker@oregonstate.edu",
-          href="mailto:brittany.barker@oregonstate.edu"),
-        "."
+    
+      ##### * References #####
+      accordion_panel(
+        
+        value = "references",
+        title = div(
+          id = "references_panel",
+          tagList(
+            bs_icon("plus-circle"),
+            strong("References")
+          )
+        ),
+        
+        div(
+          
+          class = "references",
+          
+          div(
+            
+            style = "padding-left: 2em;text-indent: -2em;margin-bottom: 0.8em;",
+            id = "ref_barker2020",
+            class = "reference-entry",
+            
+            "Barker, B. S., L. Coop, T. Wepprich, F. Grevstad, and G. Cook. 
+            2020. PLoS ONE 15:e0244005. ",
+            
+            a("https://doi.org/10.1371/journal.pone.0244005",
+              href = "https://doi.org/10.1371/journal.pone.0244005"
+            )
+          ),
+          
+          div(
+            
+            style = "padding-left: 2em;text-indent: -2em;margin-bottom: 0.8em;",
+            id = "ref_barker2023",
+            class = "reference-entry",
+            
+            "Barker et al. 2023. Frontiers in Insect Science 3:1239173. ",
+            
+            a("https://doi.org/10.3389/finsc.2023.1239173",
+              href = "https://doi.org/10.3389/finsc.2023.1239173"
+            )
+          ),
+          
+          div(
+            
+            style = "padding-left: 2em;text-indent: -2em;margin-bottom: 0.8em;",
+            id = "ref_chang2026",
+            class = "reference-entry",
+            
+          "Chang, W., J. Cheng, J. J. Allaire, C. Sievert, et al. 2026. 
+        shiny: Web Application Framework for R. R package version 1.13.0.9000.",
+            
+            a("https://github.com/rstudio/shiny",
+              href = "https://github.com/rstudio/shiny"
+            )
+          ),
+          
+          div(
+            style = "padding-left: 2em;text-indent: -2em;margin-bottom: 0.8em;",   
+            id = "ref_chatgpt2026",
+            class = "reference-entry",
+            
+            "OpenAI. 2026. ChatGPT (GPT-5.5, May 27 version) 
+            [Large language model].",
+            
+            a(
+              "https://chat.openai.com/chat/",
+              href = "https://chat.openai.com/chat/"
+            )
+          ),
+          
+          div(style = "padding-left: 2em;text-indent: -2em;margin-bottom: 0.8em;")
+        )
       )
     )
-    
   ),
   
   # Tab 2: Map ----
@@ -268,9 +484,31 @@ northwest-nurseries/")),
         ),
         
         ##### * Select variable #####
+        
+        # Info circle nested in the title to provide info on variables
         selectInput(
           "var_type",
-          label = tags$span(h4(HTML("<b>Select variable type</b>"))),
+          label = tagList(
+            h4(
+              HTML("<b>Select variable type</b>"),
+              tags$span(
+                tags$i(class = "bi bi-info-circle"),
+                style = "cursor:pointer; margin-left:5px; font-size:0.8em;",
+                `data-bs-toggle` = "popover",
+                `data-bs-trigger` = "hover",
+                `data-bs-placement` = "right",
+                `data-bs-html` = "true",
+                title = "About variable types",
+                `data-bs-content` = paste(
+                  "<b>Phenology:</b> Trends in the timing of pest life-cycle events.",
+                  "<br><br>",
+                  "<b>Climate stress:</b> Trends in accumulated cold or heat stress.",
+                  "<br><br>",
+                  "<b>All stress exclusion:</b> Change in the potential distribution based on both stress factors."
+                )
+              )
+            )
+          ),
           choices = c(
             "Climate stress" = "climate",
             "Phenology" = "phenology",
@@ -280,18 +518,37 @@ northwest-nurseries/")),
         ),
         
         ##### * Select metric #####
-        div(
-          id = "trend_metric_container",
-          
-          selectInput(
-            "trend_metric",
-            label = tags$span(h4(HTML("<b>Select metric</b>"))),
-            choices = c(
-              "Change per year" = "sens",
-              "Direction of trend" = "tau"
-            ),
-            selected = "sens"
-          )
+        # Info circle nested in the title to provide info on metrics
+        selectInput(
+          "trend_metric",
+          label = tagList(
+            h4(
+              HTML("<b>Select metric</b>"),
+              tags$span(
+                tags$i(class = "bi bi-info-circle"),
+                style = "cursor:pointer;
+                 margin-left:5px;
+                 position:relative;
+                 top:-1px;
+                 font-size:0.8em;",
+                `data-bs-toggle` = "popover",
+                `data-bs-trigger` = "hover",
+                `data-bs-placement` = "right",
+                `data-bs-html` = "true",
+                title = "About this metric",
+                `data-bs-content` = paste(
+                  "<b>Change per year:</b> Sen's slope estimate of the trend in days/year (phenology) or units/year (climate stress).",
+                  "<br><br>",
+                  "<b>Direction of trend:</b> Kendall's tau, indicating the strength and direction of the monotonic trend."
+                )
+              )
+            )
+          ),
+          choices = c(
+            "Change per year" = "sens",
+            "Direction of trend" = "tau"
+          ),
+          selected = "sens"
         ),
         
         # (Shows if climate and a species is selected)
@@ -339,7 +596,7 @@ northwest-nurseries/")),
         ##### * Map #####
         div(
           
-          # Ensure map fills most of the viewport
+          # Ensure map fills mWhy didost of the viewport
           tags$style("#map {height: calc(100vh - 300px) !important;}"),
           
           # To know map is loading
@@ -347,45 +604,55 @@ northwest-nurseries/")),
             withSpinner(color = "cornflowerblue")
         ),
         
-        # Below map: Show sig areas check box and Export map as PNG button
+        # Below map: Show sig areas check box and export map as PNG button
         div(
-          class = "d-flex justify-content-between align-items-center my-2",
+          style = "display:flex;
+           justify-content:space-between;
+           align-items:center;
+           width:100%;",
           
-          # Fixed-width container - check box only for tau and sen maps
-          div(
-            style = "min-width: 260px;",  # adjust width as needed
+          # Left side
+          conditionalPanel(
+            condition = "input.pest != 'All 18 spp' && input.var_type != 'clm'",
             
-            conditionalPanel(
-              condition = "input.pest != 'All 18 spp' && input.var_type != 'clm'",
+            div(
+              style = "padding-left:5px;",
               
-              tooltip(
-                checkboxInput(
-                  "sig_only",
-                  HTML("<span style='color:#434C5E; font-weight:300;'>
-                Show significant areas only
-               </span>"),
-                  value = FALSE
+              checkboxInput(
+                "sig_only",
+                HTML(
+                  "<span style='color:#434C5E; font-weight:300;'>
+           Show significant areas only
+           <i class='bi bi-info-circle'
+              style='margin-left:4px; cursor:pointer;'
+              data-bs-toggle='popover'
+              data-bs-trigger='hover'
+              data-bs-placement='right'
+              title='About this option'
+              data-bs-content='Masks out areas with a P-value ≥ 0.1 
+              (not statistically significant). A lack of significance may 
+              occur due to high variability/noise, non-linear trends, or other factors.'>
+           </i>
+           </span>"
                 ),
-                "Masks out areas where P ≥ 0.1 according to the Mann-Kendall test",
-                placement = "right"
+                value = FALSE
               )
             )
           ),
-          # 1. The visible warning text
-          # span(
-          #   "Note: download may take several seconds.", 
-          #   style = "font-size: 0.85rem; color: #666; font-style: italic; margin-right: 15px;"
-          # ),
           
-          # 2. The button (wrapped in a tooltip for extra detail on hover)
-          tooltip(
-            downloadButton(
-              "download_map",
-              "Download map",
-              class = "btn-info btn-sm"
-            ),
-            "Export a high-resolution image (PNG) of the current map view. 
-            Download may take several seconds."
+          # Right side
+          div(
+            style = "margin-left:auto;",
+            
+            tooltip(
+              downloadButton(
+                "download_map",
+                "Download map",
+                class = "btn-info btn-sm"
+              ),
+              "Export a high-resolution image (PNG) of the current map view.
+       Download may take several seconds."
+            )
           )
         ),
         
@@ -401,7 +668,7 @@ northwest-nurseries/")),
           
           # Show results after click
           conditionalPanel(
-            condition = "input.map_click !== null",
+            condition = "output.has_click == 'FALSE'",
             tags$p("Click on a location of interest on the map to 
                    produce location-based results.")
           ),
@@ -459,7 +726,8 @@ northwest-nurseries/")),
                 
                 
                 conditionalPanel(
-                  condition = "output.has_click !== null && input.pest != 'All 18 spp'",
+                  condition = "output.has_click == 'TRUE' && 
+                  input.pest != 'All 18 spp'",
                   
                   downloadButton(
                     "download_plot_indiv",
@@ -528,10 +796,11 @@ northwest-nurseries/")),
     line-height:1.4;
   ",
       
-      "Below are profiles for 18 invasive insect pests included in this application. 
-  Each report summarizes the pest’s biology, host range, distribution, economic 
-  impacts, and how long-term weather trends may influence its activity and 
-  establishment potential in the United States."
+      "Below are profiles and research reports for the 18 invasive pest species 
+  modeled for this project. Each report provides background information on the
+  species, presents and interprets models predictions, and discusses the 
+  relevance of the results to the surveillance and management of the pest in
+  in the contiguous United States."
       
     ),
     
@@ -548,7 +817,7 @@ northwest-nurseries/")),
         description = tagList(
           "The Asian longhorn beetle (ALB), ",
           HTML("<i>Anoplophora glabripennis</i>"),
-          " Motschulsky (Coleoptera: Cerambycidae), is a xylophagous beetle native to the Korean peninsula and eastern China. In the United States, the beetle was first discovered on Long Island, NY, in 1996. ALB spread to a number of sites in the eastern United States and Canada but has since been eradicated in Illinois, New Jersey, New York City, Boston, Mississauga, and Toronto. The pest is a major threat to the maple hardwood lumber and sugar maple syrup industries, as well as tourism associated with fall colors in maple trees. Learn more about ALB and how long-term weather changes may be impacting its activities and potential for establishment in the report below."
+          "Motschulsky (Coleoptera: Cerambycidae), is a xylophagous beetle native to the Korean peninsula and eastern China. In the United States, the beetle was first discovered on Long Island, NY, in 1996. ALB spread to a number of sites in the eastern United States and Canada but has since been eradicated in Illinois, New Jersey, New York City, Boston, Mississauga, and Toronto. The pest is a major threat to the maple hardwood lumber and sugar maple syrup industries, as well as tourism associated with fall colors in maple trees. Learn more about ALB and how long-term weather changes may be impacting its activities and potential for establishment in the report below."
         ),
         image_file = "ALB.png",
         photo_credit = "Photo: Iowa State University Extension and Outreach"
@@ -562,7 +831,7 @@ northwest-nurseries/")),
         description = tagList(
           "The Asiatic rice borer (ASRB), ",
           HTML("<i>Chilo suppressalis</i>"),
-          " (Crambiidae), is a stem borer widespread throughout Asia, Oceana, the Middle East, and Europe and has been recorded in Hawaii. While host plants include water oat, sorghum, millet, corn, and other grasses, ASRB larvae cause major damage to rice crops by severing panicles or the vascular system of tillers leading to white earheads and dead heart. The pest is not known to occur in the conterminous United States but Pyraloidea larvae are frequently intercepted at U.S. ports. Learn more about ASRB and how long-term weather changes may be impacting its activities and potential for establishment in the report below."
+          "(Crambiidae), is a stem borer widespread throughout Asia, Oceana, the Middle East, and Europe and has been recorded in Hawaii. While host plants include water oat, sorghum, millet, corn, and other grasses, ASRB larvae cause major damage to rice crops by severing panicles or the vascular system of tillers leading to white earheads and dead heart. The pest is not known to occur in the conterminous United States but Pyraloidea larvae are frequently intercepted at U.S. ports. Learn more about ASRB and how long-term weather changes may be impacting its activities and potential for establishment in the report below."
         ),
         image_file = "ASRB.png",
         photo_credit = "Photo: Hanna Royals, Screening Aids, USDA APHIS PPQ, Bugwood.org"
@@ -576,7 +845,7 @@ northwest-nurseries/")),
         description = tagList(
           "The common or cotton cutworm (SLI), ",
           HTML("<i>Spodoptera litura</i>"),
-          " (Fabricius, 1775) (Lepidoptera: Noctuidae), is a highly polyphagous pest of at least 120 species, including economically important crops such as corn, cotton, groundnut, potato, soybean, sweet potato, tea, tobacco, and other vegetables. Native to Southeast Asia, SLI is now distributed throughout Australia, Oceania, several African islands, Hawaii, and regions of Asia. SLI has developed resistance to a wide range of insecticides and transgenic Bt cotton and can migrate long distances, possibly aided by typhoons. Heavy defoliation of host plants by larvae has led to severe crop and economic losses. Learn more about SLI and how long-term weather changes may be impacting its activities and potential for establishment in the report below."
+          "(Fabricius, 1775) (Lepidoptera: Noctuidae), is a highly polyphagous pest of at least 120 species, including economically important crops such as corn, cotton, groundnut, potato, soybean, sweet potato, tea, tobacco, and other vegetables. Native to Southeast Asia, SLI is now distributed throughout Australia, Oceania, several African islands, Hawaii, and regions of Asia. SLI has developed resistance to a wide range of insecticides and transgenic Bt cotton and can migrate long distances, possibly aided by typhoons. Heavy defoliation of host plants by larvae has led to severe crop and economic losses. Learn more about SLI and how long-term weather changes may be impacting its activities and potential for establishment in the report below."
         ),
         image_file = "SLI.png",
         photo_credit = "Photo: Birgit E. Rhode, Landcare Research New Zealand Ltd."
@@ -590,7 +859,7 @@ northwest-nurseries/")),
         description = tagList(
           "The Egyptian cottonworm (ECW), ",
           HTML("<i>Spodoptera littoralis</i>"),
-          " Boisduval (Lepidoptera: Noctuidae), is a highly destructive, polyphagous moth present throughout southern Europe, the Mediterranean basin, the Middle East, Africa, China, and India. Host plants include 80 plant species from over 40 families, but ECW is considered a major pest of cotton, maize, potato, sugarcane, soybeans, vegetables, and wheat. The larval stage can damage plants by extensive defoliation and by attacking growing points and mining or cutting stems. ECW is not known to be established in the United States but has been intercepted numerous times at ports of entry. Learn more about ECW and how long-term weather changes may be impacting its activities and potential for establishment in the report below."
+          "Boisduval (Lepidoptera: Noctuidae), is a highly destructive, polyphagous moth present throughout southern Europe, the Mediterranean basin, the Middle East, Africa, China, and India. Host plants include 80 plant species from over 40 families, but ECW is considered a major pest of cotton, maize, potato, sugarcane, soybeans, vegetables, and wheat. The larval stage can damage plants by extensive defoliation and by attacking growing points and mining or cutting stems. ECW is not known to be established in the United States but has been intercepted numerous times at ports of entry. Learn more about ECW and how long-term weather changes may be impacting its activities and potential for establishment in the report below."
         ),
         image_file = "ECW.png",
         photo_credit = "Photo: Russel IPM"
@@ -604,13 +873,13 @@ northwest-nurseries/")),
         description = tagList(
           "The emerald ash borer (EAB), ",
           HTML("<i>Agrilus planipennis</i>"),
-          " Fairmaire (Coleoptera: Buprestidae), is a wood-boring beetle native to eastern Asia that feeds exclusively on ash trees (",
-          HTML("<i>Fraxinus</i> spp."),
-          "), though it occasionally attacks fringe trees (",
-          HTML("<i>Chionathus</i> spp."),
-          ") and olive trees (",
-          HTML("<i>Olea</i> spp."),
-          "). The pest is present in at least 37 U.S. states and six Canadian provinces. Feeding by larvae usually results in the death of the tree within about six years. EAB’s cryptic nature, in which all life stages except for the adult beetle are inside of trees, makes early detection of this pest extremely difficult. The financial impact of EAB in the U.S. is estimated to be in the billions of dollars. Additionally, the widespread loss of ash trees has resulted in decreased biodiversity and lost ecosystem services. Learn more about EAB and how long-term weather changes may be impacting its activities and potential for establishment in the report below."
+          "Fairmaire (Coleoptera: Buprestidae), is a wood-boring beetle native to eastern Asia that feeds exclusively on ash trees ",
+          HTML("(<i>Fraxinus</i> spp.),"),
+          "though it occasionally attacks fringe trees ",
+          HTML("(<i>Chionathus</i> spp.)"),
+          "and olive trees ",
+          HTML("(<i>Olea</i> spp.)."),
+          "The pest is present in at least 37 U.S. states and six Canadian provinces. Feeding by larvae usually results in the death of the tree within about six years. EAB’s cryptic nature, in which all life stages except for the adult beetle are inside of trees, makes early detection of this pest extremely difficult. The financial impact of EAB in the U.S. is estimated to be in the billions of dollars. Additionally, the widespread loss of ash trees has resulted in decreased biodiversity and lost ecosystem services. Learn more about EAB and how long-term weather changes may be impacting its activities and potential for establishment in the report below."
         ),
         image_file = "EAB.png",
         photo_credit = "Photo: Treescape Certified Arborists, treescapecanada.ca"
@@ -624,9 +893,9 @@ northwest-nurseries/")),
         description = tagList(
           "Native to sub-saharan Africa, the false codling moth (FCM), ",
           HTML("<i>Thaumatotibia leucotreta</i>"),
-          " Meyrick (Lepidoptera: Tortricidae), is a highly polyphagous pest now present throughout most of Africa and Israel. Economically important hosts include avocado, certain ",
-          HTML("<i>Citrus</i> spp."),
-          ", corn, cotton, eggplants, grapes, stonefruit, peppers, and cut roses. FCM larvae cause damage by boring into plant fruit before forming cocoons in the soil. In 2008, a single adult FCM male was discovered in the wild in California. If established in the United States, the pest could cause significant economic damage. Learn more about FCM and how long-term weather changes may be impacting its activities and potential for establishment in the report below."
+          "Meyrick (Lepidoptera: Tortricidae), is a highly polyphagous pest now present throughout most of Africa and Israel. Economically important hosts include avocado, certain ",
+          HTML("<i>Citrus</i> spp.,"),
+          "corn, cotton, eggplants, grapes, stonefruit, peppers, and cut roses. FCM larvae cause damage by boring into plant fruit before forming cocoons in the soil. In 2008, a single adult FCM male was discovered in the wild in California. If established in the United States, the pest could cause significant economic damage. Learn more about FCM and how long-term weather changes may be impacting its activities and potential for establishment in the report below."
         ),
         image_file = "FCM.png",
         photo_credit = "Photo: J. H. Hofmeyr, Citrus Research International, Bugwood.org"
@@ -639,8 +908,8 @@ northwest-nurseries/")),
         abbreviation = "CGN",
         description = tagList(
           "Native to the Mediterranean region, the honeydew moth (CGN), ",
-          HTML("<i>Cryptoblabes gnidiella</i>"),
-          ", is a highly polyphagous pest primary and secondary pest of many economically important crops, including avocado, citrus, corn, cotton, grape, loquat, pomegranate, rice, and wheat. CGN is usually associated with coccoids and pseudococcids, the honeydew of which CGN larvae feed on, but the pest can also directly harm fruit on certain crops. CGN has spread throughout many southern European and northern and southern African countries, as well as Brazil, Fiji, India, Malaysia, New Zealand, Uruguay, and Hawaii in the United States. While not yet established in the contiguous United States, it has been intercepted hundreds of times at ports of entry, often from countries where it is not known to be established. Learn more about CGN and how long-term weather changes may be impacting its activities and potential for establishment in the report below."
+          HTML("<i>Cryptoblabes gnidiella</i>,"),
+          "is a highly polyphagous pest primary and secondary pest of many economically important crops, including avocado, citrus, corn, cotton, grape, loquat, pomegranate, rice, and wheat. CGN is usually associated with coccoids and pseudococcids, the honeydew of which CGN larvae feed on, but the pest can also directly harm fruit on certain crops. CGN has spread throughout many southern European and northern and southern African countries, as well as Brazil, Fiji, India, Malaysia, New Zealand, Uruguay, and Hawaii in the United States. While not yet established in the contiguous United States, it has been intercepted hundreds of times at ports of entry, often from countries where it is not known to be established. Learn more about CGN and how long-term weather changes may be impacting its activities and potential for establishment in the report below."
         ),
         image_file = "CGN.png",
         photo_credit = "Photo: Hanna Royals, Screening Aids, USDA APHIS PPQ, Bugwood.org"
@@ -653,8 +922,8 @@ northwest-nurseries/")),
         abbreviation = "JPB",
         description = tagList(
           "Native to Japan, the Japanese beetle (JPB), ",
-          HTML("<i>Popillia japonica</i>"),
-          ", is a highly polyphagous pest with more than 400 host plants, including food crops, fruit trees, turfgrass, and ornamental plants. Since its first detection in 1916 in the United States in New Jersey, the beetle has become widespread throughout the eastern and central states, as well as parts of eastern Canada. Outbreaks in Colorado and California were eradicated; however, JPB is established in a small number of locations in the Pacific Northwest, including in British Columbia, Washington, and Oregon. Total associated costs of JPB in the United States are estimated at $460 million annually, with $234 million a year spent on control and turf replacement costs. Learn more about JPB and how long-term weather changes may be impacting its activities and potential for establishment in the report below."
+          HTML("<i>Popillia japonica</i>,"),
+          "is a highly polyphagous pest with more than 400 host plants, including food crops, fruit trees, turfgrass, and ornamental plants. Since its first detection in 1916 in the United States in New Jersey, the beetle has become widespread throughout the eastern and central states, as well as parts of eastern Canada. Outbreaks in Colorado and California were eradicated; however, JPB is established in a small number of locations in the Pacific Northwest, including in British Columbia, Washington, and Oregon. Total associated costs of JPB in the United States are estimated at $460 million annually, with $234 million a year spent on control and turf replacement costs. Learn more about JPB and how long-term weather changes may be impacting its activities and potential for establishment in the report below."
         ),
         image_file = "JPB.png",
         photo_credit = "Photo: YinYang, iStock"
@@ -668,13 +937,13 @@ northwest-nurseries/")),
         description = tagList(
           "The Japanese pine sawyer beetle (JPSB), ",
           HTML("<i>Monochamus alternatus</i>"),
-          " Hope (Coleoptera: Cerambycidae), is a major vector of nematodes that cause pine wilt disease. Native to mainland China, Taiwan, Laos, Korea, and Japan, JPSB has spread to South Korea and Vietnam. Adult beetles carrying the nematodes feed upon and infect healthy pine trees, which will show symptoms of infection due to xylem blockage caused by the nematode in about three weeks. JPSB beetles oviposit in the diseased tree, producing larvae that feed under the bark before diapausing. In regions invaded by the JPSB, such as Portugal and Korea, pine wilt disease has resulted in millions of dollars of damage to forest products. Host plants are usually gymnosperms or are from the ",
+          "Hope (Coleoptera: Cerambycidae), is a major vector of nematodes that cause pine wilt disease. Native to mainland China, Taiwan, Laos, Korea, and Japan, JPSB has spread to South Korea and Vietnam. Adult beetles carrying the nematodes feed upon and infect healthy pine trees, which will show symptoms of infection due to xylem blockage caused by the nematode in about three weeks. JPSB beetles oviposit in the diseased tree, producing larvae that feed under the bark before diapausing. In regions invaded by the JPSB, such as Portugal and Korea, pine wilt disease has resulted in millions of dollars of damage to forest products. Host plants are usually gymnosperms or are from the ",
           HTML("<i>Pinus</i>, <i>Abies</i>, <i>Picea</i>, <i>Larix</i> and <i>Cedrus</i>"),
-          " families, though ",
+          "families, though ",
           HTML("<i>Malus</i>"),
-          " spp. and ",
+          "spp. and ",
           HTML("<i>Acer</i>"),
-          " spp. are also possible hosts. Learn more about JPSB and how long-term weather changes may be impacting its activities and potential for establishment in the report below."
+          "spp. are also possible hosts. Learn more about JPSB and how long-term weather changes may be impacting its activities and potential for establishment in the report below."
         ),  
         image_file = "JPSB.png",
         photo_credit = "Photo: Christopher Pierce, USDA APHIS PPQ, Bugwood.org"
@@ -688,7 +957,7 @@ northwest-nurseries/")),
         description = tagList(
           "Native to Australia, the light brown apple moth (LBAM), ",
           HTML("<i>Epiphyas postvittana</i>"),
-          " (Walker) (Lepidoptera: Tortricidae), is invasive in the United States, the United Kingdom, New Zealand, New Caledonia, and the Azores, with multiple interceptions reported in other countries. The highly polyphagous pest has over 500 reported host plants, though its economic impacts have been greatest for apple, pears, and grapes. LBAM infestation can result in market access issues due to the risks of transporting live larvae on a large variety of host plants. The pest’s distribution in the United States is limited to Hawaii, where it was first reported in 1893, and in California, where it was first confirmed in 2007 and now persists mainly around San Francisco and along the coast. Learn more about LBAM and how long-term weather changes may be impacting its activities and potential for establishment in the report below."
+          "(Walker) (Lepidoptera: Tortricidae), is invasive in the United States, the United Kingdom, New Zealand, New Caledonia, and the Azores, with multiple interceptions reported in other countries. The highly polyphagous pest has over 500 reported host plants, though its economic impacts have been greatest for apple, pears, and grapes. LBAM infestation can result in market access issues due to the risks of transporting live larvae on a large variety of host plants. The pest’s distribution in the United States is limited to Hawaii, where it was first reported in 1893, and in California, where it was first confirmed in 2007 and now persists mainly around San Francisco and along the coast. Learn more about LBAM and how long-term weather changes may be impacting its activities and potential for establishment in the report below."
         ),
         image_file = "LBAM.png",
         photo_credit = "Photo: Todd M. Gilligan and Marc E. Epstein"
@@ -702,21 +971,21 @@ northwest-nurseries/")),
         description = tagList(
           "The oak ambrosia beetle (OAB), ",
           HTML("<i>Platypus quercivorus</i>"),
-          " Murayama (Coleoptera: Platypodidae), is a forest pest and vector of its symbiont, the pathogenic fungus, ",
+          "Murayama (Coleoptera: Platypodidae), is a forest pest and vector of its symbiont, the pathogenic fungus, ",
           HTML("<i>Raffaelea quercivora</i>"),
-          " Kubono & Shin-Ito. Japanese oak wilt disease (JOW) caused by this fungus kills both healthy and stressed trees by blocking tracheary function. Host plants required to complete reproduction are ",
+          "Kubono & Shin-Ito. Japanese oak wilt disease (JOW) caused by this fungus kills both healthy and stressed trees by blocking tracheary function. Host plants required to complete reproduction are ",
           HTML("<i>Quercus</i>"),
-          " species and several other members of the ",
+          "species and several other members of the ",
           HTML("<i>Fagaceae</i>"),
-          " family, including chestnut (",
-          HTML("<i>Castanea</i>"),
-          " spp.), chinquapin (",
-          HTML("<i>Castanopsis</i>"),
-          " spp.), and stone oaks (",
-          HTML("<i>Lithocarpus</i>"),
-          " spp.). OAB is distributed throughout India, Indonesia, Japan, and Papua New Guinea; however, ",
+          "family, including chestnut ",
+          HTML("(<i>Castanea</i> spp.),"),
+          "chinquapin ",
+          HTML("(<i>Castanopsis</i> spp.),"),
+          "and stone oaks ",
+          HTML("(<i>Lithocarpus</i> spp.)."),
+          "OAB is distributed throughout India, Indonesia, Japan, and Papua New Guinea; however, ",
           HTML("<i>R. quercivora</i>"),
-          " has only been reported in Japan, where the fungus has caused significant mortality in oak trees. OAB and JOW would cause considerable economic, environmental, and social impact if introduced to the United States, where there are 28 possible susceptible species of oak. Learn more about OAB and how long-term weather changes may be impacting its activities and potential for establishment in the report below."
+          "has only been reported in Japan, where the fungus has caused significant mortality in oak trees. OAB and JOW would cause considerable economic, environmental, and social impact if introduced to the United States, where there are 28 possible susceptible species of oak. Learn more about OAB and how long-term weather changes may be impacting its activities and potential for establishment in the report below."
         ),
         image_file = "OAB.png",
         photo_credit = "Photo: Joseph Benzel, Screening Aids, USDA APHIS PPQ, Bugwood.org"
@@ -730,7 +999,7 @@ northwest-nurseries/")),
         description = tagList(
           "The Old World or cotton bollworm (OWBW), ",
           HTML("<i>Helicoverpa armigera</i>"),
-          " (Hübner) (Lepidoptera: Noctuidae), is a highly polyphagous pest of agricultural crops from 68 different plant families, including chickpeas, corn, cotton, tobacco, tomatoes, potatoes, and soybeans. Widespread throughout almost all of Europe, Asia, Africa, and Australasia, OWBW began spreading through Central and South America in 2013. In 2015, several specimens were detected in Florida, but populations did not establish. The pest has the ability to migrate over great distances, even up to 2,000 km if aided by wind. OWBW is resistant to a number of insecticides and transgenic crops. An estimated $78 billion per year in crops could be at risk of pest damage if OWBW becomes established in the United States. Learn more about OWBW and how long-term weather changes may be impacting its activities and potential for establishment in the report below."
+          "(Hübner) (Lepidoptera: Noctuidae), is a highly polyphagous pest of agricultural crops from 68 different plant families, including chickpeas, corn, cotton, tobacco, tomatoes, potatoes, and soybeans. Widespread throughout almost all of Europe, Asia, Africa, and Australasia, OWBW began spreading through Central and South America in 2013. In 2015, several specimens were detected in Florida, but populations did not establish. The pest has the ability to migrate over great distances, even up to 2,000 km if aided by wind. OWBW is resistant to a number of insecticides and transgenic crops. An estimated $78 billion per year in crops could be at risk of pest damage if OWBW becomes established in the United States. Learn more about OWBW and how long-term weather changes may be impacting its activities and potential for establishment in the report below."
         ),
         image_file = "OWBW.png",
         photo_credit = "Photo: Birgit E. Rhode, Landcare Research New Zealand Ltd."
@@ -744,15 +1013,15 @@ northwest-nurseries/")),
         description = tagList(
           "The pine-tree lappet moth (PTLM), ",
           HTML("<i>Dendrolimus pini</i>"),
-          " Linnaeus (Lepidoptera: Lasiocampidae), is an economically important pest of pine trees that is native to Europe and Asia. PTLM’s primary host is the Scots pine (",
-          HTML("<i>Pinus sylvestris</i>"),
-          "), but it can successfully develop on 17 other species of pine, Douglas fir (",
-          HTML("<i>Pseudotsuga menziesii</i>"),
-          "), and Eastern hemlock (",
-          HTML("<i>Tsuga canadensis</i>"),
-          "), and may be able to successfully develop on ",
+          "Linnaeus (Lepidoptera: Lasiocampidae), is an economically important pest of pine trees that is native to Europe and Asia. PTLM’s primary host is the Scots pine",
+          HTML("(<i>Pinus sylvestris</i>),"),
+          "but it can successfully develop on 17 other species of pine, Douglas fir ",
+          HTML("(<i>Pseudotsuga menziesii</i>,)"),
+          "and Eastern hemlock",
+          HTML("(<i>Tsuga canadensis</i>),"),
+          "and may be able to successfully develop on ",
           HTML("<i>Pinus</i>"),
-          " species outside of its current range. Surviving affected trees take several years to recover from defoliation and are more susceptible to other forest pests. If introduced to the United States, PTLM could cause significant damage to forests dominated by pine and monoculture pine plantations, resulting in economic damage to the timber and Christmas tree industries. Learn more about PTLM and how long-term weather changes may be impacting its activities and potential for establishment in the report below."
+          "species outside of its current range. Surviving affected trees take several years to recover from defoliation and are more susceptible to other forest pests. If introduced to the United States, PTLM could cause significant damage to forests dominated by pine and monoculture pine plantations, resulting in economic damage to the timber and Christmas tree industries. Learn more about PTLM and how long-term weather changes may be impacting its activities and potential for establishment in the report below."
         ),
         image_file = "PTLM.png",
         photo_credit = "Photo: Vítězslav Maňák (SLU)"
@@ -766,9 +1035,9 @@ northwest-nurseries/")),
         description = tagList(
           "Widespread throughout Europe, northern Africa, and Asia, the Silver Y moth (SLYM), ",
           HTML("<i>Autographa gamma</i>"),
-          " Linnaeus (Lepidoptera: Noctuidae), is a highly polyphagous, defoliating pest of cereals, ",
+          "Linnaeus (Lepidoptera: Noctuidae), is a highly polyphagous, defoliating pest of cereals, ",
           HTML("<i>Brassica</i>"),
-          " species, legumes, tobacco, and other fruit and vegetable crops, especially sugarbeet. Adults migrate annually to northern breeding grounds throughout Eurasia to escape the hot and dry conditions of Mediterranean overwintering sites. Mass outbreaks of SLYM in breeding areas occur sporadically, which have been correlated with very wet weather. The pest has been intercepted at United States ports hundreds of times and has a high establishment risk if introduced. Learn more about SLYM and how long-term weather changes may be impacting its activities and potential for establishment in the report below."
+          "species, legumes, tobacco, and other fruit and vegetable crops, especially sugarbeet. Adults migrate annually to northern breeding grounds throughout Eurasia to escape the hot and dry conditions of Mediterranean overwintering sites. Mass outbreaks of SLYM in breeding areas occur sporadically, which have been correlated with very wet weather. The pest has been intercepted at United States ports hundreds of times and has a high establishment risk if introduced. Learn more about SLYM and how long-term weather changes may be impacting its activities and potential for establishment in the report below."
         ),
         image_file = "SLYM.png",
         photo_credit = "Photo: Vítězslav Maňák (SLU)"
@@ -782,9 +1051,9 @@ northwest-nurseries/")),
         description = tagList(
           "The small tomato borer (STB), ",
           HTML("<i>Neoleucinodes elegantalis</i>"),
-          " (Guenée) (Lepidoptera: Pyralidae), is an oligophagous pest of ",
+          "(Guenée) (Lepidoptera: Pyralidae), is an oligophagous pest of ",
           HTML("<i>Solanum</i>"),
-          " species, including tomato, eggplant, red and green pepper, and lulo/naranjilla. Native to South America, STB has spread throughout Mexico, Central America, and the Caribbean. The pest occupies a wide range of climates in South America, though its presence varies by host plant and altitude. Larvae cause the most damage to plants, feeding on foliage, boring into stems, and burrowing into green or ripe fruit. Regions with extensive tomato and pepper production would face especially high risk if STB becomes established in the United States. The pest is a major barrier to the export of solanaceous products to the United States and the European Union from South America. Learn more about STB and how long-term weather changes may be impacting its activities and potential for establishment in the report below."
+          "species, including tomato, eggplant, red and green pepper, and lulo/naranjilla. Native to South America, STB has spread throughout Mexico, Central America, and the Caribbean. The pest occupies a wide range of climates in South America, though its presence varies by host plant and altitude. Larvae cause the most damage to plants, feeding on foliage, boring into stems, and burrowing into green or ripe fruit. Regions with extensive tomato and pepper production would face especially high risk if STB becomes established in the United States. The pest is a major barrier to the export of solanaceous products to the United States and the European Union from South America. Learn more about STB and how long-term weather changes may be impacting its activities and potential for establishment in the report below."
         ),
         image_file = "STB.png",
         photo_credit = "Photo: Hanna Royals, Screening Aids, USDA APHIS PPQ, Bugwood.org"
@@ -798,9 +1067,9 @@ northwest-nurseries/")),
         description = tagList(
           "The spotted lanternfly (SLF), ",
           HTML("<i>Lycorma delicatula</i>"),
-          " (White) (Hemiptera: Fulgoridae), is a highly polyphagous planthopper native to China, India, and Vietnam that has invaded South Korea, Japan, and the United States. Since its initial detection in Pennsylvania in 2014, SLF has spread to numerous states in the eastern United States. Preferred hosts include tree-of-heaven (",
-          HTML("<i>Ailanthus altissima</i>"),
-          "), grapes, apples, hops, maples, walnuts, and stone fruit. Both nymphs and adults feed on phloem sap, causing stress to plants and producing honeydew that promotes the growth of sooty mold. Heavy infestations can reduce crop yields, weaken trees, and negatively impact vineyards and orchards. SLF is capable of spreading long distances through human-assisted movement of egg masses on vehicles and outdoor materials. Learn more about SLF and how long-term weather changes may be impacting its activities and potential for establishment in the report below."
+          "(White) (Hemiptera: Fulgoridae), is a highly polyphagous planthopper native to China, India, and Vietnam that has invaded South Korea, Japan, and the United States. Since its initial detection in Pennsylvania in 2014, SLF has spread to numerous states in the eastern United States. Preferred hosts include tree-of-heaven",
+          HTML("(<i>Ailanthus altissima</i>),"),
+          "grapes, apples, hops, maples, walnuts, and stone fruit. Both nymphs and adults feed on phloem sap, causing stress to plants and producing honeydew that promotes the growth of sooty mold. Heavy infestations can reduce crop yields, weaken trees, and negatively impact vineyards and orchards. SLF is capable of spreading long distances through human-assisted movement of egg masses on vehicles and outdoor materials. Learn more about SLF and how long-term weather changes may be impacting its activities and potential for establishment in the report below."
         ),
         image_file = "SLF.png",
         photo_credit = "Photo: USDA APHIS PPQ"
@@ -814,7 +1083,7 @@ northwest-nurseries/")),
         description = tagList(
           "Sunn pest (SUNP), ",
           HTML("<i>Eurygaster integriceps</i>"),
-          " Puton (Hemiptera: Scutelleridae), is a serious economically important pest of cereals throughout central and western Asia, including Afghanistan, Iran, Iraq, Syria, Turkey, and parts of the former Soviet Union. Wheat and barley are the primary hosts, though rye and oats may also be attacked. Both nymphs and adults feed on leaves, stems, and grains using piercing-sucking mouthparts, reducing crop yield and grain quality. Feeding damage can severely impact flour quality by degrading gluten proteins, making dough unsuitable for baking. SUNP outbreaks are influenced by climatic conditions, especially warm and dry weather during development. If introduced into the United States, SUNP could pose a significant threat to cereal production and food quality. Learn more about SUNP and how long-term weather changes may be impacting its activities and potential for establishment in the report below."
+          "Puton (Hemiptera: Scutelleridae), is a serious economically important pest of cereals throughout central and western Asia, including Afghanistan, Iran, Iraq, Syria, Turkey, and parts of the former Soviet Union. Wheat and barley are the primary hosts, though rye and oats may also be attacked. Both nymphs and adults feed on leaves, stems, and grains using piercing-sucking mouthparts, reducing crop yield and grain quality. Feeding damage can severely impact flour quality by degrading gluten proteins, making dough unsuitable for baking. SUNP outbreaks are influenced by climatic conditions, especially warm and dry weather during development. If introduced into the United States, SUNP could pose a significant threat to cereal production and food quality. Learn more about SUNP and how long-term weather changes may be impacting its activities and potential for establishment in the report below."
         ),
         image_file = "SUNP.png",
         photo_credit = "Photo: Konstantinos Kalaentzis"
@@ -828,7 +1097,7 @@ northwest-nurseries/")),
         description = tagList(
           "The tomato leaf miner (TABS), ",
           HTML("<i>Phthorimaea absoluta</i>"),
-          " (Meyrick) (Lepidoptera: Gelechiidae), is a serious pest of tomato and other solanaceous plants, including potato, eggplant, and pepper. Native to South America, TABS has rapidly spread throughout Europe, Africa, the Middle East, and Asia since the early 2000s. Larvae mine leaves, bore into stems, and feed directly on fruit, causing substantial crop losses and reducing marketability. Tomato crops can experience nearly complete yield loss under severe infestations if control measures are not implemented. TABS has a high reproductive capacity, multiple generations per year, and has developed resistance to numerous insecticides, complicating management efforts. The pest is considered a major threat to tomato production worldwide and poses a significant risk to United States agriculture if it becomes established. Learn more about TABS and how long-term weather changes may be impacting its activities and potential for establishment in the report below."
+          "(Meyrick) (Lepidoptera: Gelechiidae), is a serious pest of tomato and other solanaceous plants, including potato, eggplant, and pepper. Native to South America, TABS has rapidly spread throughout Europe, Africa, the Middle East, and Asia since the early 2000s. Larvae mine leaves, bore into stems, and feed directly on fruit, causing substantial crop losses and reducing marketability. Tomato crops can experience nearly complete yield loss under severe infestations if control measures are not implemented. TABS has a high reproductive capacity, multiple generations per year, and has developed resistance to numerous insecticides, complicating management efforts. The pest is considered a major threat to tomato production worldwide and poses a significant risk to United States agriculture if it becomes established. Learn more about TABS and how long-term weather changes may be impacting its activities and potential for establishment in the report below."
         ),
         image_file = "TABS.png",
         photo_credit = "Photo: Andrew M Allport, Driffield"

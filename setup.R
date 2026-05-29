@@ -22,7 +22,6 @@ options(shiny.sanitize.errors = FALSE)
 # Shapefile of county boundaries (to overlay map)
 us_counties <- st_read("./features/cb_2018_us_county_5m.shp") %>% 
   dplyr::filter(!STATEFP %in% c("02", "15", "66", "72", "78", "69", "60")) %>% 
-  #st_crop(conus_ext) %>% 
   st_transform(crs = 4326) 
 
 # Reproject to WGS84
@@ -30,9 +29,8 @@ us_counties <- st_read("./features/cb_2018_us_county_5m.shp") %>%
 
 # US state borders
 us_states <- st_read("./features/cb_2018_us_state_20m.shp") %>% 
-  dplyr::filter(!STATEFP %in% c("AK", "HI", "GU", "PR", "VI", "MP", "AS"))  %>% 
-  #st_crop(conus_ext) %>% 
-  st_transform(crs = 4326) 
+  dplyr::filter(!STATEFP %in% c("02", "15", "66", "72", "78", "69", "60")) %>% 
+  st_transform(crs = 4326)
 
 # Define CONUS bounds 
 bounds <- list(

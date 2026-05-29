@@ -15,10 +15,15 @@ make_pest_panel <- function(
   
   accordion_panel(
     
-    HTML(
-      paste0(
-        "<b>", common_name, "</b> ",
-        "(<i>", scientific_name, "</i>)"
+    # Plus icon with species name
+    value = "species",
+    title = tagList(
+      bs_icon("plus-circle"),
+      HTML(
+        paste0(
+          "<b>", common_name, "</b> ",
+          "(<i>", scientific_name, "</i>)"
+        )
       )
     ),
     
@@ -49,7 +54,7 @@ make_pest_panel <- function(
         
         tags$img(
           src = image_file,
-          style = "width:100%; max-width:200px;
+          style = "width:100%; max-width:150px;
                  border-radius:8px;"
         ),
         
@@ -227,15 +232,16 @@ produce_map_base <- function(bounds) {
   leaflet(
     options = leafletOptions(
       attributionControl = FALSE, 
-      zoomControl = FALSE,
-      minZoom = 4, # min zoom = CONUS
+      zoomControl = TRUE,
+      minZoom = 4.75, # min zoom = CONUS
       zoomSnap = 0.25, 
       zoomDelta = 0.25,
       # Prevent zooming when clicking a location 
       doubleClickZoom = FALSE,
       # Prevents the user from panning away from North America
-      maxBounds = list(c(bounds$south - 1, bounds$west - 1), 
-                       c(bounds$north + 1, bounds$east + 1))
+      maxBounds = list(c(bounds$south, bounds$west), 
+                       c(bounds$north, bounds$east)),
+      maxBoundsViscosity = 1.0
     )
   ) %>% 
     # Map tiles
@@ -250,17 +256,16 @@ produce_map_base <- function(bounds) {
       opacity = 0.6, 
       color = "#444444", 
       weight = 1.2, 
-      group = "permanent_states"
+      group = "States"
     ) %>%
-    # County Boundaries (Initially Hidden)
+    # County Boundaries (hidden unless zoom > 6.5)
     addPolylines(
       data = us_counties, # Assumes this object is loaded in setup.R
       opacity = 0.4, 
       color = "#777777", 
       weight = 0.5, 
-      group = "dynamic_counties"
-    ) %>%
-    hideGroup("dynamic_counties")
+      group = "Counties"
+    ) 
 }
 
 # Assign_extent: assign geographic extent
@@ -367,12 +372,11 @@ apply_boundary_visibility <- function(map, zoom_level) {
   
   if (zoom_level >= 6.5) {
     map %>%
-      showGroup("dynamic_counties") %>%
-      hideGroup("permanent_states")
+      showGroup("Counties") 
   } else {
     map %>%
-      hideGroup("dynamic_counties") %>%
-      showGroup("permanent_states")
+      hideGroup("Counties") %>%
+      showGroup("States")
   }
 }
 

@@ -10,6 +10,9 @@ options(shiny.sanitize.errors = FALSE)
 
 server <- function(input, output, session) {
   
+  # Clicked location
+  clicked_loc <- reactiveVal(NULL)
+  
   # Selected variable type
   observeEvent(input$pest, {
     
@@ -226,18 +229,18 @@ server <- function(input, output, session) {
     req(selected_row())
     
     # No p-values for comparisons 
-    #if (input$pest == "All 18 spp") {
-    if (input$pest == "All 18 spp" || input$var_type == "clm") {
+    if (input$pest == "All 18 spp" ) {
       return(NULL)
     }
     
     # P-value for CLM is in layer 2; others is layer 3
-    #if (input$var_type == "clm") {
-    # lyr <- 2
-    #} else {
-    lyr <- 3
-    #}
+    if (input$var_type == "clm") {
+      lyr <- 2
+    } else {
+      lyr <- 3
+    }
     
+    # Import raster (p-value)
     rast_import(selected_row()$file_path, lyr)
   })
   
@@ -249,12 +252,14 @@ server <- function(input, output, session) {
     # Force dependency
     sig_only <- input$sig_only
     
+    # Import raster
     r <- rast_import(selected_row()$file_path, 1)
     
     if (input$pest == "All 18 spp" || input$var_type == "clm") {
       return(r)
     }
     
+    # Show significant areas only
     apply_sig_mask(r, pest_raster_pval(), sig_only)
     
   })
@@ -265,18 +270,31 @@ server <- function(input, output, session) {
     # Force dependency
     sig_only <- input$sig_only
     
+    # Import raster
     r <- rast_import(selected_row()$file_path, 2)
     
     if (input$pest == "All 18 spp" || input$var_type == "clm") {
       return(r)
     }
     
+    # Show significant areas only
     apply_sig_mask(r, pest_raster_pval(), sig_only)
     
   })
   
   # CLM - 2 layers instead of 3 like trend rasters
-  pest_raster_clm <- reactive({ rast_import(selected_row()$file_path, 1) })
+  pest_raster_clm <- reactive({ 
+    
+    # Force dependency
+    sig_only <- input$sig_only
+    
+    # Import raster
+    r <- rast_import(selected_row()$file_path, 1)
+    
+    # Show significant areas only
+    apply_sig_mask(r, pest_raster_pval(), sig_only)
+    
+    })
   
   # Note: 1 = # of species, 2 = median, 3 = min, 4 = max..., as organized in the .tif file
   
@@ -291,8 +309,7 @@ server <- function(input, output, session) {
   observeEvent(list(input$pest, input$var_type), {
     
     if (
-      isTRUE(input$pest == "All 18 spp") ||
-      isTRUE(input$var_type == "clm")
+      isTRUE(input$pest == "All 18 spp") 
     ) {
       updateCheckboxInput(session, "sig_only", value = FALSE)
     }
@@ -413,7 +430,7 @@ server <- function(input, output, session) {
       addRasterImage(
         startup_rast,
         colors = pal_func,
-        opacity = 0.9,
+        opacity = 0.7,
         layerId = "Value",
         project = TRUE
       ) %>%
@@ -423,14 +440,6 @@ server <- function(input, output, session) {
         position = "bottomright"
       )
     
-  })
-  
-  # Observer to toggle County Lines based on zoom level
-  observe({
-    req(input$map_zoom)
-    
-    leafletProxy("map") %>%
-      apply_boundary_visibility(input$map_zoom)
   })
   
   
@@ -461,7 +470,7 @@ server <- function(input, output, session) {
   
   #### * Update map when pest changes ####
   observeEvent(
-    list(selected_trend(), input$pest, input$region, 
+    list(selected_trend(), input$pest,  
          input$var_type, input$year_range, input$sig_only), {
            
            # Required inputs
@@ -512,7 +521,7 @@ server <- function(input, output, session) {
              addRasterImage(
                trend$rast,
                colors = pal_func,
-               opacity = 0.9,
+               opacity = 0.7,
                layerId = "Value",
                project = TRUE
              ) %>%
@@ -603,7 +612,7 @@ server <- function(input, output, session) {
       
       # START CLEAN (no groups)
       m <- leaflet(options = leafletOptions(
-        zoomControl = FALSE, minZoom = 4)) %>%
+        zoomControl = TRUE, minZoom = 4)) %>%
         addProviderTiles(providers$CartoDB.Voyager) %>%
         setView(
           lng = center_lng,
@@ -611,22 +620,27 @@ server <- function(input, output, session) {
           zoom = zoom
         )
       
-      # 🔥 ADD ONLY WHAT SHOULD BE VISIBLE
+      # Add states and counties at high zoom levels
       if (zoom >= 6.5) {
         m <- m %>%
+          # States
           addPolylines(
-            data = us_counties,
-            opacity = 0.4,
-            color = "#777777",
-            weight = 0.5
-          )
+            data = us_states,
+            opacity = 0.6,
+            color = "#444444",
+            weight = 1.5,
+            group = "States"
+          ) 
+        
       } else {
+        # States only
         m <- m %>%
           addPolylines(
             data = us_states,
             opacity = 0.6,
             color = "#444444",
-            weight = 1.2
+            weight = 1.2,
+            group = "States"
           )
       }
       
@@ -699,40 +713,15 @@ server <- function(input, output, session) {
   
   ### ---------------------------------------------------------------------- ###
   
-  #### * Settings on map bounds (prevent over-zooming) ####
+  #### * Show counties when zoomed in ####
   
-  counties_visible <- reactiveVal(FALSE)
-  
+  # Observer to toggle County Lines based on zoom level
   observe({
+    req(input$map_zoom)
     
-    zoom <- input$map_zoom
-    if (is.null(zoom)) return()
-    
-    show <- zoom >= 6
-    
-    if (show && !counties_visible()) {
-      
-      leafletProxy("map") %>%
-        addPolylines(
-          data = us_counties,
-          color = "#666666",
-          weight = 0.4,
-          opacity = 0.6,
-          group = "Counties"
-        ) %>% 
-        clearGroup("States")
-      
-      counties_visible(TRUE)
-      
-    } else if (!show && counties_visible()) {
-      
-      leafletProxy("map") %>%
-        clearGroup("Counties")
-      
-      counties_visible(FALSE)
-    }
+    leafletProxy("map") %>%
+      apply_boundary_visibility(input$map_zoom)
   })
-  ### ---------------------------------------------------------------------- ###
   
   #### * Adjust to another region when selected ####
   observeEvent(input$region, {
@@ -746,6 +735,9 @@ server <- function(input, output, session) {
     # Fix bounds
     bounds <- ext_to_bounds(ext)
     
+    # Clear clicked location immediately
+    clicked_loc(NULL)
+    
     # Adjust map
     leafletProxy("map") %>%
       fitBounds(
@@ -758,11 +750,9 @@ server <- function(input, output, session) {
     
   })
   
-  
-  
   ### ---------------------------------------------------------------------- ###
   
-  #### * Reactive for where person clicked on map ####
+  #### * Reactive map click ####
   
   # Add marker only
   observeEvent(location_data(), {
@@ -779,12 +769,18 @@ server <- function(input, output, session) {
     
   }, ignoreInit = TRUE)
   
+  # Deal with map clicks
+  
+  # Store map clicks manually
+  observeEvent(input$map_click, {
+    clicked_loc(input$map_click)
+  })
   
   # Debounced map click to prevent double-rendering
-  click_val <- debounce(
-    reactive(input$map_click),
-    150
-  )
+  #click_val <- debounce(
+  click_val <-  reactive(clicked_loc())
+  #  150
+  #)
   
   # Get location data when a location is clicked
   location_data <- reactive({
@@ -800,16 +796,12 @@ server <- function(input, output, session) {
     
   })
   
-  # Conditional panel helper
+  #  Button to download plot appears if clicked
   output$has_click <- renderText({
-    
-    if (is.null(click_val())) {
-      ""
-    } else {
-      "TRUE"
-    }
-    
+    if (!is.null(clicked_loc())) "TRUE" else "FALSE"
   })
+  
+  outputOptions(output, "has_click", suspendWhenHidden = FALSE)
   
   #### * Summary statistics ####
   output$location_summary <- renderUI({
@@ -897,7 +889,7 @@ server <- function(input, output, session) {
     # P-value
     pval_ui <- NULL
     
-    if (input$pest != "All 18 spp" && input$var_type != "clm") {
+    if (input$pest != "All 18 spp") {
       
       pval_rast <- pest_raster_pval()
       req(pval_rast)
@@ -1136,6 +1128,8 @@ server <- function(input, output, session) {
   # 1. INDIVIDUAL SPECIES PLOT DATA GENERATOR
   loc_plot_obj_indiv <- reactive({
     
+    input$var_type
+    
     req(input$pest)
     
     # 1. Clear guards that do not require any input values to evaluate
@@ -1161,9 +1155,7 @@ server <- function(input, output, session) {
     year_range         <- input$year_range
     
     # Isolate both the reactive wrappers and their outputs completely!
-    selected_var       <- selected_variable()
-    trend              <- isolate(selected_trend()) 
-    #phenology_var      <- isolate(input$phenology)
+    selected_var       <- isolate(selected_variable())
     
     is_pem             <- grepl("First", selected_var)
     is_comparison      <- (pest == "All 18 spp")
@@ -1266,6 +1258,10 @@ server <- function(input, output, session) {
     
     if (input_var_type == "clm") {
       
+      # Reverse order of numbers so shows up with "none" at bottom
+      site_data$value <- abs(site_data$value)
+      
+      # Plot
       p <- ggplot(site_data, aes(x = year, y = value)) +
         geom_point() +
         geom_line(color = "steelblue") +
@@ -1276,8 +1272,8 @@ server <- function(input, output, session) {
              x = "Year",
              y = str_to_sentence(ylab_text)) +
         scale_y_continuous(
-          breaks = c(-2, -1, 0),
-          labels = c("Severe", "Moderate", "None")
+          breaks = c(0, 1, 2),
+          labels = c("None", "Moderate", "Severe" )
         ) +
         theme_bw() +
         custom_theme_indiv +
@@ -1309,11 +1305,14 @@ server <- function(input, output, session) {
         # If there is variation
       } else {
         
+        # Use same slope and p-value as raster
+        slope <- round(terra::extract(pest_raster_sen(), xy)[1,2], 3)
+        pval <- round(terra::extract(pest_raster_pval(), xy)[1, 2], 3)
         #p <- make_loc_plot(site_data, is_pem)
         # Mann-Kendall
         pwmk_test <- modifiedmk::pwmk(site_data$value)
-        slope <- round(as.numeric(pwmk_test[["Sen's Slope"]]), 4)
-        pval  <- round(as.numeric(pwmk_test[["P-value"]]), 4)
+        #slope <- round(as.numeric(pwmk_test[["Sen's Slope"]]), 4)
+        #pval  <- round(as.numeric(pwmk_test[["P-value"]]), 4)
         median_x <- median(site_data$year, na.rm = TRUE)
         median_y <- median(site_data$value, na.rm = TRUE)
         intercept <- median_y - slope * median_x
@@ -1331,8 +1330,8 @@ server <- function(input, output, session) {
           labs(title = paste("Predicted", tolower(ylab_text), "for", abbrev),
                x = "Year",
                y = str_to_sentence(ylab_text)) +
-          geom_text_repel(data = ymax_df,
-                          aes(x = max(site_data$year) + 1,
+          geom_text_repel(data = ymax_df, 
+                          aes(x = max(site_data$year) + 1, 
                               y = ymax_pt + 1.5,
                               label = paste0("Slope: ", slope, ", P-value: ", pval)),
                           size = 4.5) +
@@ -1395,6 +1394,8 @@ server <- function(input, output, session) {
   
   # 2. SPECIES COMPARISON PLOT DATA GENERATOR
   loc_plot_obj_comp <- reactive({
+    
+    input$var_type
     
     req(input$pest, input$trend_metric)
     

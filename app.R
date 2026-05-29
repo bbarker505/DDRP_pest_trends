@@ -13,6 +13,8 @@
 # Oregon IPM Center, Oregon State University
 # *Corresponding author: brittany.barker@oregonstate.edu
 
+# ChatGPT v. 5.5 (GPT-5.5) was used to develop some R code for this project.
+
 # Funding:
 # (1) USDA APHIS PPQ PPA 7721 Program, Project 1A.0036.01
 # (2) Oregon State University Agricultural Research Fund (2025-2027)

@@ -3,6 +3,7 @@
 # List of required packages for app to run the DDRP Pest Trends app
 
 library(bslib)                # Modern UI toolkit for Shiny
+library(bsicons)              # Plus sign for accordion panels
 library(fresh)                # Color theme for web app page
 library(fs)                   # Handles path structures in Shiny, etc.
 library(glue)                 # String interpolation
