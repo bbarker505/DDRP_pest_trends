@@ -638,7 +638,7 @@ server <- function(input, output, session) {
         comp_type <- gsub(" ", "_", comp_type)
         comp_type <- tolower(gsub("\\(no._species\\)", "", comp_type))
         
-        paste0("DDRP_map_18spp_", comp_type, input$year_range, ".png")
+        paste0("DDRP_map_18spp_", comp_type, "_", input$year_range, ".png")
         
       } else {
         
@@ -659,53 +659,44 @@ server <- function(input, output, session) {
       
       # Map bounds and zoom level
       bounds <- input$map_bounds
-      zoom   <- input$map_zoom %||% 5
+      zoom   <- input$map_zoom #%||% 5
       
       # --- Detect comparison mode ---
       is_comparison <- grepl("species_num", input$trend_metric)
-      
-      center_lng <- (bounds$west + bounds$east) / 2
-      center_lat <- (bounds$north + bounds$south) / 2
       
       # START CLEAN (no groups)
       m <- leaflet(options = leafletOptions(
         doubleClickZoom = FALSE, 
         minZoom = 4,
-        maxBounds = list(
-          c(bounds$west, bounds$south), c(bounds$east, bounds$north))
       )) %>%
         addProviderTiles(providers$CartoDB.Voyager) %>%
+        # Zoom bounds
         fitBounds(
           lng1 = bounds$west,
           lat1 = bounds$south,
           lng2 = bounds$east,
           lat2 = bounds$north
+        ) %>% 
+        # States
+        addPolylines(
+          data = us_states,
+          opacity = 0.6,
+          color = "#444444",
+          weight = 1.2,
+          group = "States"
         )
       
-      # Add states and counties at high zoom levels
+      # Add counties if zoomed in >=6.5
       if (zoom >= 6.5) {
         m <- m %>%
-          # States
           addPolylines(
-            data = us_states,
-            opacity = 0.6,
-            color = "#444444",
-            weight = 1.5,
-            group = "States"
-          ) 
-        
-      } else {
-        # States only
-        m <- m %>%
-          addPolylines(
-            data = us_states,
-            opacity = 0.6,
-            color = "#444444",
-            weight = 1.2,
-            group = "States"
+            data = us_counties,
+            opacity = 0.4,
+            color = "#777777",
+            weight = 0.5
           )
       }
-      
+
       # Raster
       m <- m %>%
         addRasterImage(
@@ -713,11 +704,12 @@ server <- function(input, output, session) {
           colors = pal_obj$pal,
           opacity = 0.9,
           project = TRUE
-        )
+        ) 
       
       # Fix legend title for comparison mode 
       title_text <- if (is_comparison) {
-        assign_comparison(input$trend_metric)
+        #assign_comparison(input$trend_metric))
+        "Num. species with significant trend"
       } else {
         trend$title
       }
@@ -755,18 +747,12 @@ server <- function(input, output, session) {
           )
         )
       )
-      
-      # Delay to ensure rendering
-      m <- htmlwidgets::onRender(m, "
-  function(el, x) {
-    return new Promise(resolve => setTimeout(resolve, 4000));
-  }
-")
+ 
       # Export map using mapshot2
       mapview::mapshot2(
         m,
         file = file,
-        delay = 6,
+        #delay = 6,
         vwidth  = session$clientData$output_map_width,
         vheight = session$clientData$output_map_height
       )
