@@ -409,7 +409,8 @@ server <- function(input, output, session) {
     
     # Build initial map
     produce_map_base(conus_bounds) %>%
-    
+      
+      # Raster data
       addRasterImage(
         startup_rast,
         colors = pal_func,
@@ -418,10 +419,17 @@ server <- function(input, output, session) {
         project = TRUE
       ) %>%
       
+      # Legend 
       addControl(
         html = HTML(legend_html),
         position = "bottomright"
-      )
+      ) %>% 
+      
+      # Transparent labels only
+      addProviderTiles(
+        providers$CartoDB.PositronOnlyLabels,
+        group = "Labels"
+      ) 
     
   })
   
@@ -483,6 +491,7 @@ server <- function(input, output, session) {
            
            # Add new raster, controls, and boundaries
            proxy <- leafletProxy("map") %>% 
+             
              # Add raster
              addRasterImage(
                trend$rast,
@@ -491,11 +500,18 @@ server <- function(input, output, session) {
                layerId = "Value",
                project = TRUE
              ) %>%
+             
              # Add legend
              addControl(
                html = HTML(legend_html),
                position = "bottomright"
-             )
+             ) %>% 
+             
+             # Transparent labels only
+             addProviderTiles(
+               providers$CartoDB.PositronOnlyLabels,
+               group = "Labels"
+             ) 
            
            # Add outline only for CLM rasters
            if (input$var_type == "clm") {
@@ -617,7 +633,7 @@ server <- function(input, output, session) {
   
   ### ---------------------------------------------------------------------- ###
   
-  # Download map as PNG ----
+  # Export map as PNG ----
   
   # Different file names used for comparison vs. individual spp
   output$download_map <- downloadHandler(
@@ -672,7 +688,12 @@ server <- function(input, output, session) {
         maxBoundsViscosity = 1,
         minZoom = 4,
       )) %>%
-        addProviderTiles(providers$CartoDB.Voyager) %>%
+      
+        addProviderTiles(
+          providers$CartoDB.PositronNoLabels,
+          group = "Basemap"
+        ) %>% 
+      
         # Zoom bounds
         fitBounds(
           lng1 = bounds$west,
@@ -680,6 +701,7 @@ server <- function(input, output, session) {
           lng2 = bounds$east,
           lat2 = bounds$north
         ) %>% 
+        
         # States
         addPolylines(
           data = us_states,
@@ -707,6 +729,12 @@ server <- function(input, output, session) {
           colors = pal_obj$pal,
           opacity = 0.9,
           project = TRUE
+        ) %>% 
+        
+        # Transparent labels only
+        addProviderTiles(
+          providers$CartoDB.PositronOnlyLabels,
+          group = "Labels"
         ) 
       
       # Fix legend title for comparison mode 
@@ -716,6 +744,7 @@ server <- function(input, output, session) {
         trend$title
       }
       
+      # Legend type
       legend_type <-
         if (input$pest == "All 18 spp") {
           "comparison"
@@ -725,7 +754,7 @@ server <- function(input, output, session) {
           "sens"
         }
       
-      # Legend
+      # Legend HTML specs
       legend_html <- create_legend_html(
         legend_type,
         title_text,
@@ -733,8 +762,9 @@ server <- function(input, output, session) {
         pal_obj$limits
       )
       
-      m <- htmlwidgets::prependContent(
-        m,
+      # Add HTML specs
+      m <- m %>% 
+        htmlwidgets::prependContent(
         htmltools::tagList(
           
           # 🔹 Load font + scoped CSS
@@ -750,14 +780,14 @@ server <- function(input, output, session) {
       "))
           ),
           
-          # 🔹 Legend container (now with class)
+          # Legend container (now with class)
           htmltools::tags$div(
             class = "custom-legend",
             style = "position:absolute; bottom:20px; right:20px; z-index:9999;",
             htmltools::HTML(legend_html)
           )
         )
-      )
+      ) 
  
       # Export map using mapshot2
       mapview::mapshot2(
@@ -778,11 +808,22 @@ server <- function(input, output, session) {
 
     loc <- location_data()
 
+    # Create icon
+    click_icon <- makeIcon(
+      iconUrl = "bug_icon.svg",
+      iconWidth = 32,
+      iconHeight = 48,
+      iconAnchorX = 16,
+      iconAnchorY = 44
+    )
+    
     leafletProxy("map") %>%
       clearGroup("click_marker") %>%
+      # Add marker
       addMarkers(
         lng = loc$click$lng,
         lat = loc$click$lat,
+        icon = click_icon,
         group = "click_marker"
       )
 
@@ -1323,17 +1364,18 @@ server <- function(input, output, session) {
         p <- ggplot(site_data, aes(x = year, y = value)) +
           geom_point() +
           geom_line(color = "steelblue") +
-          scale_x_continuous(limits = c(yr_first, yr_last),
-                             breaks = seq(yr_first, yr_last, x_brks)) +
+          scale_x_continuous(
+            limits = c(yr_first, yr_last),
+            breaks = seq(yr_first, yr_last, x_brks)) +
           y_scale +
           labs(title = plot_title,
                x = "Year",
                y = ylab) +
-          geom_text_repel(data = ymax_df,
-                          aes(x = max(site_data$year) + 1,
-                              y = ymax_pt + 1.5,
-                              label = "No trend"),
-                          size = 4.5) +
+          geom_text_repel(
+            data = ymax_df,
+            aes(x = max(site_data$year) + 1,
+                y = ymax_pt + 1.5,
+                label = "No trend"), size = 4.5) +
           theme_bw() +
           custom_theme_indiv +
           theme(legend.position = "none")
@@ -1357,7 +1399,7 @@ server <- function(input, output, session) {
                       color = "red") +
           scale_x_continuous(limits = c(yr_first, yr_last),
                              breaks = seq(yr_first, yr_last, x_brks)) +
-          scale_y_continuous(breaks = y_brks) +
+          y_scale +
           labs(plot_title,
                x = "Year",
                y = ylab) +

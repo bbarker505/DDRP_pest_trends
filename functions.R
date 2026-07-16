@@ -121,7 +121,8 @@ make_palette <- function(rast, metric) {
   
   if (is.null(rast)) return(NULL)
   
- # is_comparison <- metric == "comparison"
+  # Min and max value
+  mm <- as.vector(terra::minmax(rast))
   
   # Spp. comparison maps
   if (metric == "comparison") {
@@ -129,25 +130,20 @@ make_palette <- function(rast, metric) {
     limits <- c(0, 18)
     pal <- gen_pal(comp_pal, limits)
     
-  } else if (metric == "clm") {
-    
-    limits <- c(0, 1)
-    pal <- gen_pal(comp_pal, limits)
-    
   } else if (metric == "sens") {
     
-    mm <- as.vector(terra::minmax(rast))
     max_abs <- max(abs(mm), na.rm = TRUE)
     
     if (is.infinite(max_abs) || max_abs == 0)
-      max_abs <- 0.1
-    
+      
+    max_abs <- 0.1
     limits <- c(-max_abs, max_abs)
     pal <- gen_pal(sp_pal, limits)
     
-  } else if (metric == "tau") {
+  } else if (metric %in% c("tau", "clm")) {
     
-    limits <- c(-1, 1)
+    max_abs <- max(abs(mm), na.rm = TRUE)
+    limits <- c(-max_abs, max_abs)
     pal <- gen_pal(sp_pal, limits)
     
   }
@@ -235,7 +231,7 @@ produce_map_base <- function(bounds) {
     options = leafletOptions(
       attributionControl = FALSE, 
       zoomControl = TRUE,
-      minZoom = 4.5, # min zoom = CONUS
+      minZoom = 4.75, # min zoom = CONUS
       zoomSnap = 0.25, 
       zoomDelta = 0.25,
       # Prevent zooming when clicking a location 
@@ -246,12 +242,21 @@ produce_map_base <- function(bounds) {
       maxBoundsViscosity = 1.0
     )
   ) %>% 
+    
+    # Create panes for different z levels
+    addMapPane("Basemap", zIndex = 400) %>%
+    addMapPane("Value",  zIndex = 410) %>%
+    addMapPane("Labels",  zIndex = 420) %>%
+    
     # Map tiles
-    addProviderTiles(providers$CartoDB.Positron) %>% 
-    #addProviderTiles(providers$CartoDB.Voyager) %>%
+    #addProviderTiles(providers$CartoDB.Positron) %>% 
+    addProviderTiles(providers$CartoDB.PositronNoLabels,
+                     group = "Basemap") %>% 
+    
     # Fit the initial view to the provided bounds (CONUS)
     fitBounds(lng1 = bounds$west, lat1 = bounds$south, 
               lng2 = bounds$east, lat2 = bounds$north) %>%
+    
     # Always-on State Boundaries
     addPolylines(
       data = us_states, # Assumes this object is loaded in setup.R
@@ -260,6 +265,7 @@ produce_map_base <- function(bounds) {
       weight = 1.2, 
       group = "States"
     ) %>%
+    
     # County Boundaries (hidden unless zoom > 6.5)
     addPolylines(
       data = us_counties, # Assumes this object is loaded in setup.R
@@ -463,6 +469,8 @@ custom_theme_comp <- theme(
   axis.text = element_text(size = 14),
   plot.title = element_text(size = 16, face = "bold"),
   axis.title = element_text(size = 16, face = "bold"))
+
+# ----- Functions for naming exported files ------------------------------------
 
 # Metric name for exported map and plot image files
 assign_metric_name <- function(var_type,

@@ -615,16 +615,10 @@ ui <- page_navbar(
           
           # Ensure map fills mWhy didost of the viewport
           #tags$style("#map {height: calc(100vh - 300px) !important;}"),
-          # Load map
-          leafletOutput(
-            "map",
-            height = "calc(100vh - 300px)"
-          ) %>%
-            withSpinner(color = "cornflowerblue")
           
           # To know map is loading
-          #leafletOutput("map") %>%
-          #  withSpinner(color = "cornflowerblue")
+          leafletOutput("map", height = "70vh") %>%
+            withSpinner(color = "cornflowerblue")
         ),
         
         # Below map: Show sig areas check box and export map as PNG button
