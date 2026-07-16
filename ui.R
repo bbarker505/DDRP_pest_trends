@@ -82,7 +82,7 @@ ui <- page_navbar(
     
     # NIFA logo
     div(style = "display:inline-block; margin: 0 15px;",
-        tags$img(src = "NIFA.png", height = "50px")),
+        tags$img(src = "NIFA.png", height = "60px")),
     
     # OSU ARF logo
     div(style = "display:inline-block; margin: 0 15px;",
@@ -275,7 +275,7 @@ ui <- page_navbar(
        spreadsheets, technical reports, and peer-reviewed publications 
        associated with the models."),
      
-     p("Details on the mechanics of DDRP are presented in",
+     p("Details on the mechanics of DDRP are presented in ",
        a("Barker et al. (2020)", href = "#ref_barker2020"), 
      " Briefly, DDRP uses a process-based modeling approach in which degree-days 
      and climate stress are calculated daily and accumulate over time to model 
@@ -344,7 +344,7 @@ ui <- page_navbar(
             href = "https://shiny.posit.co/",
             target = "_blank",
             style = "text-decoration:underline;"),
-          a("(Chang et al. 2026)", href = "#ref_chang2026"),
+          a("(Chang et al. 2026).", href = "#ref_chang2026"),
           " We would like to thank the developers at Posit (formerly RStudio) 
           and the broader R community for providing the open-source tools that 
           powered this project. Portions of the code were developed with 
@@ -516,38 +516,56 @@ ui <- page_navbar(
           selected = "phenology"
         ),
         
-        ##### * Select metric #####
+        ##### * Comparison metric #####
         # Info circle nested in the title to provide info on metrics
-        selectInput(
-          "trend_metric",
-          label = tagList(
-            h4(
-              HTML("<b>Select metric</b>"),
-              tags$span(
-                tags$i(class = "bi bi-info-circle"),
-                style = "cursor:pointer;
-                 margin-left:5px;
-                 position:relative;
-                 top:-1px;
-                 font-size:0.8em;",
-                `data-bs-toggle` = "popover",
-                `data-bs-trigger` = "hover",
-                `data-bs-placement` = "right",
-                `data-bs-html` = "true",
-                title = "About this metric",
-                `data-bs-content` = paste(
-                  "<b>Change per year:</b> Sen's slope estimate of the trend in days/year (phenology) or units/year (climate stress).",
-                  "<br><br>",
-                  "<b>Direction of trend:</b> Kendall's tau, indicating the strength and direction of the monotonic trend."
-                )
-              )
-            )
-          ),
-          choices = c(
-            "Change per year" = "sens",
-            "Direction of trend" = "tau"
-          ),
-          selected = "sens"
+        # selectInput(
+        #   "trend_metric",
+        #   label = tagList(
+        #     h4(
+        #       HTML("<b>Select metric</b>"),
+        #       tags$span(
+        #         tags$i(class = "bi bi-info-circle"),
+        #         style = "cursor:pointer;
+        #          margin-left:5px;
+        #          position:relative;
+        #          top:-1px;
+        #          font-size:0.8em;",
+        #         `data-bs-toggle` = "popover",
+        #         `data-bs-trigger` = "hover",
+        #         `data-bs-placement` = "right",
+        #         `data-bs-html` = "true",
+        #         title = "About this metric",
+        #         `data-bs-content` = paste(
+        #           "<b>Change per year:</b> Sen's slope estimate of the trend in days/year (phenology) or units/year (climate stress).",
+        #           "<br><br>",
+        #           "<b>Direction of trend:</b> Kendall's tau, indicating the strength and direction of the monotonic trend."
+        #         )
+        #       )
+        #     )
+        #   ),
+        #   choices = c(
+        #     "Change per year" = "sens",
+        #     "Direction of trend" = "tau"
+        #   ),
+        #   selected = "sens"
+        # ),
+        conditionalPanel(
+          #"input.pest == 'All 18 spp' && input.var_type != 'clm'" ,
+          "input.pest == 'All 18 spp' && 
+          (input.var_type == 'phenology' ||
+          input.var_type == 'climate')" ,
+          
+          selectInput(
+            "comparison_metric",
+            label = tags$span(
+              h4(HTML("<b>Select comparison metric</b>"))
+            ),
+            choices = c(
+              "Earlier adult emergence" = "species_num_adult",
+              "Earlier egg hatch" = "species_num_egg"
+            ),
+            selected = "species_num_adult"
+          )
         ),
         
         # (Shows if climate and a species is selected)
@@ -596,11 +614,17 @@ ui <- page_navbar(
         div(
           
           # Ensure map fills mWhy didost of the viewport
-          tags$style("#map {height: calc(100vh - 300px) !important;}"),
+          #tags$style("#map {height: calc(100vh - 300px) !important;}"),
+          # Load map
+          leafletOutput(
+            "map",
+            height = "calc(100vh - 300px)"
+          ) %>%
+            withSpinner(color = "cornflowerblue")
           
           # To know map is loading
-          leafletOutput("map") %>%
-            withSpinner(color = "cornflowerblue")
+          #leafletOutput("map") %>%
+          #  withSpinner(color = "cornflowerblue")
         ),
         
         # Below map: Show sig areas check box and export map as PNG button

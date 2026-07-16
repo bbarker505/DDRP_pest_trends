@@ -1,5 +1,9 @@
 # ---------- SERVER ------------------------------------------------------------
 
+# NOTE: double-rendering of plot most likely:
+#At this point, after debugging dozens of Shiny apps, I actually suspect the duplicate rendering is coming from one of your raster-loading reactives (pest_raster_sen(), selected_trend(), selected_row(), etc.) rather than from the click handling or UI.
+# If the isolate() change above doesn't help, the next thing I'd inspect is pest_raster_sen(). That's now the most likely place where a hidden reactive dependency is causing the plot to invalidate twice.
+
 # Server for DDRP Pest Trends app 
 
 # Shiny server requires this is loaded: Set-up
@@ -59,23 +63,21 @@ server <- function(input, output, session) {
   
   #### * Check which variable is selected ####
   selected_variable <- reactive({
+   # message("selected_variable()")
     req(input$pest, input$var_type)
   
     # All 18 spp comparisons 
     if (input$pest == "All 18 spp") {
       
-      metric <- input$trend_metric
+      #metric <- input$trend_metric
+      metric <- input$comparison_metric
       
       # During updateSelectInput transition,
       # trend_metric is temporarily sens/tau
-      if (
-        is.null(metric) ||
-        metric == "" ||
-        metric %in% c("sens", "tau")
-      ) {
+      if (is.null(metric) || metric == "") {
         return(NULL)
       }
-      
+        
       return(
         switch(
           metric,
@@ -107,23 +109,15 @@ server <- function(input, output, session) {
     list(input$pest, input$var_type), {
       
       req(input$pest, input$var_type)
-      
-      current_value <- isolate(input$trend_metric)
-      
-      # --- CLM ---
-      if (input$var_type == "clm") {
-        
-        shinyjs::hide("trend_metric")
-        
-        return()
-        
-      } else {
-        
-        shinyjs::show("trend_metric")
-      }
+      current_value <- isolate(input$comparison_metric)
       
       # --- All-species comparisons ---
-      if (input$pest == "All 18 spp") {
+        
+        if (input$pest != "All 18 spp") {
+          return()
+        }
+        
+        current_value <- isolate(input$comparison_metric)
         
         if (input$var_type == "phenology") {
           
@@ -147,27 +141,13 @@ server <- function(input, output, session) {
             current_value <- "species_num_cold"
           }
         }
-        
-      } else {
-        
-        # --- Individual species ---
-        choices <- c(
-          "Change per year" = "sens",
-          "Direction of trend" = "tau"
-        )
-        
-        if (!current_value %in% unname(choices)) {
-          current_value <- "sens"
-        }
-      }
-      
-      updateSelectInput(
-        session,
-        "trend_metric",
-        choices = choices,
-        selected = current_value
+
+       updateSelectInput(
+         session,
+         "comparison_metric",
+         choices = choices,
+         selected = current_value
       )
-      
     },
     ignoreInit = FALSE
   )
@@ -180,17 +160,10 @@ server <- function(input, output, session) {
     sig_only <- input$sig_only
     
     # Variable
-    v_type <- if (is.null(input$var_type)) {
+    var_type <- if (is.null(input$var_type)) {
       "phenology"
     } else {
       input$var_type
-    }
-    
-    # Trend metric
-    trend_metric <- if (is.null(input$trend_metric)) {
-      "sens"
-    } else {
-      input$trend_metric
     }
     
     req(selected_row())
@@ -200,12 +173,12 @@ server <- function(input, output, session) {
       
       return(list(
         rast = pest_raster_sum(),  # or correct comparison raster loader
-        title = "Num. species with signficant trend"
+        title = "Num. species with significant trend"
       ))
     }
     
     # --- CLM ---
-    if (v_type == "clm") {
+    if (var_type == "clm") {
       
       return(list(
         rast = pest_raster_clm(),
@@ -214,27 +187,16 @@ server <- function(input, output, session) {
     }
     
     # Change units
-    sens_title <- if (v_type == "phenology") {
+    sens_title <- if (var_type == "phenology") {
       "Change (days/year)"
     } else {
       "Change (units/year)"
     }
     
-    if (trend_metric == "sens") {
-      
-      return(list(
-        rast = pest_raster_sen(),
-        title = sens_title
-      ))
-      
-    } else {
-      
-      return(list(
-        rast = pest_raster_tau(),
-        title = "Direction of trend"
-      ))
-      
-    }
+    return(list(
+      rast = pest_raster_sen(),
+      title = sens_title
+    ))
     
   })
   
@@ -244,15 +206,15 @@ server <- function(input, output, session) {
   
   #### * Filter row from loookup table ####
   selected_row <- reactive({
-    
-    req(input$pest, input$year_range, input$var_type, input$trend_metric)
+
+    req(input$pest, input$year_range, input$var_type)
     
     # Comparisons
     if (input$pest == "All 18 spp") {
       
       # Wait until comparison metric is fully updated
       req(
-        input$trend_metric %in% c(
+        input$comparison_metric %in% c(
           "species_num_adult",
           "species_num_egg",
           "species_num_cold",
@@ -411,10 +373,12 @@ server <- function(input, output, session) {
   output$map <- renderLeaflet({
     options = leafletOptions(
       doubleClickZoom = FALSE, 
-      minZoom = 4,
+      #minZoom = 4,
       maxBounds = list(
-        c(bounds$west, bounds$south), c(bounds$east, bounds$north))
+        c(conus_bounds$west, conus_bounds$south), 
+        c(conus_bounds$east, conus_bounds$north))
       )
+    
     
     # Default startup raster
     startup_row <- raster_lookup %>%
@@ -445,7 +409,7 @@ server <- function(input, output, session) {
     
     # Build initial map
     produce_map_base(conus_bounds) %>%
-      
+    
       addRasterImage(
         startup_rast,
         colors = pal_func,
@@ -468,24 +432,19 @@ server <- function(input, output, session) {
   
   #### * Update map when pest changes ####
   observeEvent(
-    list(selected_trend(), input$pest,  
-         input$var_type, input$year_range, input$sig_only), {
+    list(selected_trend()), {
            
            # Required inputs
            req(input$pest, input$region, input$var_type, 
                input$year_range)
-           
+      
            # Should prevent flashing to wrong palette and legend for comparison maps
            is_pest_all <- (input$pest == "All 18 spp")
-           is_metric_all <- grepl("species_num", input$trend_metric)
-           
-           if (is_pest_all != is_metric_all) {
-             return()
-           }
-           
+
            # Trend and trend metric
            trend <- selected_trend()
-           trend_metric <- input$trend_metric %||% "sens"
+           
+           #trend_metric <- input$trend_metric %||% "sens"
            req(trend$rast)
            
            # Reactive palette
@@ -497,8 +456,17 @@ server <- function(input, output, session) {
            pal_func <- pal_obj$pal
            
            # Generate the legend HTML
+           legend_type <-
+             if (input$pest == "All 18 spp") {
+               "comparison"
+             } else if (input$var_type == "clm") {
+               "clm"
+             } else {
+               "sens"
+             }
+           
            legend_html <- create_legend_html(
-             trend_metric,
+             legend_type,
              trend$title,
              pal_func,
              pal_obj$limits
@@ -548,40 +516,41 @@ server <- function(input, output, session) {
            }    
          }, ignoreInit = FALSE)
   
-  # Zoom to selected extent
-  observeEvent(input$region, {
-    
-    ext <- assign_extent(input$region)
-    
-    leafletProxy("map") %>%
-      fitBounds(
-        xmin(ext),
-        ymin(ext),
-        xmax(ext),
-        ymax(ext)
-      )
-    
-  }, ignoreInit = TRUE)
-  
   
   #### * Reactive palette ####
   
   # For legend
   palette_reactive <- reactive({
     
-    req(selected_trend(), input$pest)
-    
     # Default metric during startup / UI re-render
-    trend_metric <- input$trend_metric %||% "sens"
+    #trend_metric <- input$trend_metric %||% "sens"
     
-    trend <- selected_trend()
+    trend <- req(selected_trend())
     
     req(trend$rast)
     
-    make_palette(
-      trend$rast,
-      trend_metric
-    )
+    if (input$pest == "All 18 spp") {
+      
+      make_palette(
+        trend$rast,
+        "comparison"
+      )
+      
+    } else if (input$var_type == "clm") {
+      
+      make_palette(
+        trend$rast,
+        "clm"
+      )
+      
+    } else {
+      
+      make_palette(
+        trend$rast,
+        "sens"
+      )
+      
+    }
     
   })
   
@@ -622,6 +591,30 @@ server <- function(input, output, session) {
     
   })
   
+  # Re-fit map when browser window changes size
+  observeEvent(
+    list(
+      session$clientData$output_map_width,
+      session$clientData$output_map_height
+    ),
+    {
+      
+      req(input$region == "CONUS")
+      
+      ext <- assign_extent("CONUS")
+      
+      leafletProxy("map") %>%
+        fitBounds(
+          lng1 = xmin(ext),
+          lat1 = ymin(ext),
+          lng2 = xmax(ext),
+          lat2 = ymax(ext)
+        )
+      
+    },
+    ignoreInit = TRUE
+  )
+  
   ### ---------------------------------------------------------------------- ###
   
   # Download map as PNG ----
@@ -631,10 +624,10 @@ server <- function(input, output, session) {
     filename = function() {
       
       # Use different file names for comparison vs. individual spp maps
-      if (grepl("species_num", input$trend_metric)) {
+      if (input$pest == "All 18 spp") {
         
         # Format text for comparison type
-        comp_type <- assign_comparison(input$trend_metric)
+        comp_type <- assign_comparison(input$comparison_metric)
         comp_type <- gsub(" ", "_", comp_type)
         comp_type <- tolower(gsub("\\(no._species\\)", "", comp_type))
         
@@ -643,11 +636,20 @@ server <- function(input, output, session) {
       } else {
         
         abbrev <- species_abbrev[[input$pest]]
+
         # fallback if something missing
         if (is.null(abbrev)) abbrev <- gsub(" ", "_", input$pest)
         
-        paste0("DDRP_map_", abbrev, "_", input$var_type, "_", 
-               input$trend_metric, "_", input$year_range, ".png")
+        # Metric name
+        metric_name <- assign_metric_name(
+          var_type = input$var_type,
+          phenology = input$phenology,
+          clim_variable = input$clim_variable
+        )
+        
+        # File name
+        paste0("DDRP_map_", abbrev, "_", metric_name, "_change_", 
+               input$year_range, ".png")
       }
     },
     
@@ -662,11 +664,12 @@ server <- function(input, output, session) {
       zoom   <- input$map_zoom #%||% 5
       
       # --- Detect comparison mode ---
-      is_comparison <- grepl("species_num", input$trend_metric)
+      is_comparison <- input$pest == "All 18 spp"
       
       # START CLEAN (no groups)
       m <- leaflet(options = leafletOptions(
         doubleClickZoom = FALSE, 
+        maxBoundsViscosity = 1,
         minZoom = 4,
       )) %>%
         addProviderTiles(providers$CartoDB.Voyager) %>%
@@ -708,15 +711,23 @@ server <- function(input, output, session) {
       
       # Fix legend title for comparison mode 
       title_text <- if (is_comparison) {
-        #assign_comparison(input$trend_metric))
         "Num. species with significant trend"
       } else {
         trend$title
       }
       
-      # 🔥 LEGEND (must be baked in)
+      legend_type <-
+        if (input$pest == "All 18 spp") {
+          "comparison"
+        } else if (input$var_type == "clm") {
+          "clm"
+        } else {
+          "sens"
+        }
+      
+      # Legend
       legend_html <- create_legend_html(
-        input$trend_metric,
+        legend_type,
         title_text,
         pal_obj$pal,
         pal_obj$limits
@@ -752,7 +763,6 @@ server <- function(input, output, session) {
       mapview::mapshot2(
         m,
         file = file,
-        #delay = 6,
         vwidth  = session$clientData$output_map_width,
         vheight = session$clientData$output_map_height
       )
@@ -765,9 +775,9 @@ server <- function(input, output, session) {
   
   # Add marker only
   observeEvent(location_data(), {
-    
+
     loc <- location_data()
-    
+
     leafletProxy("map") %>%
       clearGroup("click_marker") %>%
       addMarkers(
@@ -775,9 +785,9 @@ server <- function(input, output, session) {
         lat = loc$click$lat,
         group = "click_marker"
       )
-    
+
   }, ignoreInit = TRUE)
-  
+
   # Deal with map clicks
   
   # Store map clicks manually
@@ -785,12 +795,9 @@ server <- function(input, output, session) {
     clicked_loc(input$map_click)
   })
   
-  # Debounced map click to prevent double-rendering
-  #click_val <- debounce(
+  # Clicked value
   click_val <-  reactive(clicked_loc())
-  #  150
-  #)
-  
+
   # Get location data when a location is clicked
   location_data <- reactive({
     
@@ -822,10 +829,11 @@ server <- function(input, output, session) {
     xy <- loc$xy
     
     # Variable text
-    variable_text <- names(input$trend_metric)
+    #variable_text <- names(input$trend_metric)
+    variable_text <- NULL
     
     if (input$pest == "All 18 spp") {
-      variable_text <- assign_comparison(input$trend_metric)
+      variable_text <- assign_comparison(input$comparison_metric)
     } else if (input$var_type == "clm") {
       variable_text <- "All stress exclusion"
     } else if (input$var_type == "climate") {
@@ -862,35 +870,32 @@ server <- function(input, output, session) {
       )
       
     } else {
+
+      # Extract sen slope and tau
+      sens <- terra::extract(pest_raster_sen(), xy)[1,2]
+      tau <- terra::extract(pest_raster_tau(), xy)[1,2]
       
-      trend_metric <- input$trend_metric %||% "sens"
+      # Label for value
+      value_label <- if (isTRUE(input$var_type == "phenology")) {
+           "Change (days/year)"
+         } else {
+           "Change (units/year)"
+         }
       
-      rast <- if (trend_metric == "sens") {
-        pest_raster_sen()
-      } else {
-        pest_raster_tau()
-      }
-      
-      req(rast)
-      
-      val <- terra::extract(rast, xy)[1,2]
-      
-      value_label <- if (trend_metric == "sens") {
+      # UI 
+      value_ui <- tagList(
         
-        if (isTRUE(input$var_type == "phenology")) {
-          "Change (days/year)"
-        } else {
-          "Change (units/year)"
-        }
+        tags$div(
+          tags$b(value_label),
+          ": ",
+          round(sens, 3)
+        ),
         
-      } else {
-        "Direction of trend"
-      }
-      
-      # Add to UI
-      value_ui <- tags$div(
-        tags$b(paste0(value_label, ": ")),
-        round(val, 3)
+        tags$div(
+          tags$b("Kendall's tau: "),
+          round(tau, 3)
+        )
+        
       )
       
     }
@@ -1023,16 +1028,14 @@ server <- function(input, output, session) {
       return(NULL)
     }
     
+    # Location info
     loc <- location_data()
     click <- loc$click
     xy <- loc$xy
     
-    # Trend metric
-    trend_metric <- input$trend_metric
-    
     # Variable text
     variable_text <- assign_comparison(
-      trend_metric
+      input$comparison_metric
     )
     
     # Sum raster
@@ -1137,20 +1140,13 @@ server <- function(input, output, session) {
   # 1. INDIVIDUAL SPECIES PLOT DATA GENERATOR
   loc_plot_obj_indiv <- reactive({
     
-    input$var_type
+    #input$var_type
     
     req(input$pest)
     
     # 1. Clear guards that do not require any input values to evaluate
     if (input$pest == "All 18 spp") { return(NULL) }
-    
-    # 4. Guard against individual metrics leaking into comparison choices
-    if (isolate(input$trend_metric) %in% 
-        c("species_num_adult", "species_num_egg", 
-          "species_num_cold", "species_num_heat")) {
-      return(NULL)
-    }
-    
+  
     # 2. This is your ONLY active dependency tracker. 
     # It fires EXACTLY once when a user releases their mouse click on the map.
     loc <- req(location_data())
@@ -1158,10 +1154,10 @@ server <- function(input, output, session) {
     # 3. ABSOLUTELY ISOLATE EVERY OTHER VARIABLE. 
     # This stops sidebar updates and legend redraws from stealing focus.
     xy                 <- isolate(loc$xy)
-    pest               <- input$pest
+    pest               <- isolate(input$pest)
     input_var_type     <- isolate(input$var_type)
-    input_clim_var     <- input$clim_variable
-    year_range         <- input$year_range
+    input_clim_var     <- isolate(input$clim_variable)
+    year_range         <- isolate(input$year_range)
     
     # Isolate both the reactive wrappers and their outputs completely!
     selected_var       <- isolate(selected_variable())
@@ -1174,13 +1170,14 @@ server <- function(input, output, session) {
     
     # For checking on Console
     message("Rendering plot...")
+    #message("loc_plot_obj_indiv()")
     
     # Convert years from character to index (to pull in files)
     range_vals <- strsplit(year_range, "-")[[1]]
     yrs <- as.numeric(range_vals[1]):as.numeric(range_vals[2])
     
     # Species abbreviation for plot title
-    abbrev <- species_abbrev[[input$pest]] # for plot title
+    abbrev <- species_abbrev[[pest]]
     
     # Y-axis labels
     ylab_text <- if (input_var_type == "clm") {
@@ -1188,7 +1185,7 @@ server <- function(input, output, session) {
     } else if (is_pem) {
       "Date"
     } else {
-      if (grepl("Cold", input_clim_var)) {
+      if (grepl("Cold", input_clim_var, ignore.case = TRUE)) {
         "Accumulated cold stress units"
       } else {
         "Accumulated heat stress units"
@@ -1290,7 +1287,37 @@ server <- function(input, output, session) {
       
     } else {
       
-      # If no variation
+      # Define y-scale and titles based on PEM or not
+      
+      # y-scale 
+      y_scale <- if (is_pem) {
+        
+        valid_idx <- match(y_brks, dates_df$value)
+        scale_y_continuous(
+          breaks = y_brks[!is.na(valid_idx)],
+          labels = dates_df$dates[valid_idx[!is.na(valid_idx)]]
+        )
+      } else {
+        scale_y_continuous(
+          breaks = y_brks
+        )
+      }
+      
+      # Title
+      plot_title <- if (is_pem) {
+        paste("Predicted", tolower(gsub("_", " ", selected_var)), "for", abbrev)
+      } else {
+        paste("Predicted", tolower(ylab_text), "for", abbrev)
+      }
+      
+      # y label
+      ylab <- if (is_pem) {
+        "Date"
+      } else {
+        str_to_sentence(ylab_text)
+      }
+      
+      # Plot when there's no variation
       if (all(site_data$value == 0 | is.na(site_data$value))) {
         
         p <- ggplot(site_data, aes(x = year, y = value)) +
@@ -1298,10 +1325,10 @@ server <- function(input, output, session) {
           geom_line(color = "steelblue") +
           scale_x_continuous(limits = c(yr_first, yr_last),
                              breaks = seq(yr_first, yr_last, x_brks)) +
-          scale_y_continuous(breaks = y_brks) +
-          labs(title = paste("Predicted", tolower(ylab_text), "for", abbrev),
+          y_scale +
+          labs(title = plot_title,
                x = "Year",
-               y = str_to_sentence(ylab_text)) +
+               y = ylab) +
           geom_text_repel(data = ymax_df,
                           aes(x = max(site_data$year) + 1,
                               y = ymax_pt + 1.5,
@@ -1311,17 +1338,12 @@ server <- function(input, output, session) {
           custom_theme_indiv +
           theme(legend.position = "none")
         
-        # If there is variation
+        # Plot if there is variation
       } else {
         
         # Use same slope and p-value as raster
         slope <- round(terra::extract(pest_raster_sen(), xy)[1,2], 3)
         pval <- round(terra::extract(pest_raster_pval(), xy)[1, 2], 3)
-        #p <- make_loc_plot(site_data, is_pem)
-        # Mann-Kendall
-        pwmk_test <- modifiedmk::pwmk(site_data$value)
-        #slope <- round(as.numeric(pwmk_test[["Sen's Slope"]]), 4)
-        #pval  <- round(as.numeric(pwmk_test[["P-value"]]), 4)
         median_x <- median(site_data$year, na.rm = TRUE)
         median_y <- median(site_data$value, na.rm = TRUE)
         intercept <- median_y - slope * median_x
@@ -1336,9 +1358,9 @@ server <- function(input, output, session) {
           scale_x_continuous(limits = c(yr_first, yr_last),
                              breaks = seq(yr_first, yr_last, x_brks)) +
           scale_y_continuous(breaks = y_brks) +
-          labs(title = paste("Predicted", tolower(ylab_text), "for", abbrev),
+          labs(plot_title,
                x = "Year",
-               y = str_to_sentence(ylab_text)) +
+               y = ylab) +
           geom_text_repel(data = ymax_df, 
                           aes(x = max(site_data$year) + 1, 
                               y = ymax_pt + 1.5,
@@ -1346,22 +1368,6 @@ server <- function(input, output, session) {
                           size = 4.5) +
           theme_bw() +
           custom_theme_indiv
-      }
-      
-      # Replace DOY with dates for PEM and add new title for event
-      if (is_pem) {
-        
-        pem_title <- tolower(gsub("_", " ", selected_var))
-        # Verify y-breaks is same length as date values - no NA values
-        valid_idx <- match(y_brks, dates_df$value)
-        # Plot
-        p <- p + 
-          scale_y_continuous(
-            breaks = y_brks[!is.na(valid_idx)],
-            labels = dates_df$dates[valid_idx[!is.na(valid_idx)]]
-          ) +
-          labs(title = paste("Predicted", pem_title, "for", abbrev),
-               y = "Date")
       }
       
       return(p)
@@ -1372,6 +1378,7 @@ server <- function(input, output, session) {
   # Render individual plot
   output$loc_plot_indiv <- renderPlot({
     # Ensure input$pest isn't switching over to comparison mode
+    #message("rendPlot()")
     req(input$pest != "All 18 spp")
     p <- loc_plot_obj_indiv()
     req(p)
@@ -1380,17 +1387,24 @@ server <- function(input, output, session) {
   
   # Individual plot download handler
   output$download_plot_indiv <- downloadHandler(
+    
+    # Image file name
     filename = function() {
+      
+      # Species abbreviation
       abbrev <- species_abbrev[[input$pest]]
       if (is.null(abbrev)) abbrev <- gsub(" ", "_", input$pest)
       
-      if (input$var_type == "clm") {
-        paste0("Trend_plot_", abbrev, "_", input$var_type, 
-               "_", input$year_range, ".png")
-      } else {
-        paste0("Trend_plot_", abbrev, "_", input$var_type, 
-               "_", input$trend_metric, "_", input$year_range, ".png")
-      }
+      # Metric name
+      metric_name <- assign_metric_name(
+        var_type = input$var_type,
+        phenology = input$phenology,
+        clim_variable = input$clim_variable
+      )
+      
+      # File name
+      paste0("Trend_plot_", abbrev, "_", metric_name, 
+             "_change_", input$year_range, ".png")
     },
     content = function(file) {
       p <- isolate(loc_plot_obj_indiv())
@@ -1406,7 +1420,7 @@ server <- function(input, output, session) {
     
     input$var_type
     
-    req(input$pest, input$trend_metric)
+    req(input$pest, input$comparison_metric)
     
     # Only run for comparisons
     if (input$pest != "All 18 spp") {
@@ -1415,7 +1429,7 @@ server <- function(input, output, session) {
     
     # Wait until comparison metric stabilizes
     req(
-      input$trend_metric %in% c(
+      input$comparison_metric %in% c(
         "species_num_adult",
         "species_num_egg",
         "species_num_cold",
@@ -1442,17 +1456,7 @@ server <- function(input, output, session) {
     # Needs to be in same projection
     site <- terra::project(site, pest_raster_slopemed())
     
-    # Isolate inputs
-    selected_var <- isolate(selected_variable())
-    input_trend_metric <- isolate(input$trend_metric)
-    is_pest_all <- (input$pest == "All 18 spp")
-    is_metric_all <- grepl("species_num", input_trend_metric)
-    
-    if (is_pest_all != is_metric_all) return(NULL)
-    
     req(click_val(), cancelOutput = TRUE)
-    
-    if (!grepl("species_num", input_trend_metric)) return(NULL)
     
     # For checking on Console
     message("Rendering comparison plot...")
@@ -1476,18 +1480,21 @@ server <- function(input, output, session) {
     site_data <- data.frame("value" = sum_val)
     check_NA(xy, site_data, TRUE)
     
-    variable_text <- assign_comparison(input_trend_metric)
+    #variable_text <- assign_comparison(input_trend_metric)
+    variable_text <- assign_comparison(
+      input$comparison_metric
+    )
     
-    if (grepl("cold|heat", variable_text)) {
+    if (grepl("cold|heat", variable_text, ignore.case = TRUE)) {
       ylab <- "Change (units/year)"
-      plot_title <- if (grepl("cold", variable_text)) {
+      plot_title <- if (grepl("cold", variable_text, ignore.case = TRUE)) {
         "Change (units/year) in cold stress across 18 spp."
       } else {
         "Change (units/year) in heat stress across 18 spp."
       }
     } else {
       ylab <- "Change (days/year)"
-      plot_title <- if (grepl("adult", variable_text)) {
+      plot_title <- if (grepl("adult", variable_text, ignore.case = TRUE)) {
         "Change in adult emergence date across 18 spp."
       } else {
         "Change in egg hatch date across 18 spp."
@@ -1526,13 +1533,13 @@ server <- function(input, output, session) {
   # Comparison plot download handler
   output$download_plot_comp <- downloadHandler(
     filename = function() {
-      variable_text <- assign_comparison(input$trend_metric)
+      variable_text <- assign_comparison(input$comparison_metric)
       paste0("Plot_", tolower(gsub(" ", "_", variable_text)), "_18spp_", input$year_range, ".png")
     },
     content = function(file) {
       p <- isolate(loc_plot_obj_comp())
       req(p) 
-      ggsave(file, plot = p6, width = 8, height = 6, dpi = 300)
+      ggsave(file, plot = p, width = 8, height = 6, dpi = 300)
     }
   )
   ### ---------------------------------------------------------------------- ###
