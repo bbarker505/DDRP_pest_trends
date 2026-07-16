@@ -810,7 +810,7 @@ server <- function(input, output, session) {
 
     # Create icon
     click_icon <- makeIcon(
-      iconUrl = "bug_icon.svg",
+      iconUrl = "www/bug_icon.svg",
       iconWidth = 32,
       iconHeight = 48,
       iconAnchorX = 16,
@@ -1312,8 +1312,9 @@ server <- function(input, output, session) {
       p <- ggplot(site_data, aes(x = year, y = value)) +
         geom_point() +
         geom_line(color = "steelblue") +
-        scale_x_continuous(limits = c(yr_first, yr_last),
-                           breaks = seq(yr_first, yr_last, x_brks)) +
+        scale_x_continuous(
+          limits = c(yr_first, yr_last),
+          breaks = seq(yr_first, yr_last, x_brks)) +
         #scale_y_continuous(breaks = y_brks) +
         labs(title = paste("Predicted climate stress exclusion for", abbrev),
              x = "Year",
@@ -1397,10 +1398,11 @@ server <- function(input, output, session) {
           geom_abline(intercept = intercept,
                       slope = slope,
                       color = "red") +
-          scale_x_continuous(limits = c(yr_first, yr_last),
-                             breaks = seq(yr_first, yr_last, x_brks)) +
+          scale_x_continuous(
+            limits = c(yr_first, yr_last),
+            breaks = seq(yr_first, yr_last, x_brks)) +
           y_scale +
-          labs(plot_title,
+          labs(title = plot_title,
                x = "Year",
                y = ylab) +
           geom_text_repel(data = ymax_df, 
