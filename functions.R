@@ -2,6 +2,13 @@
 
 # Contains custom functions to be loaded into the app.R file
 
+# New - Sep 2026 - CARTO key required for base tiles 
+carto_key <- Sys.getenv("CARTO_KEY")
+
+if (carto_key == "") {
+  stop("CARTO_KEY is not set.")
+}
+
 # ----- Make the pest panels for UI --------------------------------------------
 # Formats the species titles, descriptions, and reports and images for UI
 make_pest_panel <- function(
@@ -245,35 +252,77 @@ produce_map_base <- function(bounds) {
     
     # Create panes for different z levels
     addMapPane("Basemap", zIndex = 400) %>%
-    addMapPane("Value",  zIndex = 410) %>%
+    addMapPane("Value",   zIndex = 410) %>%
     addMapPane("Labels",  zIndex = 420) %>%
+    addMapPane("Borders", zIndex = 430) %>%
     
     # Map tiles
-    #addProviderTiles(providers$CartoDB.Positron) %>% 
-    addProviderTiles(providers$CartoDB.PositronNoLabels,
-                     group = "Basemap") %>% 
+    # Gives "API Required" message on map
+    # addProviderTiles(providers$CartoDB.PositronNoLabels,
+    #                  group = "Basemap") %>% 
+    # CARTO Positron basemap
+    addTiles(
+      urlTemplate = paste0(
+        "https://{s}.basemaps.cartocdn.com/rastertiles/light_all/",
+        "{z}/{x}/{y}.png?key=",
+        carto_key
+      ),
+      options = tileOptions(
+        pane = "Basemap"
+      ),
+      group = "Basemap"
+    ) %>%
+
+    # CARTO labels
+    addTiles(
+      urlTemplate = paste0(
+        "https://basemaps.cartocdn.com/rastertiles/voyager_only_labels/",
+        "{z}/{x}/{y}.png?key=",
+        carto_key
+      ),
+      options = tileOptions(
+        subdomains = "abcd",
+        pane = "Labels",
+        attribution = paste0(
+          '&copy; <a href="https://openstreetmap.org">',
+          "OpenStreetMap</a> contributors ",
+          '&copy; <a href="https://carto.com">',
+          "CARTO</a>"
+        )
+      ),
+      group = "Labels"
+    ) %>%
     
     # Fit the initial view to the provided bounds (CONUS)
-    fitBounds(lng1 = bounds$west, lat1 = bounds$south, 
-              lng2 = bounds$east, lat2 = bounds$north) %>%
+    fitBounds(
+      lng1 = bounds$west, 
+      lat1 = bounds$south, 
+      lng2 = bounds$east, 
+      lat2 = bounds$north) %>%
     
     # Always-on State Boundaries
     addPolylines(
-      data = us_states, # Assumes this object is loaded in setup.R
-      opacity = 0.6, 
-      color = "#444444", 
-      weight = 1.2, 
-      group = "States"
+      data = us_states,
+      opacity = 0.6,
+      color = "#444444",
+      weight = 1.2,
+      group = "States",
+      options = pathOptions(
+        pane = "Borders"
+      )
     ) %>%
     
     # County Boundaries (hidden unless zoom > 6.5)
     addPolylines(
-      data = us_counties, # Assumes this object is loaded in setup.R
-      opacity = 0.4, 
-      color = "#777777", 
-      weight = 0.5, 
-      group = "Counties"
-    ) 
+      data = us_counties,
+      opacity = 0.4,
+      color = "#777777",
+      weight = 0.5,
+      group = "Counties",
+      options = pathOptions(
+        pane = "Borders"
+      )
+    )
 }
 
 # Assign_extent: assign geographic extent

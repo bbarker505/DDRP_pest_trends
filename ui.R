@@ -27,9 +27,29 @@ ui <- page_navbar(
         new bootstrap.Popover(el);
       }
     });
-  "))
+  ")),
+
+  # Capture map center and zoom
+  tags$script(HTML("
+      $(document).on('shiny:connected', function() {
+        var map = $('#map').data('leaflet-map');
+        
+        if (map) {
+          map.on('moveend', function() {
+            var center = map.getCenter();
+            
+            Shiny.setInputValue('map_center', {
+              lat: center.lat,
+              lng: center.lng
+            });
+            
+            Shiny.setInputValue('map_zoom', map.getZoom());
+          });
+        }
+      });
+    "))
   ),
-  
+
   tags$head(
     tags$link(
       rel = "stylesheet",

@@ -5,7 +5,7 @@
 # If the isolate() change above doesn't help, the next thing I'd inspect is pest_raster_sen(). That's now the most likely place where a hidden reactive dependency is causing the plot to invalidate twice.
 
 # Server for DDRP Pest Trends app 
-
+# https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png?key=cb1_3ivm_1_588cb42a6b4e590c512ddf8c
 # Shiny server requires this is loaded: Set-up
 source("setup.R")
 
@@ -416,7 +416,10 @@ server <- function(input, output, session) {
         colors = pal_func,
         opacity = 0.7,
         layerId = "Value",
-        project = TRUE
+        project = TRUE,
+        options = gridOptions(
+          pane = "Value"
+        )
       ) %>%
       
       # Legend 
@@ -426,11 +429,29 @@ server <- function(input, output, session) {
       ) %>% 
       
       # Transparent labels only
-      addProviderTiles(
-        providers$CartoDB.PositronOnlyLabels,
+      # addProviderTiles(
+      #   providers$CartoDB.PositronOnlyLabels,
+      #   group = "Labels"
+      # )
+      addTiles(
+        urlTemplate = paste0(
+          "https://basemaps.cartocdn.com/rastertiles/voyager_only_labels/",
+          "{z}/{x}/{y}.png?key=",
+          carto_key
+        ),
+        options = tileOptions(
+          subdomains = "abcd",
+          pane = "Labels",
+          attribution = paste0(
+            '&copy; <a href="https://openstreetmap.org">',
+            "OpenStreetMap</a> contributors ",
+            '&copy; <a href="https://carto.com">',
+            "CARTO</a>"
+          )
+        ),
         group = "Labels"
-      ) 
-    
+      )
+       
   })
   
   
@@ -498,7 +519,10 @@ server <- function(input, output, session) {
                colors = pal_func,
                opacity = 0.7,
                layerId = "Value",
-               project = TRUE
+               project = TRUE,
+               options = gridOptions(
+                 pane = "Value"
+               )
              ) %>%
              
              # Add legend
@@ -508,11 +532,29 @@ server <- function(input, output, session) {
              ) %>% 
              
              # Transparent labels only
-             addProviderTiles(
-               providers$CartoDB.PositronOnlyLabels,
-               group = "Labels"
-             ) 
-           
+             # addProviderTiles(
+             #   providers$CartoDB.PositronOnlyLabels,
+             #   group = "Labels"
+             # )
+           addTiles(
+             urlTemplate = paste0(
+               "https://basemaps.cartocdn.com/rastertiles/voyager_only_labels/",
+               "{z}/{x}/{y}.png?key=",
+               carto_key
+             ),
+             options = tileOptions(
+               subdomains = "abcd",
+               pane = "Labels",
+               attribution = paste0(
+                 '&copy; <a href="https://openstreetmap.org">',
+                 "OpenStreetMap</a> contributors ",
+                 '&copy; <a href="https://carto.com">',
+                 "CARTO</a>"
+               )
+             ),
+             group = "Labels"
+           )
+             
            # Add outline only for CLM rasters
            if (input$var_type == "clm") {
              
@@ -526,7 +568,10 @@ server <- function(input, output, session) {
                  weight = 1,
                  opacity = 1,
                  smoothFactor = 0,
-                 group = "clm_outline"
+                 group = "clm_outline",
+                 options = pathOptions(
+                   pane = "Value"
+                 )
                )
              
            }    
@@ -633,38 +678,39 @@ server <- function(input, output, session) {
   
   ### ---------------------------------------------------------------------- ###
   
-  # Export map as PNG ----
+  # Download map as PNG ----
   
   # Different file names used for comparison vs. individual spp
   output$download_map <- downloadHandler(
+    
     filename = function() {
       
       # Use different file names for comparison vs. individual spp maps
       if (input$pest == "All 18 spp") {
         
-        # Format text for comparison type
-        comp_type <- assign_comparison(input$comparison_metric)
-        comp_type <- gsub(" ", "_", comp_type)
-        comp_type <- tolower(gsub("\\(no._species\\)", "", comp_type))
-        
-        paste0("DDRP_map_18spp_", comp_type, "_", input$year_range, ".png")
+        paste0("Trend_map_18spp_", input$year_range, ".png")
         
       } else {
         
         abbrev <- species_abbrev[[input$pest]]
-
-        # fallback if something missing
-        if (is.null(abbrev)) abbrev <- gsub(" ", "_", input$pest)
         
-        # Metric name
-        metric_name <- assign_metric_name(
-          var_type = input$var_type,
+        # Fallback if something is missing
+        if (is.null(abbrev)) {
+          abbrev <- gsub(" ", "_", input$pest)
+        }
+        
+        # Get the selected variable/event
+        variable_name <- switch(
+          input$var_type,
           phenology = input$phenology,
-          clim_variable = input$clim_variable
+          climate = input$clim_variable,
+          clm = "Climate_Stress_Excl"
         )
         
-        # File name
-        paste0("DDRP_map_", abbrev, "_", metric_name, "_change_", 
+        # Clean variable name for filename
+        variable_name <- gsub("[^A-Za-z0-9]+", "_", variable_name)
+        
+        paste0("Trend_Map_", abbrev, "_", variable_name, "_", 
                input$year_range, ".png")
       }
     },
@@ -673,71 +719,107 @@ server <- function(input, output, session) {
       
       trend <- selected_trend()
       pal_obj <- palette_reactive()
-      req(trend, pal_obj, input$map_bounds)
       
-      # Map bounds and zoom level
+      req(
+        trend,
+        pal_obj,
+        input$map_bounds,
+        input$map_center,
+        input$map_zoom
+      )
+      
+      # Current map position
       bounds <- input$map_bounds
-      zoom   <- input$map_zoom #%||% 5
+      center <- input$map_center
+      zoom <- input$map_zoom
       
-      # --- Detect comparison mode ---
+      # Detect comparison mode
       is_comparison <- input$pest == "All 18 spp"
-      
-      # START CLEAN (no groups)
-      m <- leaflet(options = leafletOptions(
-        doubleClickZoom = FALSE, 
-        maxBoundsViscosity = 1,
-        minZoom = 4,
-      )) %>%
-      
-        addProviderTiles(
-          providers$CartoDB.PositronNoLabels,
-          group = "Basemap"
-        ) %>% 
-      
-        # Zoom bounds
-        fitBounds(
-          lng1 = bounds$west,
-          lat1 = bounds$south,
-          lng2 = bounds$east,
-          lat2 = bounds$north
-        ) %>% 
+
+      # START CLEAN
+      m <- leaflet(
+        options = leafletOptions(
+          doubleClickZoom = FALSE,
+          minZoom = 4
+        )
+      ) %>%
         
-        # States
+        # Map panes
+        addMapPane("Basemap", zIndex = 400) %>%
+        addMapPane("Value", zIndex = 410) %>%
+        addMapPane("Labels", zIndex = 420) %>%
+        addMapPane("Borders", zIndex = 430) %>%
+        
+        # Basemap
+        addTiles(
+          urlTemplate = paste0("https://{s}.basemaps.cartocdn.com/rastertiles/light_all/",
+                               "{z}/{x}/{y}.png?key=", carto_key),
+          options = tileOptions(
+            subdomains = "abcd",
+            pane = "Basemap"
+          )
+        ) %>%
+        
+        # CARTO labels only
+        addTiles(
+          urlTemplate = paste0("https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/",
+                               "{z}/{x}/{y}.png?key=", carto_key),
+          options = tileOptions(
+            subdomains = "abcd",
+            pane = "Labels"
+          )
+        ) %>%
+      
+        # Use the current map center and zoom
+        setView(
+          lng = center$lng,
+          lat = center$lat,
+          zoom = zoom
+        )
+      
+      # State boundaries
+      m <- m %>%
         addPolylines(
           data = us_states,
           opacity = 0.6,
           color = "#444444",
           weight = 1.2,
-          group = "States"
+          group = "States",
+          options = pathOptions(
+            pane = "Borders"
+          )
         )
       
-      # Add counties if zoomed in >=6.5
+      # County boundaries
       if (zoom >= 6.5) {
+        
         m <- m %>%
           addPolylines(
             data = us_counties,
             opacity = 0.4,
             color = "#777777",
-            weight = 0.5
+            weight = 0.5,
+            group = "Counties",
+            options = pathOptions(
+              pane = "Borders"
+            )
           )
       }
-
-      # Raster
-      m <- m %>%
+      
+       # Raster
+       m <- m %>%
         addRasterImage(
           trend$rast,
           colors = pal_obj$pal,
           opacity = 0.9,
-          project = TRUE
-        ) %>% 
-        
-        # Transparent labels only
-        addProviderTiles(
-          providers$CartoDB.PositronOnlyLabels,
-          group = "Labels"
-        ) 
+          layerId = "Value",
+          project = TRUE,
+          options = gridOptions(
+            pane = "Value"
+          )
+        )
       
-      # Fix legend title for comparison mode 
+      # Legend title
       title_text <- if (is_comparison) {
         "Num. species with significant trend"
       } else {
@@ -745,16 +827,15 @@ server <- function(input, output, session) {
       }
       
       # Legend type
-      legend_type <-
-        if (input$pest == "All 18 spp") {
-          "comparison"
-        } else if (input$var_type == "clm") {
-          "clm"
-        } else {
-          "sens"
-        }
+      legend_type <- if (is_comparison) {
+        "comparison"
+      } else if (input$var_type == "clm") {
+        "clm"
+      } else {
+        "sens"
+      }
       
-      # Legend HTML specs
+      # Legend
       legend_html <- create_legend_html(
         legend_type,
         title_text,
@@ -762,43 +843,69 @@ server <- function(input, output, session) {
         pal_obj$limits
       )
       
-      # Add HTML specs
-      m <- m %>% 
-        htmlwidgets::prependContent(
+      # Add legend to exported map
+      m <- htmlwidgets::prependContent(
+        m,
         htmltools::tagList(
           
-          # 🔹 Load font + scoped CSS
+          # Load font + scoped CSS
           htmltools::tags$head(
+            
             htmltools::tags$link(
               rel = "stylesheet",
-              href = "https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap"
+              href = paste0("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap")
             ),
-            htmltools::tags$style(htmltools::HTML("
-        .custom-legend {
-          font-family: 'Roboto', sans-serif;
-        }
-      "))
+            
+            htmltools::tags$style(
+              htmltools::HTML(
+                "
+              .custom-legend {
+                font-family: 'Roboto', sans-serif;
+              }
+              "
+              )
+            )
           ),
           
-          # Legend container (now with class)
+          # Legend container
           htmltools::tags$div(
             class = "custom-legend",
-            style = "position:absolute; bottom:20px; right:20px; z-index:9999;",
-            htmltools::HTML(legend_html)
+            style = paste(
+              "position:absolute;",
+              "bottom:20px;",
+              "right:20px;",
+              "z-index:9999;"
+            ),
+            htmltools::HTML(
+              legend_html
+            )
           )
         )
-      ) 
- 
-      # Export map using mapshot2
+      )
+      
+      # Export map as PNG
+
+      # Explicitly create a PNG file for mapshot2
+      png_file <- tempfile(fileext = ".png")
+      
       mapview::mapshot2(
         m,
-        file = file,
-        vwidth  = session$clientData$output_map_width,
-        vheight = session$clientData$output_map_height
+        file = png_file,
+        vwidth = 1400,
+        vheight = 800
       )
+      
+      # Copy PNG to the file supplied by Shiny
+      file.copy(
+        png_file,
+        file,
+        overwrite = TRUE
+      )
+      
+      # Remove temporary PNG
+      unlink(png_file)
     }
-  )
-  
+  )  
   ### ---------------------------------------------------------------------- ###
   
   # Map click ----
@@ -1186,28 +1293,33 @@ server <- function(input, output, session) {
     req(input$pest)
     
     # 1. Clear guards that do not require any input values to evaluate
-    if (input$pest == "All 18 spp") { return(NULL) }
+    if (input$pest == "All 18 spp") { 
+      return(NULL) 
+    }
   
-    # 2. This is your ONLY active dependency tracker. 
-    # It fires EXACTLY once when a user releases their mouse click on the map.
+    # Active dependencies
+    # Plot updates when the user clicks the map or changes
+    # the selected layer/year range    loc <- req(location_data())
     loc <- req(location_data())
+    selected_var <- req(selected_variable())
     
-    # 3. ABSOLUTELY ISOLATE EVERY OTHER VARIABLE. 
-    # This stops sidebar updates and legend redraws from stealing focus.
-    xy                 <- isolate(loc$xy)
-    pest               <- isolate(input$pest)
-    input_var_type     <- isolate(input$var_type)
-    input_clim_var     <- isolate(input$clim_variable)
-    year_range         <- isolate(input$year_range)
+    # Location does not need to trigger anything beyond a map click
+    xy <- isolate(loc$xy)
     
-    # Isolate both the reactive wrappers and their outputs completely!
-    selected_var       <- isolate(selected_variable())
+    # These should update the plot when changed
+    pest <- isolate(input$pest)
+    input_var_type <- input$var_type
+    input_clim_var <- input$clim_variable
+    year_range <- input$year_range
     
+    # Is it a PEM or 18 spp comparison?
     is_pem             <- grepl("First", selected_var)
     is_comparison      <- (pest == "All 18 spp")
     
     # Return no plot if species comparison
-    if (is_comparison) { return(NULL) }
+    if (is_comparison) { 
+      return(NULL) 
+    }
     
     # For checking on Console
     message("Rendering plot...")
@@ -1437,18 +1549,24 @@ server <- function(input, output, session) {
       
       # Species abbreviation
       abbrev <- species_abbrev[[input$pest]]
-      if (is.null(abbrev)) abbrev <- gsub(" ", "_", input$pest)
+      if (is.null(abbrev)) {
+        abbrev <- gsub(" ", "_", input$pest)
+      } 
       
-      # Metric name
-      metric_name <- assign_metric_name(
-        var_type = input$var_type,
+      # Get the selected variable/event
+      variable_name <- switch(
+        input$var_type,
         phenology = input$phenology,
-        clim_variable = input$clim_variable
+        climate = input$clim_variable,
+        clm = "Climate_Stress_Excl"
       )
       
+      # Clean variable name for filename
+      variable_name <- gsub("[^A-Za-z0-9]+", "_", variable_name)
+      
       # File name
-      paste0("Trend_plot_", abbrev, "_", metric_name, 
-             "_change_", input$year_range, ".png")
+      paste0("Location_Plot_", abbrev, "_", variable_name, 
+             "_Change_", input$year_range, ".png")
     },
     content = function(file) {
       p <- isolate(loc_plot_obj_indiv())
@@ -1578,7 +1696,8 @@ server <- function(input, output, session) {
   output$download_plot_comp <- downloadHandler(
     filename = function() {
       variable_text <- assign_comparison(input$comparison_metric)
-      paste0("Plot_", tolower(gsub(" ", "_", variable_text)), "_18spp_", input$year_range, ".png")
+      paste0("Plot_", tolower(gsub(" ", "_", variable_text)), 
+             "_18spp_", input$year_range, ".png")
     },
     content = function(file) {
       p <- isolate(loc_plot_obj_comp())
