@@ -1565,7 +1565,7 @@ server <- function(input, output, session) {
       variable_name <- gsub("[^A-Za-z0-9]+", "_", variable_name)
       
       # File name
-      paste0("Location_Plot_", abbrev, "_", variable_name, 
+      paste0("Trend_Plot_", abbrev, "_", variable_name, 
              "_Change_", input$year_range, ".png")
     },
     content = function(file) {
