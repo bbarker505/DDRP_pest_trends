@@ -21,6 +21,56 @@ server <- function(input, output, session) {
     intro_tab
   })
   
+  # Metric selection (depends on selection)
+  # Climate stress metric
+  output$climate_metric_label <- renderUI({
+    
+    req(input$clim_variable)
+    
+    tooltip_text <- if (input$clim_variable == "Cold Stress") {
+      "Shows trends in accumulated cold stress."
+    } else {
+      "Shows trends in accumulated heat stress."
+    }
+    
+    tags$h4(
+      tags$b("Select climate variable"),
+      tags$span(
+        tags$i(class = "bi bi-info-circle"),
+        style = "cursor: pointer; margin-left: 5px; font-size: 0.8em;",
+        `data-bs-toggle` = "popover",
+        `data-bs-trigger` = "hover",
+        `data-bs-placement` = "right",
+        title = "About this metric",
+        `data-bs-content` = tooltip_text
+      )
+    )
+  })
+  
+  # Phenology metric information
+  output$phenology_metric_label <- renderUI({
+    
+    req(input$phenology)
+    
+    tooltip_text <- if (input$phenology == "First Adult Emergence") {
+      "Shows trends in the predicted timing of first adult emergence. Negative trends indicate earlier emergence."
+    } else {
+      "Shows trends in the predicted timing of first egg hatch. Negative trends indicate earlier egg hatch."
+    }
+    
+    tags$h4(
+      tags$b("Select phenology metric"),
+      tags$span(
+        tags$i(class = "bi bi-info-circle"),
+        style = "cursor: pointer; margin-left: 5px; font-size: 0.8em;",
+        `data-bs-toggle` = "popover",
+        `data-bs-trigger` = "hover",
+        `data-bs-placement` = "right",
+        title = "About this metric",
+        `data-bs-content` = tooltip_text
+      )
+    )
+  })
   # Clicked location
   clicked_loc <- reactiveVal(NULL)
   
@@ -182,7 +232,7 @@ server <- function(input, output, session) {
       
       return(list(
         rast = pest_raster_clm(),
-        title = "Beta coefficient"
+        title = "Change in suitability"
       ))
     }
     
@@ -564,9 +614,9 @@ server <- function(input, output, session) {
                
                addPolylines(
                  data = clm_outline,
-                 color = "purple",
+                 color = "#404040",
                  weight = 1,
-                 opacity = 1,
+                 opacity = 0.8,
                  smoothFactor = 0,
                  group = "clm_outline",
                  options = pathOptions(
@@ -680,6 +730,27 @@ server <- function(input, output, session) {
   
   # Download map as PNG ----
   
+  # Confirm map download
+  observeEvent(input$download_map_btn, {
+    
+    showModal(
+      modalDialog(
+        title = "Map download may take a while",
+        "Generating the map as a PNG can take some time, particularly for large maps. Please wait for the download to finish.",
+        footer = tagList(
+          modalButton("Cancel"),
+          actionButton(
+            "confirm_map_download",
+            "Continue",
+            class = "btn-primary"
+          )
+        ),
+        easyClose = TRUE
+      )
+    )
+    
+  })
+  
   # Different file names used for comparison vs. individual spp
   output$download_map <- downloadHandler(
     
@@ -704,7 +775,7 @@ server <- function(input, output, session) {
           input$var_type,
           phenology = input$phenology,
           climate = input$clim_variable,
-          clm = "Climate_Stress_Excl"
+          clm = "Suitability"
         )
         
         # Clean variable name for filename
@@ -747,6 +818,7 @@ server <- function(input, output, session) {
         # Map panes
         addMapPane("Basemap", zIndex = 400) %>%
         addMapPane("Value", zIndex = 410) %>%
+        addMapPane("CLMOutline", zIndex = 415) %>%
         addMapPane("Labels", zIndex = 420) %>%
         addMapPane("Borders", zIndex = 430) %>%
         
@@ -819,6 +891,25 @@ server <- function(input, output, session) {
           )
         )
       
+       # Add outline for potential distribution raster
+       if (input$var_type == "clm") {
+         
+         clm_outline <- create_clm_outline(trend$rast)
+         
+         m <- m %>%
+           addPolylines(
+             data = clm_outline,
+             color = "#404040",
+             weight = 1,
+             opacity = 0.8,
+             smoothFactor = 0,
+             group = "clm_outline",
+             options = pathOptions(
+               pane = "CLMOutline"
+             )
+           )
+       }
+       
       # Legend title
       title_text <- if (is_comparison) {
         "Num. species with significant trend"
@@ -1013,7 +1104,7 @@ server <- function(input, output, session) {
       val <- terra::extract(rast, xy)[1,2]
       
       value_ui <- tags$div(
-        tags$b("Beta coefficient: "),
+        tags$b("Change in suitability: "),
         round(val, 3)
       )
       
@@ -1040,7 +1131,7 @@ server <- function(input, output, session) {
         ),
         
         tags$div(
-          tags$b("Kendall's tau: "),
+          tags$b("Trend direction and strength: "),
           round(tau, 3)
         )
         
@@ -1334,7 +1425,7 @@ server <- function(input, output, session) {
     
     # Y-axis labels
     ylab_text <- if (input_var_type == "clm") {
-      "Climate Stress Exclusion"
+      "Climate stress exclusion value"
     } else if (is_pem) {
       "Date"
     } else {
@@ -1428,7 +1519,7 @@ server <- function(input, output, session) {
           limits = c(yr_first, yr_last),
           breaks = seq(yr_first, yr_last, x_brks)) +
         #scale_y_continuous(breaks = y_brks) +
-        labs(title = paste("Predicted climate stress exclusion for", abbrev),
+        labs(title = paste("Predicted suitability for", abbrev),
              x = "Year",
              y = str_to_sentence(ylab_text)) +
         scale_y_continuous(

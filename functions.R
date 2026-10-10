@@ -159,48 +159,106 @@ make_palette <- function(rast, metric) {
 }
 
 # ----- Consolidated legend builder --------------------------------------------
-create_legend_html <- function(metric, title, pal, limits) {
 
+
+create_legend_html <- function(metric, title, pal, limits) {
+  
   is_comparison <- metric == "comparison"
   
   if (is_comparison) {
-    # 1. Generate colors for the gradient bar
-    grad_colors <- paste(pal(seq(0, 18, length.out = 50)), collapse = ",")
     
-    # 2. Generate the numeric labels first
+    grad_colors <- paste(
+      pal(seq(0, 18, length.out = 50)),
+      collapse = ","
+    )
+    
     ticks <- seq(0, 18, by = 2)
     
-    # 3. Create the HTML string for labels
-    # We use flexbox to ensure they spread evenly across the 240px width
-    tick_labels <- paste0("<span style='flex: 1; text-align: center;'>", ticks, "</span>", collapse = "")
+    tick_labels <- paste0(
+      "<span style='flex:1;text-align:center;font-size:13px;'>",
+      ticks,
+      "</span>",
+      collapse = ""
+    )
     
-    # 4. Now the sub() function will work because tick_labels exists
-    tick_labels <- sub("<span>18</span>$", "<span>18</span>", tick_labels)
-    
-    paste0(
-      "<div style='background:white;padding:8px 10px;border-radius:6px;box-shadow:0 0 5px rgba(0,0,0,0.2);'>",
-      "<div style='text-align:center;font-weight:bold;margin-bottom:4px;'>", title, "</div>",
-      "<div style='width:240px;height:14px;border:1px solid #ccc;background:linear-gradient(to right,", grad_colors, ");'></div>",
-      "<div style='display:flex;justify-content:space-between;font-size:9px;margin-top:2px;'>",
+    return(paste0(
+      "<div style='background:white;padding:13px 14px;border-radius:7px;",
+      "box-shadow:0 0 6px rgba(0,0,0,0.25);box-sizing:border-box;",
+      "width:312px;max-width:100%;font-size:14px;'>",
+      
+      "<div style='text-align:center;font-weight:bold;font-size:18px;",
+      "line-height:1.3;margin-bottom:10px;'>",
+      title,
+      "</div>",
+      
+      "<div style='width:100%;height:21px;border:1px solid #ccc;",
+      "box-sizing:border-box;background:linear-gradient(to right,",
+      grad_colors,
+      ");'></div>",
+      
+      "<div style='display:flex;justify-content:space-between;",
+      "margin-top:6px;'>",
       tick_labels,
       "</div>",
-      "<div style='text-align:right; font-size:9px; margin-top:2px;'>",
-      "</div></div>"
-    )
-  } else {
-    # Continuous gradient for Trends (Tau/Sens)
-    paste0(
-      "<div style='background:white;padding:8px 10px;border-radius:6px;box-shadow:0 0 5px rgba(0,0,0,0.2);'>",
-      "<div style='text-align:center;font-weight:bold;margin-bottom:4px;'>", title, "</div>",
-      "<div style='width:160px;height:14px;border:1px solid #ccc;background:linear-gradient(to right,",
-      paste(pal(seq(limits[1], limits[2], length.out = 50)), collapse = ","),
-      ");'></div>",
-      "<div style='display:flex;justify-content:space-between;font-size:11px;margin-top:2px;'>",
-      "<span>", round(limits[1], 2), "</span><span>0</span><span>", round(limits[2], 2), "</span>",
-      "</div></div>"
-    )
+      
+      "</div>"
+    ))
   }
+  
+  grad_colors <- paste(
+    pal(seq(limits[1], limits[2], length.out = 50)),
+    collapse = ","
+  )
+  
+  paste0(
+    "<div style='background:white;padding:13px 14px;border-radius:7px;",
+    "box-shadow:0 0 6px rgba(0,0,0,0.25);width:312px;max-width:100%;",
+    "box-sizing:border-box;font-size:14px;'>",
+    
+    # Title with arrows on either side
+    "<div style='display:flex;align-items:center;justify-content:space-between;",
+    "gap:10px;margin-bottom:10px;'>",
+    
+    "<span style='font-size:28px;line-height:1;flex-shrink:0;",
+    "font-weight:bold;'>&#8592;</span>",
+    
+    "<div style='font-weight:bold;text-align:center;font-size:18px;",
+    "line-height:1.3;flex:1;min-width:0;overflow-wrap:anywhere;'>",
+    title,
+    "</div>",
+    
+    "<span style='font-size:28px;line-height:1;flex-shrink:0;",
+    "font-weight:bold;'>&#8594;</span>",
+    
+    "</div>",
+    
+    # Horizontal gradient
+    "<div style='width:100%;height:21px;border:1px solid #ccc;",
+    "box-sizing:border-box;background:linear-gradient(to right,",
+    grad_colors,
+    ");'></div>",
+    
+    # Numeric labels
+    "<div style='display:flex;justify-content:space-between;",
+    "font-size:14px;margin-top:6px;'>",
+    
+    "<span>",
+    if (limits[1] < 0) "&minus;" else "",
+    abs(round(limits[1], 2)),
+    "</span>",
+    
+    "<span>0</span>",
+    
+    "<span>",
+    if (limits[2] < 0) "&minus;" else "",
+    abs(round(limits[2], 2)),
+    "</span>",
+    
+    "</div>",
+    "</div>"
+  )
 }
+
 
 # ----- Mask out non-significant areas -----------------------------------------
 mask_by_pval <- function(value_rast, pval_rast, threshold = 0.1) {

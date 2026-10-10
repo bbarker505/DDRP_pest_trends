@@ -18,17 +18,48 @@ ui <- page_navbar(
   
   # For the popover info
   tags$head(
+  
+    # Info message bubbles
+    tags$style(HTML("
+    .tooltip .tooltip-inner {
+      font-size: 18px !important;
+      padding: 10px 14px !important;
+      max-width: 350px !important;
+    }
+  ")),
+    
+    # Mouseover
     tags$script(HTML("
     document.addEventListener('mouseover', function (e) {
       const el = e.target.closest('[data-bs-toggle=\"popover\"]');
       if (!el) return;
-
+  
       if (!bootstrap.Popover.getInstance(el)) {
         new bootstrap.Popover(el);
       }
     });
+  
+    // Close popovers when a new metric is selected
+    document.addEventListener('change', function (e) {
+      if (e.target.id === 'clim_variable' ||
+          e.target.id === 'phenology') {
+  
+        document.querySelectorAll('[data-bs-toggle=\"popover\"]').forEach(function (el) {
+          const popover = bootstrap.Popover.getInstance(el);
+          if (popover) {
+            popover.hide();
+          }
+        });
+      }
+    });
   ")),
-
+  
+    # Icons
+    tags$link(
+      rel = "stylesheet",
+      href = "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+    ),
+    
   # Capture map center and zoom
   tags$script(HTML("
       $(document).on('shiny:connected', function() {
@@ -50,13 +81,6 @@ ui <- page_navbar(
     "))
   ),
 
-  tags$head(
-    tags$link(
-      rel = "stylesheet",
-      href = "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
-    )
-  ),
-  
   # Ensure footer doesn't overlap the content
   fillable = FALSE,
   
@@ -244,7 +268,7 @@ ui <- page_navbar(
                 target="_blank", style="text-decoration:underline;"),
               ", six were formerly included on the list, and two are Federal 
                 Program Pests."),
-            tableOutput("intro_table")
+            tableOutput("species_table")
           )
         ), # end species table
         
@@ -267,7 +291,7 @@ ui <- page_navbar(
          tags$div(style = "margin-top: 2px;"),
          
          tags$a(
-           href = "#",
+           href = "tutorial.html",
            paste0("Download tutorial"),
            target = "_blank",
            style = "text-decoration: underline;"
@@ -480,7 +504,22 @@ ui <- page_navbar(
         ##### * Select region #####
         selectInput(
           "region",
-          label = tags$span(h4(HTML("<b>Select region</b>"))),
+          #label = tags$span(h4(HTML("<b>Select region</b>"))),
+          tags$h4(
+            tags$b("Select region"),
+            tags$span(
+              tags$i(class = "bi bi-info-circle"),
+              style = "cursor: pointer; margin-left: 5px; font-size: 0.8em;",
+              `data-bs-toggle` = "popover",
+              `data-bs-trigger` = "hover",
+              `data-bs-placement` = "right",
+              title = "About region selection",
+              `data-bs-content` = paste(
+                "Select the contiguous United States or",
+                "a state to zoom the map to that area."
+              )
+            )
+          ),
           choices = c(
             "Contiguous U.S." = "CONUS",
             "Alabama" = "AL", "Arizona" = "AZ", "Arkansas" = "AR",
@@ -523,7 +562,7 @@ ui <- page_navbar(
                   "<br><br>",
                   "<b>Climate stress:</b> Trends in accumulated cold or heat stress.",
                   "<br><br>",
-                  "<b>All stress exclusion:</b> Change in the potential distribution based on both stress factors."
+                  "<b>Suitability:</b> Change in suitability (establishment risk) based on both stress factors."
                 )
               )
             )
@@ -531,44 +570,13 @@ ui <- page_navbar(
           choices = c(
             "Climate stress" = "climate",
             "Phenology" = "phenology",
-            "All stress exclusion" = "clm"
+            "Suitability" = "clm"
           ),
           selected = "phenology"
         ),
         
         ##### * Comparison metric #####
         # Info circle nested in the title to provide info on metrics
-        # selectInput(
-        #   "trend_metric",
-        #   label = tagList(
-        #     h4(
-        #       HTML("<b>Select metric</b>"),
-        #       tags$span(
-        #         tags$i(class = "bi bi-info-circle"),
-        #         style = "cursor:pointer;
-        #          margin-left:5px;
-        #          position:relative;
-        #          top:-1px;
-        #          font-size:0.8em;",
-        #         `data-bs-toggle` = "popover",
-        #         `data-bs-trigger` = "hover",
-        #         `data-bs-placement` = "right",
-        #         `data-bs-html` = "true",
-        #         title = "About this metric",
-        #         `data-bs-content` = paste(
-        #           "<b>Change per year:</b> Sen's slope estimate of the trend in days/year (phenology) or units/year (climate stress).",
-        #           "<br><br>",
-        #           "<b>Direction of trend:</b> Kendall's tau, indicating the strength and direction of the monotonic trend."
-        #         )
-        #       )
-        #     )
-        #   ),
-        #   choices = c(
-        #     "Change per year" = "sens",
-        #     "Direction of trend" = "tau"
-        #   ),
-        #   selected = "sens"
-        # ),
         conditionalPanel(
           #"input.pest == 'All 18 spp' && input.var_type != 'clm'" ,
           "input.pest == 'All 18 spp' && 
@@ -588,40 +596,93 @@ ui <- page_navbar(
           )
         ),
         
-        # (Shows if climate and a species is selected)
+        
         # Select climate variable
         conditionalPanel(
           "input.var_type == 'climate' && input.pest != 'All 18 spp'",
           
+          uiOutput("climate_metric_label"),
+          
           selectInput(
             "clim_variable",
-            label = tags$span(h4(HTML("<b>Select climate variable</b>"))),
+            label = NULL,
             choices = c("Cold Stress", "Heat Stress"),
             selected = "Cold Stress"
           )
         ),
         
-        # (Shows if phenology and a species is selected)
         # Select phenology variable
         conditionalPanel(
           "input.var_type == 'phenology' && input.pest != 'All 18 spp'",
           
+          uiOutput("phenology_metric_label"),
+          
           selectInput(
             "phenology",
-            label = tags$span(h4(HTML("<b>Select phenology metric</b>"))),
+            label = NULL,
             choices = c("First Adult Emergence", "First Egg Hatch"),
             selected = "First Adult Emergence"
           )
         ),
         
+        # (Shows if climate and a species is selected)
+        # Select climate variable
+        # conditionalPanel(
+        #   "input.var_type == 'climate' && input.pest != 'All 18 spp'",
+        #   
+        #   selectInput(
+        #     "clim_variable",
+        #     label = tags$span(h4(HTML("<b>Select climate variable</b>"))),
+        #     choices = c("Cold Stress", "Heat Stress"),
+        #     selected = "Cold Stress"
+        #   )
+        # ),
+        # 
+        # 
+        # # (Shows if phenology and a species is selected)
+        # # Select phenology variable
+        # conditionalPanel(
+        #   "input.var_type == 'phenology' && input.pest != 'All 18 spp'",
+        #   
+        #   selectInput(
+        #     "phenology",
+        #     label = tags$span(h4(HTML("<b>Select phenology metric</b>"))),
+        #     choices = c("First Adult Emergence", "First Egg Hatch"),
+        #     selected = "First Adult Emergence"
+        #   )
+        # ),
+        # 
         # Year range selection
+        # selectInput(
+        #   "year_range",
+        #   label = tags$span(h4(HTML("<b>Select time range</b>"))),
+        #   choices = c("1981-2025", "2001-2025"),
+        #   selected = "1981-2025"
+        # )
+        # 
+        tags$h4(
+          tags$b("Select time range"),
+          tags$span(
+            tags$i(class = "bi bi-info-circle"),
+            style = "cursor: pointer; margin-left: 5px; font-size: 0.8em;",
+            `data-bs-toggle` = "popover",
+            `data-bs-trigger` = "hover",
+            `data-bs-placement` = "right",
+            title = "About the time range",
+            `data-bs-content` = paste(
+              "Select the years used to calculate trends.",
+              "The selected period determines the time span",
+              "over which changes are evaluated."
+            )
+          )
+        ),
+        
         selectInput(
           "year_range",
-          label = tags$span(h4(HTML("<b>Select time range</b>"))),
-          choices = c("1981-2025", "1981-2000", "2001-2025"),
+          label = NULL,
+          choices = c("1981-2025", "2001-2025"),
           selected = "1981-2025"
         )
-        
       ), # End side panel
       
       # Visuals (Right side) ----
@@ -686,13 +747,12 @@ ui <- page_navbar(
               downloadButton(
                 "download_map",
                 "Download map",
-                class = "btn-info btn-sm"
+                class = "btn-info"
               ),
               "Export a high-resolution image (PNG) of the current map view.
-       Download may take several seconds."
+     Warning: download may take several seconds (up to ~1/2 min).")
             )
-          )
-        ),
+          ),
         
         ##### * Location statistics #####
         # Different statistics shown for individual species vs. comparison
@@ -714,21 +774,61 @@ ui <- page_navbar(
           layout_columns(
             
             # Left column
-            div(
-              h5("Summary statistics", style = "font-size: 18px"),
-              tags$hr(),
-              
-              conditionalPanel(
-                condition = "input.pest != 'All 18 spp'",
-                uiOutput("location_summary", style = "font-size: 14px; line-height: 2.0")
-              ),
-              
-              # All species stats
+             div(
+               
+              # Left column: summary statistics
+               # Left column: summary statistics
+               tags$h5(
+                 tags$b("Summary statistics"),
+                 tags$span(
+                   tags$i(class = "bi bi-info-circle"),
+                   style = "cursor: pointer; margin-left: 5px; font-size: 0.8em;",
+                   `data-bs-toggle` = "popover",
+                   `data-bs-trigger` = "hover",
+                   `data-bs-placement` = "right",
+                   `data-bs-html` = "true",
+                   title = "About summary statistics",
+                   `data-bs-content` = paste0(
+                     "<b>Change (days/year or units/year):</b> The estimated rate ",
+                     "of change over time according to Sen's slope, expressed in ",
+                     "either days per year (phenology) or units per year ",
+                     "(cold and heat stress). Positive values indicate an ",
+                     "increase while negative values indicate a decrease.",
+                     "<br><br>",
+                     "<b>Trend direction and strength:</b> Kendall's tau (&tau;) ",
+                     "measures the direction and strength of a monotonic trend ",
+                     "over time. Positive values indicate an upward trend, while ",
+                     "negative values indicate a downward trend. Values closer to ",
+                     "−1 or +1 indicate a stronger trend, whereas values near 0 ",
+                     "indicate a weaker trend.",
+                     "<br><br>",
+                     "<b>P-value:</b> Statistical significance of the trend based ",
+                     "on the Mann–Kendall test. A P-value &lt; 0.1 indicates a ",
+                     "statistically significant trend, suggesting that the trend ",
+                     "differs from zero (no trend)."
+                   )
+                 ),
+                 style = "font-size: 18px"
+               ),
+            
+              # Summary statistics for all species
               conditionalPanel(
                 condition = "input.pest == 'All 18 spp'",
-                uiOutput("comparison_summary", style = "font-size: 14px; line-height: 2.0")
+                uiOutput(
+                  "comparison_summary",
+                  style = "font-size: 14px; line-height: 2.0"
+                )
+              ),
+              
+              # Summary statistics for an individual pest
+              conditionalPanel(
+                condition = "input.pest != 'All 18 spp'",
+                uiOutput(
+                  "location_summary",
+                  style = "font-size: 14px; line-height: 2.0"
+                )
               )
-            ),
+              ),
             
             # Right column 
             div(
@@ -748,13 +848,11 @@ ui <- page_navbar(
                     `data-bs-placement` = "right",
                     `data-bs-html` = "true",
                     title = "About this plot",
-                    `data-bs-content` = "This plot shows predicted values at the 
-                    selected location over time. If the variable type is 'Phenology' 
-                    or 'Climate stress', the red line represents Sen’s 
-                    slope (trend), and the p-value indicates statistical 
-                    significance. If the plot you selected shows missing points,
-                    those points are due to conditions being unsatisfactory for
-                    the selected event to occur."
+                    `data-bs-content` = "Plots show predicted values over time 
+                    at the selected location. For phenology and climate stress, 
+                    the red line indicates the trend (slope), and the P-value 
+                    indicates statistical significance. Missing points indicate 
+                    conditions were unsuitable for the selected event to occur."
                   )
                 ),
                 
@@ -762,15 +860,17 @@ ui <- page_navbar(
                 plotOutput("loc_plot_indiv", height = "400px"),
                 tags$br(),
                 
-                
                 conditionalPanel(
-                  condition = "output.has_click == 'TRUE' && 
-                  input.pest != 'All 18 spp'",
+                  condition = "output.has_click == 'TRUE' &&
+               input.pest != 'All 18 spp'",
                   
-                  downloadButton(
-                    "download_plot_indiv",
-                    "Download plot",
-                    class = "btn-info btn-sm"
+                  tooltip(
+                    downloadButton(
+                      "download_plot_indiv",
+                      "Download plot",
+                      class = "btn-info"
+                    ),
+                    "Export a high-resolution image (PNG) of the current plot."
                   )
                 )
               ),
@@ -804,7 +904,7 @@ ui <- page_navbar(
                 downloadButton(
                   "download_plot_comp", 
                   "Download Plot",
-                  class = "btn-info btn-sm")
+                  class = "btn-info")
               )
             ),
             
