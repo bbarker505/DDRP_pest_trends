@@ -32,19 +32,27 @@ format:
           justification=raggedright,
           singlelinecheck=false
         }
-        \setlength{\intextsep}{18pt}
+        
+        \setlength{\intextsep}{8pt}
+        \setlength{\textfloatsep}{8pt}
+        \setlength{\abovecaptionskip}{3pt}
+        \setlength{\belowcaptionskip}{3pt}
     
         % ---------------------------
         % Title 
         % ---------------------------
         \usepackage{titling}
-        \setlength{\droptitle}{-5em} 
+        \setlength{\droptitle}{-5em}
+        
         \pretitle{\begin{center}\Huge\bfseries}
-        \posttitle{\end{center}\Large\vspace{-0.5em}}
-        \preauthor{\begin{center}\Large}
-        \postauthor{\end{center}\vspace{-2em}}
-        \predate{\begin{center}\Large}
-        \postdate{\end{center}\vspace{-0.5em}}
+        \posttitle{\par\end{center}\vspace{-1.5em}}
+        
+        \preauthor{\begin{center}\large}
+        \postauthor{\par\end{center}\vspace{-1.5em}}
+        
+        \predate{\begin{center}\large}
+        \postdate{\par\end{center}\vspace{-2em}}
+        
         \pagestyle{plain}
         
         % ---------------------------
@@ -238,7 +246,7 @@ Comparing maps produced for the 1981–2025 and 2001–2025 periods helps distin
 
 ```{r}
 #| echo: false
-#| out-width: 85%
+#| out-width: 75%
 #| fig-align: center
 #| fig-cap: "**Figure 6.** Trends in predicted first adult emergence of spotted lanternfly across the CONUS over the entire 44-year period (1981-2025) for (A) all trends and (B) statistically significant trends only (P < 0.1). Negative values indicate earlier predicted emergence, whereas positive values indicate later predicted emergence."
 knitr::include_graphics("./tutorial/figure6.png")
