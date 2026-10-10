@@ -100,7 +100,7 @@ server <- function(input, output, session) {
       choices <- c(
         "Climate stress" = "climate",
         "Phenology" = "phenology",
-        "All stress exclusion" = "clm"
+        "Suitability" = "clm"
       )
     }
     
@@ -225,7 +225,7 @@ server <- function(input, output, session) {
       
       return(list(
         rast = pest_raster_sum(),  # or correct comparison raster loader
-        title = "Num. species with significant trend"
+        title = "Significant trends (no. species)"
       ))
     }
     
@@ -914,7 +914,7 @@ server <- function(input, output, session) {
        
       # Legend title
       title_text <- if (is_comparison) {
-        "Num. species with significant trend"
+        "Significant trends (no. species)"
       } else {
         trend$title
       }
@@ -1010,7 +1010,7 @@ server <- function(input, output, session) {
 
     # Create icon
     click_icon <- makeIcon(
-      iconUrl = "www/bug_icon.svg",
+      iconUrl = "bug_icon.svg",
       iconWidth = 32,
       iconHeight = 48,
       iconAnchorX = 16,
@@ -1076,7 +1076,7 @@ server <- function(input, output, session) {
     if (input$pest == "All 18 spp") {
       variable_text <- assign_comparison(input$comparison_metric)
     } else if (input$var_type == "clm") {
-      variable_text <- "All stress exclusion"
+      variable_text <- "Suitability"
     } else if (input$var_type == "climate") {
       variable_text <- input$clim_variable
     } else {
@@ -1094,7 +1094,7 @@ server <- function(input, output, session) {
       val <- terra::extract(rast, xy)[1,2]
       
       value_ui <- tags$div(
-        tags$b("Num. species with significant trend: "),
+        tags$b("Significant trends (no. species): "),
         round(val, 3)
       )
       
@@ -1356,7 +1356,7 @@ server <- function(input, output, session) {
       ),
       
       tags$div(
-        tags$b("Num. species with significant trend: "),
+        tags$b("Significant trends (no. species): "),
         round(sum_val, 2)
       ),
       
