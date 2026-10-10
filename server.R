@@ -16,10 +16,12 @@ options(shiny.sanitize.errors = FALSE)
 server <- function(input, output, session) {
   
   #### * Table for intro ####
-  output$intro_table <- renderTable({
-    intro_tab <- read.csv("intro_table.csv", check.names = FALSE)
-    intro_tab
-  })
+  output$species_table <- renderTable({
+    species_table <- read.csv("species_table.csv", check.names = FALSE) %>%
+      mutate(Species = paste0("<i>", Species, "</i>"))
+    
+    species_table
+  }, sanitize.text.function = identity)
   
   # Metric selection (depends on selection)
   # Climate stress metric
