@@ -1,0 +1,42 @@
+
+
+| Parameter | Code | Value |
+|:--|:--|--:|
+| **Lower developmental thresholds (°C)** | | |
+| &nbsp;&nbsp;Egg | `eggLDT` | 11.7 |
+| &nbsp;&nbsp;Larvae | `larvaeLDT` | 11.7 |
+| &nbsp;&nbsp;Pupae | `pupaeLDT` | 11.7 |
+| &nbsp;&nbsp;Adult | `adultLDT` | 11.7 |
+| **Upper developmental thresholds (°C)** | | |
+| &nbsp;&nbsp;Egg | `eggUDT` | 38 |
+| &nbsp;&nbsp;Larvae | `larvaeUDT` | 38 |
+| &nbsp;&nbsp;Pupae | `pupaeUDT` | 38 |
+| &nbsp;&nbsp;Adult | `adultUDT` | 38 |
+| **Stage durations (°C degree-days)** | | |
+| &nbsp;&nbsp;Egg | `eggDD` | 71 |
+| &nbsp;&nbsp;Larvae | `larvaeDD` | 155 |
+| &nbsp;&nbsp;Pupae | `pupDD` | 175 |
+| &nbsp;&nbsp;Adult | `adultDD` | 83 |
+| **Pest events (°C degree-days)** | | |
+| &nbsp;&nbsp;J-larval development complete | `OWEventDD` | 220 |
+| &nbsp;&nbsp;Egg hatch | `eggEventDD` | 71 |
+| &nbsp;&nbsp;Developing J-larvae | `larvaeEventDD` | 77 |
+| &nbsp;&nbsp;Adult emergence (pupal development complete) | `pupaeEventDD` | 145 |
+| &nbsp;&nbsp;Egg laying | `adultEventDD` | 17 |
+| **Cold stress** | | |
+| &nbsp;&nbsp;Cold stress temperature threshold (°C) | `coldstress_threshold` | -1 |
+| &nbsp;&nbsp;Cold degree-day (°C) limit when most individuals die | `coldstress_units_max1` | 25 |
+| &nbsp;&nbsp;Cold degree-day (°C) limit when all individuals die | `coldstress_units_max2` | 250 |
+| **Heat stress** | | |
+| &nbsp;&nbsp;Heat stress temperature threshold (°C) | `heatstress_threshold` | 40 |
+| &nbsp;&nbsp;Heat stress degree-day (°C) limit when most individuals die | `heatstress_units_max1` | 75 |
+| &nbsp;&nbsp;Heat stress degree-day (°C) limit when all individuals die | `heatstress_units_max2` | 150 |
+| **Cohorts** | | |
+| &nbsp;&nbsp;Degree-days (°C) to emergence (average) | `distro_mean` | 220 |
+| &nbsp;&nbsp;Degree-days (°C) to emergence (variation) | `distro_var` | 500 |
+| &nbsp;&nbsp;Minimum degree-days (°C) to emergence | `xdist1` | 140 |
+| &nbsp;&nbsp;Maximum degree-days (°C) to emergence | `xdist2` | 280 |
+| &nbsp;&nbsp;Shape of the distribution | `distro_shape` | normal |
+| **Other** | | |
+| &nbsp;&nbsp;Order of stages | `stgorder` | OP, E, L, P, A |
+| &nbsp;&nbsp;Degree-day calculation method | `calctype` | average |

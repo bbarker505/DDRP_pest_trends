@@ -1,0 +1,35 @@
+
+/* Hanging indentation */
+.hanging p {
+  text-indent: -0.5in;
+  margin-left: 0.5in;
+}
+
+/* Table captions: left-aligned */
+.quarto-float-caption-top.quarto-float-tbl {
+  text-align: left !important;
+  margin-left: 0 !important;
+  margin-right: auto !important;
+}
+
+/* Bold only the caption label */
+figcaption.quarto-float-caption strong {
+  font-weight: 700 !important;
+}
+
+/* Slightly increase figure and table caption font size */
+.quarto-float-caption {
+  font-size: 0.95em;
+}
+
+
+/* Table of Contents: indent nested sections */
+#TOC ul ul,
+nav[role="doc-toc"] ul ul {
+  padding-left: 1.25rem !important;
+  margin-left: 0 !important;
+}
+
+#refs a {
+  color: blue !important;
+}

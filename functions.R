@@ -45,11 +45,23 @@ make_pest_panel <- function(
         
         tags$div(style = "margin-top: 2px;"),
         
-        tags$a(
-          href = "#",
-          paste0("Download PDF report for ", abbreviation),
-          target = "_blank",
-          style = "text-decoration: underline;"
+        # HTML version
+        tags$div(
+          tags$a(
+            href = paste0("reports/Full_report.html#", tolower(abbreviation)),
+            paste0("View report for ", abbreviation),
+            target = "_blank",
+            style = "text-decoration: underline;"
+          ),
+          tags$br(),
+          
+          # PDF version
+          tags$a(
+            href = paste0("reports/", abbreviation, "/", abbreviation, ".pdf"),
+            paste0("Download PDF report for ", abbreviation),
+            target = "_blank",
+            style = "text-decoration: underline;"
+          )
         )
         
       ),
@@ -292,7 +304,8 @@ apply_sig_mask <- function(r, pval, sig_only) {
 
 # ----- Initial map render setup -----------------------------------------------
 produce_map_base <- function(bounds) {
-  leaflet(
+  
+  m <- leaflet(
     options = leafletOptions(
       attributionControl = FALSE, 
       zoomControl = TRUE,
