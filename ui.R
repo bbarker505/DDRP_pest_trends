@@ -291,8 +291,8 @@ ui <- page_navbar(
          tags$div(style = "margin-top: 2px;"),
          
          tags$a(
-           href = "/reports/tutorial.html",
-           paste0("Download tutorial"),
+           href = "reports/tutorial.html",
+           paste0("App Tutorial"),
            target = "_blank",
            style = "text-decoration: underline;"
          )
@@ -946,15 +946,21 @@ ui <- page_navbar(
       }
     ")),
       
-      HTML(
-        "<p>The <a href='reports/Full_report.html' target='_blank'>full project report</a>, 
-  describes the project goals and objectives, methods, and findings for all 
-  18 invasive pest species modeled. Below are individual species profiles 
-  and research reports that provide background information, present and 
-  interpret model predictions, and discuss the implications of the results 
-  for pest surveillance and management in the contiguous United States. 
-  Clicking an individual species link navigates directly to that species' 
-  section in the full report.</p>"
+      p("The full pest report below describes the project goals and objectives, 
+      methods, and findings for all 18 invasive pest species modeled. Below 
+      are individual species profiles and research reports that provide 
+      background information, present and interpret model predictions, and 
+      discuss the implications of the results for pest surveillance and 
+      management in the contiguous United States. Clicking an individual species 
+      link navigates directly to that species' section in the full report."),
+      
+      tags$div(style = "margin-top: 2px;"),
+      
+      tags$a(
+        href = "reports/full_report.html",
+        paste0("Full Report"),
+        target = "_blank",
+        style = "text-decoration: underline;"
       )
       
     ),
