@@ -9,6 +9,10 @@
 # Shiny server requires this is loaded: Set-up
 source("setup.R")
 
+# Load shared pest profile data and Pest Reports helper functions.
+# These are also sourced by ui.R, but must be available in the server environment.
+source("functions.R")
+
 # Print all error messages 
 options(shiny.sanitize.errors = FALSE)
 
@@ -23,6 +27,82 @@ server <- function(input, output, session) {
     species_table
   }, sanitize.text.function = identity)
   
+  #### * Pest Reports: selected species ---------------------------------------
+  selected_report_pest <- reactiveVal(NULL)
+
+  # Close the selected species profile when the user navigates away from Pest Reports.
+  # observeEvent(input$clear_pest_profile, {
+  #   selected_report_pest(NULL)
+  # }, ignoreInit = TRUE)
+  
+  # Listen for clicks on each species card. Clicking the selected card again
+  # collapses the information panel.
+  lapply(pest_profiles, function(profile) {
+    local({
+      this_profile <- profile
+      observeEvent(
+        input[[paste0("pest_card_", this_profile$abbreviation)]],
+        {
+          current_profile <- selected_report_pest()
+          if (!is.null(current_profile) &&
+              identical(current_profile$abbreviation, this_profile$abbreviation)) {
+            selected_report_pest(NULL)
+          } else {
+            selected_report_pest(this_profile)
+          }
+        },
+        ignoreInit = TRUE
+      )
+    })
+  })
+
+  # Display the selected species description, photo credit, and report links.
+  output$selected_pest_info <- renderUI({
+    profile <- selected_report_pest()
+
+    if (is.null(profile)) {
+      return(
+        div(
+          class = "pest-info-placeholder",
+          p("Select a pest image above to view its species summary and reports.")
+        )
+      )
+    }
+
+    div(
+      class = "pest-info-panel",
+      div(
+        class = "pest-info-header",
+        div(
+          h3(profile$common_name, class = "pest-info-title"),
+          p(format_scientific_name(profile$scientific_name), class = "pest-info-scientific")
+        ),
+        tags$span("SPECIES PROFILE", class = "pest-info-label")
+      ),
+      div(
+        class = "pest-info-content",
+        div(
+          class = "pest-info-description",
+          p(profile$description),
+          div(
+            class = "pest-report-links",
+            tags$a(
+              href = paste0("reports/Full_report.html#", tolower(profile$abbreviation)),
+              paste0("View report for ", profile$abbreviation),
+              target = "_blank"
+            ),
+            tags$br(),
+            tags$a(
+              href = paste0("reports/", profile$abbreviation, "/", profile$abbreviation, ".pdf"),
+              paste0("Download PDF report for ", profile$abbreviation),
+              target = "_blank"
+            )
+          )
+        )
+      )
+    )
+  })
+
   # Metric selection (depends on selection)
   # Climate stress metric
   output$climate_metric_label <- renderUI({

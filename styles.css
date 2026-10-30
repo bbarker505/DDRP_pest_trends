@@ -42,3 +42,188 @@ h5 + p,
 h6 + p {
   text-indent: 0 !important;
 }
+
+/* Pest Reports: responsive clickable image-card grid */
+.pest-card-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin: 18px 0 22px;
+}
+
+.pest-card {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  white-space: normal;
+  height: 100%;
+  min-width: 0;
+  padding: 8px;
+  color: #434C5E;
+  background: #fff;
+  border: 1px solid #d8e1e8;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+.pest-card:hover,
+.pest-card:focus,
+.pest-card.is-selected {
+  color: #334155;
+  background: #f4fbfc;
+  border-color: #4b9da7;
+  box-shadow: 0 0 0 2px rgba(75, 157, 167, 0.16);
+  outline: none;
+}
+
+.pest-card-image {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 5px;
+  margin-bottom: 8px;
+}
+
+.pest-card-name {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.pest-card-scientific {
+  display: block;
+  margin-top: 3px;
+  color: #687386;
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.pest-card-credit {
+  display: block;
+  margin-top: 7px;
+  padding-top: 6px;
+  border-top: 1px solid #edf0f2;
+  color: #687386;
+  font-size: 10px;
+  line-height: 1.25;
+  text-align: left;
+}
+
+.pest-info-placeholder,
+.pest-info-panel {
+  margin: 18px 0 24px;
+  background: #fff;
+  border-radius: 10px;
+}
+
+.pest-info-placeholder {
+  padding: 18px;
+  color: #687386;
+  text-align: center;
+  border: 1px dashed #aebfc8;
+  background: #f7fafb;
+}
+
+.pest-info-panel {
+  padding: 0;
+  border: 2px solid #398b96;
+  box-shadow: 0 5px 18px rgba(35, 77, 86, 0.16);
+  overflow: hidden;
+  scroll-margin-top: 18px;
+}
+
+.pest-info-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 15px 20px 12px;
+  background: #e6f3f4;
+  border-bottom: 1px solid #c5dfe2;
+}
+
+.pest-info-label {
+  flex: 0 0 auto;
+  padding: 5px 9px;
+  color: #245e67;
+  background: #fff;
+  border: 1px solid #a9cfd3;
+  border-radius: 5px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.pest-info-content {
+  padding: 18px 20px 20px;
+}
+
+.pest-info-placeholder p,
+.pest-info-panel p {
+  margin-bottom: 10px;
+}
+
+.pest-info-title {
+  margin: 0 0 3px;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.pest-info-scientific {
+  color: #526273;
+  margin-bottom: 0 !important;
+}
+
+.pest-info-description {
+  /* Inherit the same typography as the rest of the webpage. */
+}
+
+.pest-report-links a {
+  text-decoration: underline;
+}
+
+@media (max-width: 991px) {
+  .pest-card-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 575px) {
+  .pest-card-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+  }
+  .pest-card {
+    padding: 6px;
+  }
+  .pest-card-name {
+    font-size: 13px;
+  }
+}
+
+
+@media (max-width: 575px) {
+  .pest-info-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+    padding: 13px 15px;
+  }
+  .pest-info-content {
+    padding: 15px;
+  }
+}
+
+
+/* The expanded profile is inserted as a full-width grid item immediately
+   after the row containing the selected pest card. */
+#selected_pest_info_slot {
+  grid-column: 1 / -1;
+  width: 100%;
+  min-width: 0;
+}
