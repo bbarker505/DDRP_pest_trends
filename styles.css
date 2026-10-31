@@ -227,3 +227,104 @@ h6 + p {
   width: 100%;
   min-width: 0;
 }
+
+/* =========================================================
+   RESPONSIVE TYPOGRAPHY
+   DDRP Pest Trends
+   ========================================================= */
+
+/* Base font size */
+html {
+  font-size: 100%;
+}
+
+body {
+  font-size: clamp(1rem, 0.95rem + 0.15vw, 1.0625rem);
+  line-height: 1.5;
+}
+
+/* Main headings */
+h1 {
+  font-size: clamp(1.65rem, 1.4rem + 1vw, 1.9rem);
+}
+
+h2 {
+  font-size: clamp(1.3rem, 1.15rem + 0.5vw, 1.5rem);
+}
+
+h3 {
+  font-size: clamp(1.15rem, 1rem + 0.3vw, 1.3rem);
+}
+
+/* Sidebar headings */
+.sidebar h4 {
+  font-size: clamp(1rem, 0.95rem + 0.2vw, 1.1rem);
+}
+
+/* General text */
+p,
+li,
+.accordion-body {
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+/* Accordion headings */
+.accordion-button {
+  font-size: 1.05rem;
+}
+
+/* Dropdown menus and selection controls */
+.form-control,
+.form-select,
+.selectize-input {
+  font-size: 1rem;
+}
+
+/* Sidebar labels */
+.form-label,
+.control-label {
+  font-size: 1rem;
+}
+
+/* Checkboxes */
+.form-check-label {
+  font-size: 1rem;
+}
+
+/* Cards and information panels */
+.card-header {
+  font-size: 1.05rem;
+}
+
+.card-body {
+  font-size: 1rem;
+}
+
+/* Tables */
+table {
+  font-size: 0.95rem;
+}
+
+/* Popover and tooltip text */
+.popover,
+.tooltip {
+  font-size: 0.95rem;
+}
+
+/* Smaller screens */
+@media (max-width: 768px) {
+
+  body {
+    font-size: 1rem;
+  }
+
+  .sidebar {
+    font-size: 1rem;
+  }
+
+  .accordion-button {
+    font-size: 1rem;
+  }
+
+}

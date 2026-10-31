@@ -212,9 +212,9 @@ ui <- page_navbar(
       
       p(style = "margin-bottom: 8px;",
         "Here, we use the ", 
-        a("DDRP platform", href = "https://uspest.org/CAPS",
+        a("DDRP platform", href = "https://uspest.org/DDRP",
           target="_blank", style="text-decoration:underline;"), 
-      " to assess the potential impacts of weather changes from 1980 to the 
+      " to assess the potential impacts of weather changes from 1981 to the 
       current year on the timing of pest activities, such as spring emergence 
       (phenology) and potential for establishment of ", 
         a("18 invasive pest species", href = "#species"),
