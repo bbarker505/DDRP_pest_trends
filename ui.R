@@ -283,7 +283,7 @@ ui <- page_navbar(
          suitability, and the potential distribution of the 18 species. The
          'Pest reports' page provides reports that present the major results for
          each species and their potential applications for surveillance. The 
-         tutorial below describes app usage, explains the different map 
+         User Guide below describes app usage, explains the different map 
          types, and provides guidance on how to interpret maps. Note that this 
          app requires an internet connection and will therefore not work in 
          airplane or off-line mode."),
@@ -291,11 +291,11 @@ ui <- page_navbar(
          div(
            class = "text-left my-4",
            tags$a(
-             href = "reports/tutorial.html",
+             href = "reports/user_guide.html",
              target = "_blank",
              class = "btn btn-primary btn-md",
              icon("book-open"),
-             " View App Tutorial"
+             " View User Guide"
            )
          )
      ), # end instructions
@@ -674,7 +674,9 @@ ui <- page_navbar(
             `data-bs-content` = paste(
               "Select the years used to calculate trends.",
               "The selected period determines the time span",
-              "over which changes are evaluated."
+              "over which changes are evaluated.  Comparing maps produced 
+              for the 1981–2025 and 2001–2025 periods helps distinguish 
+              long-term trends from more recent changes."
             )
           )
         ),
@@ -961,7 +963,7 @@ ui <- page_navbar(
       div(
         class = "text-left my-4",
         tags$a(
-          href = "reports/Full_report.html",
+          href = "reports/full_report.html",
           target = "_blank",
           class = "btn btn-primary btn-md",
           icon("file-lines"),
