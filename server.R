@@ -87,7 +87,7 @@ server <- function(input, output, session) {
           div(
             class = "pest-report-links",
             tags$a(
-              href = paste0("reports/Full_report.html#", tolower(profile$abbreviation)),
+              href = paste0("reports/full_report.html#", tolower(profile$abbreviation)),
               paste0("View report for ", profile$abbreviation),
               target = "_blank"
             ),

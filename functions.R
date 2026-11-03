@@ -35,6 +35,25 @@ format_scientific_name <- function(name) {
 }
 
 # Create a clickable image card for the Pest Reports page.
+# make_pest_card <- function(profile) {
+#   actionButton(
+#     inputId = paste0("pest_card_", profile$abbreviation),
+#     label = tagList(
+#       tags$img(
+#         src = profile$image_file,
+#         alt = profile$common_name,
+#         class = "pest-card-image"
+#       ),
+#       tags$span(profile$common_name, class = "pest-card-name"),
+#       tags$span(format_scientific_name(profile$scientific_name), class = "pest-card-scientific"),
+#       tags$span(profile$photo_credit, class = "pest-card-credit")
+#     ),
+#     class = "pest-card",
+#     width = "100%"
+#   )
+# }
+
+# Create a clickable image card for the Pest Reports page.
 make_pest_card <- function(profile) {
   actionButton(
     inputId = paste0("pest_card_", profile$abbreviation),
@@ -42,7 +61,13 @@ make_pest_card <- function(profile) {
       tags$img(
         src = profile$image_file,
         alt = profile$common_name,
-        class = "pest-card-image"
+        class = if (profile$abbreviation %in% 
+                    c("ASRB", "CGN", "ECW", "SLI", "FCM", 
+                      "LBAM", "OAB", "OWBW", "PTLM")) {
+          "pest-card-image pest-card-image-reduced"
+        } else {
+          "pest-card-image"
+        }
       ),
       tags$span(profile$common_name, class = "pest-card-name"),
       tags$span(format_scientific_name(profile$scientific_name), class = "pest-card-scientific"),

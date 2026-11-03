@@ -12,7 +12,7 @@ execute:
   eval: true
 format:
   html:
-    output-file: "Full_report.html"
+    output-file: "full_report.html"
     self-contained: true
     embed-resources: false
     toc: true
@@ -409,11 +409,9 @@ In progress - check back soon
 
 ## **13. Spotted lanternfly** {#slf}
 
-In progress - check back soon
+<a id="slf_content"></a>
 
-<!-- <a id="slf_content"></a> -->
-
-<!-- {{< include SLF_content.qmd >}} -->
+{{< include SLF_content.qmd >}}
 
 ## **14. Cotton cutworm** {#sli}
 

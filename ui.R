@@ -992,6 +992,13 @@ ui <- page_navbar(
         object-fit: cover;
       }
 
+      /* Reduce selected images without changing the image area or card layout. */
+      .pest-card-image.pest-card-image-reduced {
+        object-fit: contain;
+        transform: scale(0.9);
+        transform-origin: center;
+      }
+
       @media (max-width: 991px) {
         .pest-card-grid {
           width: 85%;
