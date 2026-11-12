@@ -74,7 +74,7 @@ format:
         ]{paragraph}
 
         % ---------------------------
-        % Paragraph formatting (ALB style)
+        % Paragraph formatting
         % ---------------------------
         % Prevent indentation after all section headings
         \usepackage{etoolbox}
@@ -172,7 +172,7 @@ Trends in predictions of first adult emergence and egg hatch for ALB during the 
 #| echo: false
 #| out-width: 70%
 #| fig-align: center
-#| fig-cap: "Changes (days/year) in predicted dates of first adult emergence for ALB across the CONUS over the recent 24-year period (2001–2025). Maps depict the trend in predicted dates, significance of the trend (P-value), and change in predicted dates (days/year). Maps show (A) all changes and (B) statistically significant changes (P < 0.1); areas shown in gray are not statistically significant."
+#| fig-cap: "Changes (days/year) in predicted dates of first adult emergence for ALB across the CONUS over the recent 24-year period (2001–2025). Maps show (A) all changes and (B) statistically significant changes (P < 0.1); areas shown in gray are not statistically significant."
 #| label: fig-alb-emergence-recent
 knitr::include_graphics("figure3.png")
 ```
@@ -190,7 +190,7 @@ knitr::include_graphics("figure4.png")
 
 #### **Entire period: 1981--2025**
 
-Significant trends in predicted cold stress for ALB over the full 44-year period (1981–2025) were predominantly negative (@fig-alb-cold-stress), indicating a general decrease in cold stress over time. In contrast, significant trends in heat stress were largely positive across portions of the Southwest, indicating increasing heat stress (@fig-alb-heat-stress). When annual accumulated stress units exceed limits specified in DDRP models, climatic suitability may change. Consistent with these trends, suitability for ALB increased in parts of the Midwest, including Minnesota and North Dakota, but decreased in southern California and adjacent desert regions (@fig-alb-suitability). However, only some of these changes were statistically significant, suggesting that shifts in climatic suitability were spatially limited.
+Significant trends in predicted cold stress for ALB over the entire 44-year period (1981–2025) were predominantly negative (@fig-alb-cold-stress), indicating a general decrease in cold stress over time. In contrast, significant trends in heat stress were largely positive across portions of the Southwest, indicating increasing heat stress (@fig-alb-heat-stress). When annual accumulated stress units exceed limits specified in DDRP models, climatic suitability may change. Consistent with these trends, suitability for ALB increased in parts of the Midwest, including Minnesota and North Dakota, but decreased in southern California and adjacent desert regions (@fig-alb-suitability). However, only some of these changes were statistically significant, suggesting that shifts in climatic suitability were spatially limited.
 
 ```{r}
 #| echo: false
@@ -256,7 +256,7 @@ Predictions of phenology and climatic suitability for ALB show clear, directiona
 
 Declines in predicted cold stress across northern and high-elevation regions—including parts of the Northeast and Midwest—may indicate increasing potential for overwinter survival in ALB. These regions may be especially vulnerable because of the high abundance of preferred host species for ALB, particularly maple (`\hyperref[ref-smith-wu-2008]{Smith and Wu 2008}`{=latex}`<a href="#ref-smith-wu-2008">Smith and Wu 2008</a>`{=html}; `\hyperref[ref-berland-elliott-2014]{Berland and Elliot 2014}`{=latex}`<a href="#ref-berland-elliott-2014">Berland and Elliot 2014</a>`{=html}). Thus, surveyors and managers may want to increase the prioritization of areas such as northern New England and Michigan. Although significant increases in heat stress—and corresponding reductions in establishment risk—are predicted for the hottest parts of the Southwest, risk in this region is likely already constrained by the relatively low density of hardwood forests.
 
-The stronger and more significant trends in predicted phenology and climate stress over the entire 44-year period may reflect both the larger sample size, which can reduce noise and improve detection of directional patterns, and differences in the underlying climate trends between the two time periods. In particular, the recent 24-year period may capture climate variability or regional trends that differ from those observed over the longer 44-year period. For example, increases in predicted cold stress in parts of the north-central United States may reflect this region's departure from the broader warming pattern during the more recent period, with some areas experiencing cooler conditions relative to the preceding years (`\hyperref[ref-ncei-2021]{NCEI 2021}`{=latex}`<a href="#ref-ncei-2021">NCEI 2021</a>`{=html}).
+The stronger and more spatially extensive trends in predicted phenology and climate stress over the entire 44-year period likely reflect both the greater number of years included, which may reduce interannual variability and improve the detection of directional trends, and differences in the underlying climatic trends between the two study periods. In particular, the recent 24-year period may capture climate variability or regional trends that differ from those observed over the longer 44-year period. For example, increases in predicted cold stress in parts of the north-central United States may reflect this region's departure from the broader warming pattern during the more recent period, with some areas experiencing cooler conditions relative to the preceding years (`\hyperref[ref-ncei-2021]{NCEI 2021}`{=latex}`<a href="#ref-ncei-2021">NCEI 2021</a>`{=html}).
 
 \vspace{1.5em}
 

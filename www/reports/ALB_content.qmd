@@ -47,7 +47,7 @@ Trends in predictions of first adult emergence and egg hatch for ALB during the 
 #| echo: false
 #| out-width: 70%
 #| fig-align: center
-#| fig-cap: "Changes (days/year) in predicted dates of first adult emergence for ALB across the CONUS over the recent 24-year period (2001–2025). Maps depict the trend in predicted dates, significance of the trend (P-value), and change in predicted dates (days/year). Maps show (A) all changes and (B) statistically significant changes (P < 0.1); areas shown in gray are not statistically significant."
+#| fig-cap: "Changes (days/year) in predicted dates of first adult emergence for ALB across the CONUS over the recent 24-year period (2001–2025). Maps show (A) all changes and (B) statistically significant changes (P < 0.1); areas shown in gray are not statistically significant."
 #| label: fig-alb-emergence-recent
 knitr::include_graphics("./ALB/figure3.png")
 ```

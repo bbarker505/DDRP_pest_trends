@@ -152,7 +152,7 @@ Recent weather trends may be promoting overwintering survival and increasing dev
 
 # **Goal and Objectives**
 
-Our goal was to develop a web app that delivers maps and other products that communicate the potential influence of recent (1981&minus;2025) weather changes on the phenology and establishment of 18 major invasive insects for the contiguous United States (CONUS). The project addressed the following three objectives:
+Our goal was to develop a web app that delivers maps and other products that communicate the potential influence of recent (1981&minus;2025) weather changes on the phenology and establishment of 18 major invasive insects for the CONUS. The project addressed the following three objectives:
 
 1. Evaluate trends in predictions of selected phenological events (adult emergence and egg hatch) and climatic suitability over the full 44-year period (1981–2025) and a more recent 24-year period (2001–2025).
 
@@ -356,11 +356,9 @@ Select a species to jump to its Results, or download its individual report as a 
 
 ## **6. False codling moth** {#fcm}
 
-In progress - check back soon
+<a id="fcm_content"></a>
 
-<!-- <a id="fcm_content"></a> -->
-
-<!-- {{< include FCM_content.qmd >}} -->
+{{< include FCM_content.qmd >}}
 
 ## **7. Japanese beetle** {#jpb}
 

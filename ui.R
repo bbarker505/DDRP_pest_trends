@@ -421,7 +421,7 @@ ui <- page_navbar(
             id = "ref_barker2020",
             class = "reference-entry",
             
-            "Barker, B. S., L. Coop, T. Wepprich, F. Grevstad, and G. Cook. 2020. DDRP: real-time phenology and climatic suitability modeling of invasive insects. PLoS ONE 15:e0244005.",
+            "Barker, B. S., L. Coop, T. Wepprich, F. Grevstad, et al. 2020. DDRP: real-time phenology and climatic suitability modeling of invasive insects. PLoS ONE 15:e0244005.",
             
             a("https://doi.org/10.1371/journal.pone.0244005",
               href = "https://doi.org/10.1371/journal.pone.0244005"
