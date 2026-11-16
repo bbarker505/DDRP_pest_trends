@@ -144,7 +144,7 @@ A model for EAB developed for the Degree-Day, establishment Risk, and Phenologic
 
 #### **Entire period: 1981--2025**
 
-Predicted adult emergence and egg hatch for JPB shifted significantly earlier across large portions of CONUS over the entire period (1981–2025), including most East Coast states and parts of the South and Intermountain West (@fig-eab-emergence, @fig-eab-egg-hatch). In these regions, predicted adult emergence and egg hatch decreased by approximately 0.01–0.9 days per year, with some of the largest declines occurring at higher elevations in the Intermountain West. Significant changes were more spatially extensive for predicted egg hatch, encompassing much of the central United States. 
+Predicted adult emergence and egg hatch for JPB shifted significantly (P < 0.01) earlier across large portions of CONUS over the entire period (1981–2025), including most East Coast states and parts of the South and Intermountain West (@fig-eab-emergence, @fig-eab-egg-hatch). In these regions, predicted adult emergence and egg hatch decreased by approximately 0.01–0.9 days per year, with some of the largest declines occurring at higher elevations in the Intermountain West. Significant changes were more spatially extensive for predicted egg hatch, encompassing much of the central United States. 
 
 ```{r}
 #| echo: false

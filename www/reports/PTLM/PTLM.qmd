@@ -212,7 +212,7 @@ knitr::include_graphics("figure6.png")
 #| echo: false
 #| out-width: 70%
 #| fig-align: center
-#| fig-cap: "Changes in predicted climatic suitability for PTLM across the CONUS over the 44-year period (1981–2025). Suitability is defined as areas not excluded by climate stress. Positive changes (warmer colors) indicate an increased likelihood of establishment, whereas negative changes (cooler colors) indicate a decreased likelihood of establishment."
+#| fig-cap: "Changes in predicted climatic suitability for PTLM across the CONUS over the entire 44-year period (1981–2025). Suitability is defined as areas not excluded by climate stress. Positive changes (warmer colors) indicate an increased likelihood of establishment, whereas negative changes (cooler colors) indicate a decreased likelihood of establishment."
 #| label: fig-ptlm-suitability
 knitr::include_graphics("figure7.png")
 ```

@@ -368,10 +368,9 @@ Select a species to jump to its Results, or download its individual report as a 
 
 ## **8. Japanese pine sawyer beetle** {#jpsb}
 
-In progress - check back soon
-<!-- <a id="jpbs_content"></a> -->
+<a id="jpbs_content"></a>
 
-<!-- {{< include JPSB_content.qmd >}} -->
+{{< include JPSB_content.qmd >}}
 
 ## **9. Light brown apple moth** {#lbam}
 

@@ -142,7 +142,7 @@ A model for SLF developed for the Degree-Day, establishment Risk, and Phenologic
 
 #### **Entire period: 1981--2025**
 
-Trends in predicted first adult emergence and egg hatch for SLF over the 44-year period (1981–2025) were predominantly negative, indicating that both phenological events shifted earlier over time. These earlier phenological events were spatially extensive, occurring across much of the CONUS, although trends toward later phenology were evident in portions of the northern interior and western United States (@fig-slf-emergence, @fig-slf-egg-hatch). Statistically significant trends were more spatially restricted, particularly for egg hatch, and occurred primarily in the East, South, and portions of the West. Within these regions, predicted adult emergence and egg hatch shifted earlier by approximately 0.01–0.5 days per year, with some of the largest shifts occurring in the Northeast and at higher elevations in the West. Only a few small, isolated areas exhibited significant trends toward later phenology.
+Trends in predicted first adult emergence and egg hatch for SLF over the 44-year period (1981–2025) were predominantly negative, indicating that both phenological events shifted earlier over time. These earlier phenological events were spatially extensive, occurring across much of the CONUS, although trends toward later phenology were evident in portions of the northern interior and western United States (@fig-slf-emergence, @fig-slf-egg-hatch). Statistically significant trends (P < 0.01) were more spatially restricted, particularly for egg hatch, and occurred primarily in the East, South, and portions of the West. Within these regions, predicted adult emergence and egg hatch shifted earlier by approximately 0.01–0.5 days per year, with some of the largest shifts occurring in the Northeast and at higher elevations in the West. Only a few small, isolated areas exhibited significant trends toward later phenology.
 
 ```{r}
 #| echo: false
@@ -212,7 +212,7 @@ knitr::include_graphics("figure6.png")
 #| echo: false
 #| out-width: 70%
 #| fig-align: center
-#| fig-cap: "Changes in predicted climatic suitability for SLF across the CONUS over the 44-year period (1981–2025). Suitability is defined as areas not excluded by climate stress. Positive changes (warmer colors) indicate an increased likelihood of establishment, whereas negative changes (cooler colors) indicate a decreased likelihood of establishment."
+#| fig-cap: "Changes in predicted climatic suitability for SLF across the CONUS over the entire 44-year period (1981–2025). Suitability is defined as areas not excluded by climate stress. Positive changes (warmer colors) indicate an increased likelihood of establishment, whereas negative changes (cooler colors) indicate a decreased likelihood of establishment."
 #| label: fig-slf-suitability
 knitr::include_graphics("figure7.png")
 ```

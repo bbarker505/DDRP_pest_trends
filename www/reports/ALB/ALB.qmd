@@ -144,7 +144,7 @@ A model for ALB developed for the Degree-Day, establishment Risk, and Phenologic
 
 #### **Entire period: 1981--2025**
 
-Significant trends in predicted first adult emergence and egg hatch for ALB over the entire 44-year period (1981–2025) were predominantly negative, indicating that these phenological events shifted earlier over time (@fig-alb-emergence, @fig-alb-egg-hatch). Significant advances were concentrated across large portions of the eastern United States, with additional localized areas along the Pacific coast, in the South, and at higher elevations of the interior West. In these regions, predicted adult emergence and egg hatch decreased by approximately 0.01–0.8 days per year, with some of the largest declines occurring at higher elevations in the West.
+Significant trends (P < 0.01) in predicted first adult emergence and egg hatch for ALB over the entire 44-year period (1981–2025) were predominantly negative, indicating that these phenological events shifted earlier over time (@fig-alb-emergence, @fig-alb-egg-hatch). Significant advances were concentrated across large portions of the eastern United States, with additional localized areas along the Pacific coast, in the South, and at higher elevations of the interior West. In these regions, predicted adult emergence and egg hatch decreased by approximately 0.01–0.8 days per year, with some of the largest declines occurring at higher elevations in the West.
 
 ```{r}
 #| echo: false

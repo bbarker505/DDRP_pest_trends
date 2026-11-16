@@ -142,7 +142,7 @@ A model for CGN developed for the Degree-Day, establishment Risk, and Phenologic
 
 #### **Entire period: 1981--2025**
 
-Trends in predicted first adult emergence and egg hatch for CGN over the 44-year period (1981–2025) were predominantly negative, indicating that both phenological events shifted earlier over time. Earlier phenology was spatially extensive, occurring across most of the CONUS (@fig-cgn-emergence, @fig-cgn-egg-hatch). Statistically significant trends were more spatially restricted, occurring primarily in portions of the southern and eastern United States and in scattered areas of the West. Within these regions, predicted adult emergence and egg hatch shifted earlier by approximately 0.01–0.8 days per year, with some of the largest shifts occurring at higher elevations in the West. Trends toward later phenology occurred in a some isolated areas of the West but most were not statistically significant. 
+Trends in predicted first adult emergence and egg hatch for CGN over the 44-year period (1981–2025) were predominantly negative, indicating that both phenological events shifted earlier over time. Earlier phenology was spatially extensive, occurring across most of the CONUS (@fig-cgn-emergence, @fig-cgn-egg-hatch). Statistically significant trends (P < 0.01) were more spatially restricted, occurring primarily in portions of the southern and eastern United States and in scattered areas of the West. Within these regions, predicted adult emergence and egg hatch shifted earlier by approximately 0.01–0.8 days per year, with some of the largest shifts occurring at higher elevations in the West. Trends toward later phenology occurred in a some isolated areas of the West but most were not statistically significant. 
 
 ```{r}
 #| echo: false
